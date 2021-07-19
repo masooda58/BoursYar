@@ -3,9 +3,27 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31424.327
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{2349BDEC-C532-4518-A3AE-AF1959CF75CB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domin", "Domin", "{B4C2ED97-2954-46A9-864B-7EA18B4D6959}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "InfraData", "InfraData", "{826E5382-105C-4358-A1A4-FE64D257FE92}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Ioc", "Ioc", "{4E1B05DA-5D2F-4507-A49B-BC21934A0722}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UiWeb", "UiWeb", "{E011A47A-CF1C-43EB-9A6F-6FA50F68D536}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Convertors", "Convertors", "{3E09143C-37D0-4F9C-AA47-B5591B601E9A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extention", "Extention", "{118AC81C-EEDE-4D32-A109-8F6CC6BC2142}"
+EndProject
 Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3E09143C-37D0-4F9C-AA47-B5591B601E9A} = {2349BDEC-C532-4518-A3AE-AF1959CF75CB}
+		{118AC81C-EEDE-4D32-A109-8F6CC6BC2142} = {2349BDEC-C532-4518-A3AE-AF1959CF75CB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E8BC5213-F0FD-4ABA-A5B9-41061C465589}
