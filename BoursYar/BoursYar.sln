@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.31424.327
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{2349BDEC-C532-4518-A3AE-AF1959CF75CB}"
+	ProjectSection(SolutionItems) = preProject
+		TextFile1.txt = TextFile1.txt
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domin", "Domin", "{B4C2ED97-2954-46A9-864B-7EA18B4D6959}"
 EndProject
@@ -17,7 +20,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Convertors", "Convertors", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extention", "Extention", "{118AC81C-EEDE-4D32-A109-8F6CC6BC2142}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebBoursYarMVC", "WebBoursYarMVC\WebBoursYarMVC.csproj", "{29C0C3F4-9BE9-472F-A4AE-BF76D133B0AD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebBoursYarMVC", "WebBoursYarMVC\WebBoursYarMVC.csproj", "{29C0C3F4-9BE9-472F-A4AE-BF76D133B0AD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
