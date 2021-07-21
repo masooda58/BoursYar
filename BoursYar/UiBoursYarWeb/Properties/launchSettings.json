@@ -30,6 +30,7 @@
     },
     "ISS": {
       "commandName": "IIS",
+      "launchBrowser": true,
       "nativeDebugging": false,
       "jsWebView2Debugging": false
     }

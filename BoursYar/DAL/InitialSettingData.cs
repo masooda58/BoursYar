@@ -1,4 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.IO;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration; 
+using Microsoft.Extensions.Configuration.FileExtensions; 
+using Newtonsoft.Json; 
+using Microsoft.Extensions.Configuration.Json; 
+using System.IO;
 
 namespace DAL
 {
@@ -220,6 +227,15 @@ namespace DAL
                 ClassJsonType = typeof(List<AllNamadOption>).FullName
             });
             return defaultCallWebServiceSettings;
+        }
+
+        public static string GetConnectionString(string StringName)
+        {
+            string c = Directory.GetCurrentDirectory();
+            IConfigurationRoot configuration = new ConfigurationBuilder().SetBasePath(c).AddJsonFile("appsettings.json").Build();
+                
+            string connectionStringIs = configuration.GetConnectionString("StringName"); 
+            return connectionStringIs;
         }
     }
 }

@@ -21,10 +21,7 @@ namespace UiBoursYarWeb.Controllers
 
         public IActionResult Index()
         {
-            using (WDbContext db = new WDbContext())
-            {
-                var gg = db.CallWebServiceSetting.ToList();
-            }
+          
             return View();
         }
 
