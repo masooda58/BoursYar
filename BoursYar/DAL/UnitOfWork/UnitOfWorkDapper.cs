@@ -2,6 +2,9 @@
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
+using Microsoft.IdentityModel.Protocols;
+using Microsoft.Extensions.Configuration;
 
 
 namespace DAL
@@ -9,8 +12,9 @@ namespace DAL
     public class UnitOfWorkDapper:IDisposable
 
     {
-      
-        static string connectionString = ConfigurationManager.ConnectionStrings["WDbContext"].ConnectionString;
+        private static string connectionString =
+            "data source=.;initial catalog=WDb_;integrated security=True;MultipleActiveResultSets=True";
+          //  ConfigurationManager<>.ConnectionStrings["WDbContext"].ConnectionString;
 
        IDbConnection db= new SqlConnection(connectionString);
 
