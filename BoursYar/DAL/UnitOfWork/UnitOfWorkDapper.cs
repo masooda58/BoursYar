@@ -12,8 +12,8 @@ namespace DAL
     public class UnitOfWorkDapper:IDisposable
 
     {
-        private static string connectionString =
-            "data source=.;initial catalog=WDb_;integrated security=True;MultipleActiveResultSets=True";
+        private static string connectionString = "Server=.;Database=WDb_1;Trusted_Connection=True;";
+           
           //  ConfigurationManager<>.ConnectionStrings["WDbContext"].ConnectionString;
 
        IDbConnection db= new SqlConnection(connectionString);

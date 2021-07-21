@@ -35,8 +35,12 @@ namespace DAL
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            var settings = InitialSettingData.Seed();
+
+            modelBuilder.Entity<CallWebServiceSetting>().HasData(settings);
             modelBuilder.HasAnnotation("Relational:Collation", "Arabic_CI_AS");
         }
+       
         //protected override void OnModelCreating(DbModelBuilder dbModelBuilder)
         //{
         //    dbModelBuilder.Conventions.Remove<PluralizingTableNameConvention>();

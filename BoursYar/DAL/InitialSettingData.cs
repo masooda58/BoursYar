@@ -4,7 +4,7 @@ namespace DAL
 {
     public class InitialSettingData
     {
-        public  void Seed()
+        public static  List<CallWebServiceSetting>  Seed()
         {
             List<CallWebServiceSetting> defaultCallWebServiceSettings = new List<CallWebServiceSetting>();
 
@@ -219,11 +219,7 @@ namespace DAL
                 ClassType = typeof(List<AllNamadOption>).FullName,
                 ClassJsonType = typeof(List<AllNamadOption>).FullName
             });
-
-
-            UnitOfWorkDapper db = new UnitOfWorkDapper();
-            db.CallwebservicesettingDapperRepository.AddDataList(defaultCallWebServiceSettings);
-            db.Dispose();
+            return defaultCallWebServiceSettings;
         }
     }
 }
