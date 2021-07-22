@@ -38,8 +38,8 @@ namespace WebServiceManager
             // _lblNext.SafeInvoke(d => d.Text = (now.ToString()));
             if (now > endRun)
             {
-                StaticProgram.NextRuns[_name] = (DateTime.Now + MilisecondWaitForNewStart()).ToString();
-                StaticProgram.ReqTimers[_name].Change((int)MilisecondWaitForNewStart().TotalMilliseconds, Interval);
+                StaticDictionary.NextRuns[_name] = (DateTime.Now + MilisecondWaitForNewStart()).ToString();
+                StaticDictionary.ReqTimers[_name].Change((int)MilisecondWaitForNewStart().TotalMilliseconds, Interval);
                 OnChangedNextTim(EventArgs.Empty);
             }
             // call do method
@@ -48,7 +48,7 @@ namespace WebServiceManager
             else
             {
 
-                StaticProgram.NextRuns[_name] = (DateTime.Now.AddMilliseconds(Convert.ToDouble(Interval))).ToString();
+                StaticDictionary.NextRuns[_name] = (DateTime.Now.AddMilliseconds(Convert.ToDouble(Interval))).ToString();
                 OnChangedNextTim(EventArgs.Empty);
                 _callByTimer();
 

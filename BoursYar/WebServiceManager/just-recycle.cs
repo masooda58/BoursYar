@@ -3,11 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PersianTools.Core;
 
 namespace WDbManager
 {
     class JustRecycle
     {
+        public void test()
+        {
+            var pdt = new PersianDateTime(1400, 01, 17);
+            var x = pdt.GetDateInformation();
+        }
         // دیتای روزانه اولیه
         //UnitOfWork db = new UnitOfWork();
         //var pdt = new PersianDateTime(1400, 01, 17);

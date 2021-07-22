@@ -20,8 +20,11 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.1.0" />
     <PackageReference Include="MoralesLarios.Data.Dapper" Version="1.0.0.5" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="PersianTools.Core" Version="2.0.1-preview100" />
     <PackageReference Include="Skender.Stock.Indicators" Version="1.14.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PersianTools\PersianTools.csproj" />
   </ItemGroup>
 
 </Project>

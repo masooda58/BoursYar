@@ -32,7 +32,7 @@ namespace WebServiceManager
         //خارج از کلاس هندل شود ERR پس از دریافت  فایل حاوی
         public object WebReadjsonResult()
         {
-            lock (StaticProgram.ThreadLockToken)
+            lock (StaticDictionary.ThreadLockToken)
             {
                 if (TestInternetConnection())
                 {

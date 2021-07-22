@@ -23,7 +23,10 @@ namespace UiBoursYarWeb.Controllers
 
         public IActionResult Index()
         {
-         
+         //ScheduleCallBack sb= new ScheduleCallBack("https://sourcearena.ir/api/?token=722b65c8184942a55aebc5253895f8d9&all&type=0");
+         //sb.CallActionBack("allnamadinfo").Invoke();
+         //CreatJob.RunAllTimer();
+         //var x=StaticDictionary.NextRuns["allnamadinfo"];
             return View();
         }
 

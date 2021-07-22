@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DAL\DAL.csproj" />
+    <ProjectReference Include="..\PersianTools\PersianTools.csproj" />
     <ProjectReference Include="..\WebServiceManager\WebServiceManager.csproj" />
   </ItemGroup>
 

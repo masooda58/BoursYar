@@ -13,7 +13,7 @@ using Timer = System.Threading.Timer;
 
 namespace WebServiceManager
 {
-   public static class StaticProgram
+   public static class StaticDictionary
 
     {
         /// <summary>
