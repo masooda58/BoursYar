@@ -7,6 +7,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using DAL;
 using UiBoursYarWeb.Models;
+using WebServiceManager;
+
 
 namespace UiBoursYarWeb.Controllers
 {
@@ -21,7 +23,7 @@ namespace UiBoursYarWeb.Controllers
 
         public IActionResult Index()
         {
-          
+         
             return View();
         }
 

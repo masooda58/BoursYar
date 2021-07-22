@@ -15,7 +15,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UiWeb", "UiWeb", "{E011A47A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DAL", "DAL\DAL.csproj", "{4B55D611-BC4C-4774-BF8B-F2310DB81A67}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UiBoursYarWeb", "UiBoursYarWeb\UiBoursYarWeb.csproj", "{5A4EF2EE-6526-4A90-95D2-BB3DCED621F1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UiBoursYarWeb", "UiBoursYarWeb\UiBoursYarWeb.csproj", "{5A4EF2EE-6526-4A90-95D2-BB3DCED621F1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebServiceManager", "WebServiceManager\WebServiceManager.csproj", "{79FA631F-DD5B-43E8-81BA-99ECAE651953}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,6 +33,10 @@ Global
 		{5A4EF2EE-6526-4A90-95D2-BB3DCED621F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5A4EF2EE-6526-4A90-95D2-BB3DCED621F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5A4EF2EE-6526-4A90-95D2-BB3DCED621F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79FA631F-DD5B-43E8-81BA-99ECAE651953}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79FA631F-DD5B-43E8-81BA-99ECAE651953}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79FA631F-DD5B-43E8-81BA-99ECAE651953}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79FA631F-DD5B-43E8-81BA-99ECAE651953}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -38,6 +44,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{4B55D611-BC4C-4774-BF8B-F2310DB81A67} = {B4C2ED97-2954-46A9-864B-7EA18B4D6959}
 		{5A4EF2EE-6526-4A90-95D2-BB3DCED621F1} = {E011A47A-CF1C-43EB-9A6F-6FA50F68D536}
+		{79FA631F-DD5B-43E8-81BA-99ECAE651953} = {2349BDEC-C532-4518-A3AE-AF1959CF75CB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E8BC5213-F0FD-4ABA-A5B9-41061C465589}
