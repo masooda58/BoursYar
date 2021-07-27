@@ -71,6 +71,7 @@ namespace PersianTools.Core
            // etfaghi
            DaysData.Add(new DaysData(1400, 05, 02, CalenderType.Jalali, DateType.HoliDay, "کرونا"));
            DaysData.Add(new DaysData(1400, 05, 03, CalenderType.Jalali, DateType.HoliDay, "کرونا"));
+           DaysData.Add(new DaysData(1400, 04, 29, CalenderType.Jalali, DateType.HoliDay, "کرونا"));
         }
         private void FillJalaliNormalDays()
         {

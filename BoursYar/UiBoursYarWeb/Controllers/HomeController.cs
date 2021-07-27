@@ -5,7 +5,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using ASP;
 using DAL;
+using Microsoft.Extensions.WebEncoders.Testing;
 using UiBoursYarWeb.Models;
 using WebServiceManager;
 
@@ -27,8 +29,17 @@ namespace UiBoursYarWeb.Controllers
          //sb.CallActionBack("allnamadinfo").Invoke();
          //CreatJob.RunAllTimer();
          //var x=StaticDictionary.NextRuns["allnamadinfo"];
+        // testintialdaily();
             return View();
         }
+
+        //public Task testintialdaily()
+        //{
+        //    return Task.Run(() =>
+        //    {
+        //        InitialDailyHistoryData.DailyNamdeInfo();
+        //    });
+        //}
 
         public IActionResult Privacy()
         {
@@ -40,5 +51,10 @@ namespace UiBoursYarWeb.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        //public IActionResult QueueBuy()
+        //{
+        //    return PartialView("_MiniTableTemplate");
+        //}
     }
 }
