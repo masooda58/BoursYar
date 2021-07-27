@@ -25,11 +25,11 @@ namespace UiBoursYarWeb.Controllers
 
         public IActionResult Index()
         {
-         //ScheduleCallBack sb= new ScheduleCallBack("https://sourcearena.ir/api/?token=722b65c8184942a55aebc5253895f8d9&all&type=0");
-         //sb.CallActionBack("allnamadinfo").Invoke();
-         //CreatJob.RunAllTimer();
-         //var x=StaticDictionary.NextRuns["allnamadinfo"];
-        // testintialdaily();
+            //ScheduleCallBack sb = new ScheduleCallBack("https://sourcearena.ir/api/?token=722b65c8184942a55aebc5253895f8d9&all&type=0");
+            //sb.CallActionBack("allnamadinfo").Invoke();
+            //CreatJob.RunAllTimer();
+            //var x=StaticDictionary.NextRuns["allnamadinfo"];
+            // testintialdaily();
             return View();
         }
 
@@ -51,10 +51,17 @@ namespace UiBoursYarWeb.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+        [HttpGet]
+        public IEnumerable<AllNamadInfo> safkharid()
+        {
+           
+            FilterLastAllNamadInfo filter = new FilterLastAllNamadInfo();
+            var d = filter.BuyQueue();
+            return d;
 
-        //public IActionResult QueueBuy()
-        //{
-        //    return PartialView("_MiniTableTemplate");
-        //}
+        }
+
+     public IActionResult namad()
+    
     }
 }

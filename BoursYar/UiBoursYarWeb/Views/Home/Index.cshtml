@@ -1,8 +1,13 @@
-﻿@{
+﻿ 
+@{
     ViewData["Title"] = "Home Page";
 }
-
+<script src="~/lib/jquery/dist/jquery.js"></script>
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    @*<partial class ="part " name=_MiniTableTemplate model=@null  />*@
+    @await Component.InvokeAsync("BQ")
+    <p class="ff">Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
+
+

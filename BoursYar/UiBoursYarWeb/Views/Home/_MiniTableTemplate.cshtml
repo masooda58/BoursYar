@@ -1,0 +1,50 @@
+﻿@model IEnumerable<DAL.AllNamadInfo>
+    @*
+        For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+    *@
+    @if (Model == null)
+    {
+        <p> hichi</p>
+    }
+    else
+    {
+                  <div class="col-sm-6 col-md-3 item">
+                      <div class="border">
+                          <h2 class="index_box_header">بيشترين حجم معاملات <a href="#" class="q_in_h tooltip top"><i class="q_i_in_h fa fa-question-circle"></i></a></h2>
+                          <div id="border_inner15" class="border_inner wat2">
+                              <table id="table15" class="table" style="margin-bottom: 0px; padding: 0px;">
+                                  <thead class="tableFloatingHeaderOriginal">
+                                      <tr>
+                                          <th>نماد</th>
+                                          <th>آخرين قيمت</th>
+                                          <th>درصد آخرين قيمت</th>
+                                          <th style="background: rgba(27, 123, 169, 0.06);">حجم</th>
+                                      </tr>
+                                  </thead>
+                                  <thead class="tableFloatingHeader" style="display: none; opacity: 0;">
+                                      <tr>
+                                          <th>نماد</th>
+                                          <th>آخرين قيمت</th>
+                                          <th>درصد آخرين قيمت</th>
+                                          <th style="background: rgba(27, 123, 169, 0.06);">حجم</th>
+                                      </tr>
+                                  </thead>
+                                  <tbody id="IndexTable15">
+                                  @foreach (var item in Model)
+                                  {
+                                      <tr>
+                                          <td><a href=# target="_blank">@item.Name</a></td>
+                                          <td>@item.ClosePrice</td>
+                                          <td class="pr-rd">@item.FinalPriceChangePercent</td>
+                                          <td class="bl-colu">@item.TradeValue</td>
+                                      </tr>
+                                  }
+                              
+                                  </tbody>
+                              </table>
+                          </div>
+                      </div>
+                  </div>
+    }
+ 
+

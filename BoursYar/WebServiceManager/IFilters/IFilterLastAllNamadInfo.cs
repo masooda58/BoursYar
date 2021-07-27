@@ -10,7 +10,7 @@ namespace WebServiceManager
 {
     public interface IFilterLastAllNamadInfo
     {
-        IEnumerable BuyQueue();
+        IEnumerable<AllNamadInfo> BuyQueue();
         IEnumerable SellQueue();
 
 
