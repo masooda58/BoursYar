@@ -1,25 +1,23 @@
-﻿using System;
-using DAL;
-using Newtonsoft.Json;
+﻿using DAL;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Web;
 using Index = DAL.Index;
 
 namespace WebServiceManager
 {
     public class ScheduleCallBack
     {
-   
+
         private readonly string _url;
-        private  string _name; // for test
-       
-       
+        private string _name; // for test
+
+
         public ScheduleCallBack(string url)
         {
             _url = url;
-            
+
         }
 
         private void AllNamadInfoRead()
@@ -28,10 +26,11 @@ namespace WebServiceManager
             {
                 WebReadJson<List<AllNamadInfo>> webReadJson = new WebReadJson<List<AllNamadInfo>>(_url);
                 Utilities utl = new Utilities();
+                var allnamadobject = webReadJson.WebReadjsonResult() ?? throw new ArgumentNullException("webReadJson.WebReadjsonResult()");
                 var allnamadinfo =
-                    (List<AllNamadInfo>) utl.AddExtraData<List<AllNamadInfo>>(webReadJson.WebReadjsonResult());
-               //CacheManager.CacheData("allnamadinfo",allnamadinfo);
-               
+                    (List<AllNamadInfo>)utl.AddExtraData<List<AllNamadInfo>>(allnamadobject);
+                CacheManager.CacheData("allnamadinfo", allnamadinfo);
+
                 //var ops = allnamadinfo.Where(c => c.Name.StartsWith("ض") || c.Name.StartsWith("ط")).ToList();
                 //// ops= همه نماده های شامل  اختیار
                 //foreach (var namad in ops)
@@ -51,7 +50,7 @@ namespace WebServiceManager
             catch (Exception e)
             {
                 Console.WriteLine(e);
-               
+
             }
         }
 
@@ -63,7 +62,7 @@ namespace WebServiceManager
                 var allnamadobject = webReadJson.WebReadjsonResult() ?? throw new ArgumentNullException("webReadJson.WebReadjsonResult()");
                 Utilities utl = new Utilities();
                 var allnamadinfo =
-                    (List<AllNamadInfo_Daily>) utl.AddExtraData<List<AllNamadInfo_Daily>>(allnamadobject);
+                    (List<AllNamadInfo_Daily>)utl.AddExtraData<List<AllNamadInfo_Daily>>(allnamadobject);
 
                 using (UnitOfWorkDapper db = new UnitOfWorkDapper())
                 {
@@ -75,7 +74,7 @@ namespace WebServiceManager
             catch (Exception e)
             {
                 Console.WriteLine(e);
-               
+
             }
         }
 
@@ -87,7 +86,7 @@ namespace WebServiceManager
                 var allnamadoptionobject = webReadJson.WebReadjsonResult() ?? throw new ArgumentNullException("webReadJson.WebReadjsonResult()");
                 Utilities utl = new Utilities();
                 var allnamadinfo =
-                    (List<AllNamadOption>) utl.AddExtraData<List<AllNamadOption>>(allnamadoptionobject);
+                    (List<AllNamadOption>)utl.AddExtraData<List<AllNamadOption>>(allnamadoptionobject);
                 var allnamadoption = allnamadinfo.Where(c => c.Name.StartsWith("ض") || c.Name.StartsWith("ط")).ToList();
                 using (UnitOfWorkDapper db = new UnitOfWorkDapper())
                 {
@@ -99,7 +98,7 @@ namespace WebServiceManager
             catch (Exception e)
             {
                 Console.WriteLine(e);
-               
+
             }
         }
 
@@ -108,12 +107,12 @@ namespace WebServiceManager
             try
             {
                 WebReadJson<Index> webReadJson = new WebReadJson<Index>(_url);
-                var index = (Index) webReadJson.WebReadjsonResult(); // index 
+                var index = (Index)webReadJson.WebReadjsonResult(); // index 
                 if (index == null) throw new ArgumentNullException("webReadJson.WebReadjsonResult()");
 
 
                 Utilities utl = new Utilities();
-                var bourse = (BourseIndex) utl.AddExtraData<BourseIndex>(index.Bourse);
+                var bourse = (BourseIndex)utl.AddExtraData<BourseIndex>(index.Bourse);
                 using (UnitOfWorkDapper db = new UnitOfWorkDapper())
                 {
                     db.BourseDapperRepository.AddData(bourse);
@@ -123,7 +122,7 @@ namespace WebServiceManager
             catch (Exception e)
             {
                 Console.WriteLine(e);
-               
+
             }
         }
 
@@ -132,12 +131,12 @@ namespace WebServiceManager
             try
             {
                 WebReadJson<Index> webReadJson = new WebReadJson<Index>(_url);
-                var index = (Index) webReadJson.WebReadjsonResult(); // index 
+                var index = (Index)webReadJson.WebReadjsonResult(); // index 
                 if (index == null) throw new ArgumentNullException(" webReadJson.WebReadjsonResult()");
 
 
                 Utilities utl = new Utilities();
-                var farabourse = (BourseIndex) utl.AddExtraData<BourseIndex>(index.FaraBourse, "فرابورس");
+                var farabourse = (BourseIndex)utl.AddExtraData<BourseIndex>(index.FaraBourse, "فرابورس");
                 using (UnitOfWorkDapper db = new UnitOfWorkDapper())
                 {
                     db.BourseDapperRepository.AddData(farabourse);
@@ -147,7 +146,7 @@ namespace WebServiceManager
             catch (Exception e)
             {
                 Console.WriteLine(e);
-               
+
             }
         }
 
@@ -161,7 +160,7 @@ namespace WebServiceManager
 
                 Utilities utl = new Utilities();
                 var indextype =
-                    (List<IndusteryIndex>) utl.AddExtraData<List<IndusteryIndex>>(jsonobject);
+                    (List<IndusteryIndex>)utl.AddExtraData<List<IndusteryIndex>>(jsonobject);
                 using (UnitOfWorkDapper db = new UnitOfWorkDapper())
                 {
                     db.IndusteryDapperRepository.AddDataList(indextype);
@@ -171,7 +170,7 @@ namespace WebServiceManager
             catch (Exception e)
             {
                 Console.WriteLine(e);
-               
+
             }
         }
 
@@ -185,7 +184,7 @@ namespace WebServiceManager
 
 
                 Utilities utl = new Utilities();
-                var favnamads = (List<FavNamad>) utl.AddExtraData<List<FavNamad>>(jsonobject);
+                var favnamads = (List<FavNamad>)utl.AddExtraData<List<FavNamad>>(jsonobject);
 
                 using (UnitOfWorkDapper db = new UnitOfWorkDapper())
                 {
@@ -196,7 +195,7 @@ namespace WebServiceManager
             catch (Exception e)
             {
                 Console.WriteLine(e);
-               
+
             }
         }
 
@@ -211,7 +210,7 @@ namespace WebServiceManager
 
                 Utilities utl = new Utilities();
                 var favnamads =
-                    (List<FavNamad>) utl.AddExtraData<List<FavNamad>>(jsonobject, "فرابورس");
+                    (List<FavNamad>)utl.AddExtraData<List<FavNamad>>(jsonobject, "فرابورس");
 
                 using (UnitOfWorkDapper db = new UnitOfWorkDapper())
                 {
@@ -222,7 +221,7 @@ namespace WebServiceManager
             catch (Exception e)
             {
                 Console.WriteLine(e);
-               
+
             }
         }
 
@@ -234,7 +233,7 @@ namespace WebServiceManager
                 var jsonobject = webReadJson.WebReadjsonResult() ?? throw new ArgumentNullException("webReadJson.WebReadjsonResult()");
 
                 Utilities utl = new Utilities();
-                var indnamads = (List<IndNamad>) utl.AddExtraData<List<IndNamad>>(jsonobject);
+                var indnamads = (List<IndNamad>)utl.AddExtraData<List<IndNamad>>(jsonobject);
 
                 using (UnitOfWorkDapper db = new UnitOfWorkDapper())
                 {
@@ -245,7 +244,7 @@ namespace WebServiceManager
             catch (Exception e)
             {
                 Console.WriteLine(e);
-               
+
             }
         }
 
@@ -260,7 +259,7 @@ namespace WebServiceManager
 
                 Utilities utl = new Utilities();
                 var indnamads =
-                    (List<IndNamad>) utl.AddExtraData<List<IndNamad>>(jsonobject, "فرابورس");
+                    (List<IndNamad>)utl.AddExtraData<List<IndNamad>>(jsonobject, "فرابورس");
 
                 using (UnitOfWorkDapper db = new UnitOfWorkDapper())
                 {
@@ -271,7 +270,7 @@ namespace WebServiceManager
             catch (Exception e)
             {
                 Console.WriteLine(e);
-               
+
             }
         }
 
@@ -281,7 +280,7 @@ namespace WebServiceManager
             {
                 WebReadJson<List<Codal>> webReadJson = new WebReadJson<List<Codal>>(_url);
 
-                var codals = (List<Codal>) webReadJson.WebReadjsonResult();
+                var codals = (List<Codal>)webReadJson.WebReadjsonResult();
                 if (codals == null) throw new ArgumentNullException(" webReadJson.WebReadjsonResult()");
 
                 using (UnitOfWorkDapper db = new UnitOfWorkDapper())
@@ -294,7 +293,7 @@ namespace WebServiceManager
             catch (Exception e)
             {
                 Console.WriteLine(e);
-               
+
             }
         }
 
@@ -317,9 +316,9 @@ namespace WebServiceManager
             catch (Exception e)
             {
                 Console.WriteLine(e);
-               
+
             }
-     
+
         }
 
         private void KhodroRead()
@@ -341,9 +340,9 @@ namespace WebServiceManager
             catch (Exception e)
             {
                 Console.WriteLine(e);
-               
+
             }
-        
+
 
         }
 
@@ -352,12 +351,12 @@ namespace WebServiceManager
             try
             {
                 WebReadJson<CryptoAll> webReadJson = new WebReadJson<CryptoAll>(_url);
-                var index = (CryptoAll) webReadJson.WebReadjsonResult();
+                var index = (CryptoAll)webReadJson.WebReadjsonResult();
                 if (index == null) throw new ArgumentNullException("webReadJson.WebReadjsonResult()");
 
 
                 Utilities utl = new Utilities();
-                var cryptoes = (List<Crypto>) utl.AddExtraData<List<Crypto>>(index.Data);
+                var cryptoes = (List<Crypto>)utl.AddExtraData<List<Crypto>>(index.Data);
                 using (UnitOfWorkDapper db = new UnitOfWorkDapper())
                 {
                     db.CryptoDapperRepository.AddDataList(cryptoes);
@@ -367,7 +366,7 @@ namespace WebServiceManager
             catch (Exception e)
             {
                 Console.WriteLine(e);
-               
+
             }
         }
 
@@ -376,10 +375,10 @@ namespace WebServiceManager
             try
             {
                 WebReadJson<LArz> webReadJson = new WebReadJson<LArz>(_url);
-                var jArz = (LArz) webReadJson.WebReadjsonResult();
+                var jArz = (LArz)webReadJson.WebReadjsonResult();
                 if (jArz == null) throw new ArgumentNullException("webReadJson.WebReadjsonResult()");
                 Utilities utl = new Utilities();
-                var arzes = (List<Arz>) utl.AddExtraData<List<Arz>>(jArz.data);
+                var arzes = (List<Arz>)utl.AddExtraData<List<Arz>>(jArz.data);
                 using (UnitOfWorkDapper db = new UnitOfWorkDapper())
                 {
 
@@ -390,14 +389,14 @@ namespace WebServiceManager
             catch (Exception e)
             {
                 Console.WriteLine(e);
-               
+
             }
         }
 
         private void testaction()// for test
         {
             var f = DateTime.Now.ToString();
-           
+
             //MessageBox.Show("next"+Program.ScheduleRuns[_name].MilisecondWaitForNewStart().ToString());
             Thread.Sleep(2000);
         }
@@ -408,63 +407,63 @@ namespace WebServiceManager
             {
                 case "allnamadinfo":
                     return AllNamadInfoRead;
-                   
+
                 case "market_bourse":
                     return market_bourseRead;
-                     
+
                 case "market_farabourse":
                     return market_farabourseRead;
-                     
+
                 case "industeryindex":
                     return IndusteryIndexRead;
-                     
+
                 case "fav_namad_bourse":
                     return fav_namad_bourseRead;
-                     
+
                 case "fav_namad_farabourse":
                     return fav_namad_farabourseRead;
-                     
+
                 case "ind_namad_bourse":
                     return ind_namad_bourseRead;
-                     
+
                 case "ind_namad_farabourse":
                     return ind_namad_farabourseRead;
-                     
+
                 case "codal":
                     return CodalRead;
-                     
+
                 case "payamnazer":
                     return PayamnazerRead;
-                     
+
                 case "khodro":
                     return KhodroRead;
-                     
+
                 case "crypto":
                     return CryptoRead;
-                     
+
                 case "arz":
                     return ArzRead;
-                     
+
                 case "allnamadinfo_daily":
                     return AllNamadInfo_DailyRead;
-                     
+
                 case "allnamadoption":
                     return AllNamadOptionRead;
-                     
+
 
             }
             _name = nameOfSetting;
             return testaction;
         }
-        private void RefreshData<T>(T input, string cachename )
+        private void RefreshData<T>(T input, string cachename)
         {
-            var cachedata = (T) input;
+            var cachedata = (T)input;
             // our expiry handler
-           // onRemove = new CacheItemRemovedCallback(this.RemovedCallback);
-    
+            // onRemove = new CacheItemRemovedCallback(this.RemovedCallback);
+
             // connect to the webservice and get the data
-         
-    
+
+
             // add the data to the cache, setting an expiry time of two mins
             //Program.HttpRuntime.Cache.Add(cachename, cachedata, 
             //    null, DateTime.Now.AddMinutes(20), TimeSpan.Zero, 

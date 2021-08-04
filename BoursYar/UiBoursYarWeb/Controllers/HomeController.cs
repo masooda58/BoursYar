@@ -5,9 +5,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 
 using DAL;
 using Microsoft.Extensions.WebEncoders.Testing;
+using UiBoursYarWeb.Component;
 using UiBoursYarWeb.Models;
 using WebServiceManager;
 
@@ -30,6 +32,7 @@ namespace UiBoursYarWeb.Controllers
             //CreatJob.RunAllTimer();
             //var x=StaticDictionary.NextRuns["allnamadinfo"];
             // testintialdaily();
+
             return View();
         }
 
@@ -43,6 +46,11 @@ namespace UiBoursYarWeb.Controllers
 
         public IActionResult Privacy()
         {
+
+            ScheduleCallBack sb = new ScheduleCallBack("https://sourcearena.ir/api/?token=722b65c8184942a55aebc5253895f8d9&all&type=0");
+            sb.CallActionBack("allnamadinfo").Invoke();
+
+
             return View();
         }
 
@@ -67,6 +75,8 @@ namespace UiBoursYarWeb.Controllers
             var d = filter.getnamdbyname(code);
             return View(d);
         }
+
+       
     
     }
 }

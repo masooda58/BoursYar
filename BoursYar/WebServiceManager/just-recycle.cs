@@ -258,3 +258,27 @@ namespace WDbManager
               
 //input= input.Replace("ي", "ی").Replace("ك", "ک");
 //var x = input.IndexOf("ی");
+
+/*  getlastdata
+ * public object getlastdata()
+        {
+            var qureylastdataallnamad = @"with ss as
+(
+select * from [WDb_1].[dbo].[AllNamadInfo] where ReqDateTime =
+(select max(ReqDateTime) from [WDb_1].[dbo].[AllNamadInfo])
+),
+tt as
+(
+select *, max (ReqdateTime ) over (partition by name ) as maxdate
+from ss
+)
+select * from tt where ReqDateTime = maxdate ";
+
+            using (var db = new UnitOfWorkDapper())
+            {
+                var d = db.AllnamadDapperRepository.GetQureyData(qureylastdataallnamad).ToList();
+                return d;
+            }
+        
+        }
+*/
