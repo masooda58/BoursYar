@@ -61,7 +61,12 @@ namespace UiBoursYarWeb.Controllers
 
         }
 
-     public IActionResult namad()
+        public IActionResult namad(string code)
+        {
+            FilterLastAllNamadInfo filter = new FilterLastAllNamadInfo();
+            var d = filter.getnamdbyname(code);
+            return View(d);
+        }
     
     }
 }
