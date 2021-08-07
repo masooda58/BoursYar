@@ -22,10 +22,10 @@ namespace DAL
 
         [JsonProperty("price", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
         [JsonConverter(typeof(ParseStringConverterDouble))]
-        public double Price { get; set; }
+        public string Price { get; set; }
 
         [JsonProperty("change", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
-        public string Change { get; set; }
+        public double Change { get; set; }
 
         [JsonProperty("change_percent", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
         public string ChangePercent { get; set; }

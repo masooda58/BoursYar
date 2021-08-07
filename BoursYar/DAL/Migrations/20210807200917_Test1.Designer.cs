@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(WDbContext))]
-    [Migration("20210807125855_F1")]
-    partial class F1
+    [Migration("20210807200917_Test1")]
+    partial class Test1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -623,8 +623,8 @@ namespace DAL.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Change")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<double>("Change")
+                        .HasColumnType("float");
 
                     b.Property<string>("ChangePercent")
                         .HasColumnType("nvarchar(max)");

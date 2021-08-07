@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DAL;
 using UiWebBoursYar.Data;
 
 namespace UiWebBoursYar
@@ -30,6 +31,9 @@ namespace UiWebBoursYar
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<WDbContext>(options =>
+                options.UseSqlServer(
+                    Configuration.GetConnectionString("WDbContext")));
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -68,6 +72,4 @@ namespace UiWebBoursYar
             });
         }
     }
-
-
 }
