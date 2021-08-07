@@ -19,8 +19,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebServiceManager", "WebSer
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PersianTools", "PersianTools\PersianTools.csproj", "{6230C000-352F-4CB5-93A4-7288294A7B8B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UiBoursYarWeb", "UiBoursYarWeb\UiBoursYarWeb.csproj", "{C84F35FB-949A-44A4-87FA-28FD7763D0DB}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,10 +37,6 @@ Global
 		{6230C000-352F-4CB5-93A4-7288294A7B8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6230C000-352F-4CB5-93A4-7288294A7B8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6230C000-352F-4CB5-93A4-7288294A7B8B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C84F35FB-949A-44A4-87FA-28FD7763D0DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C84F35FB-949A-44A4-87FA-28FD7763D0DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C84F35FB-949A-44A4-87FA-28FD7763D0DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C84F35FB-949A-44A4-87FA-28FD7763D0DB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -51,7 +45,6 @@ Global
 		{4B55D611-BC4C-4774-BF8B-F2310DB81A67} = {B4C2ED97-2954-46A9-864B-7EA18B4D6959}
 		{79FA631F-DD5B-43E8-81BA-99ECAE651953} = {2349BDEC-C532-4518-A3AE-AF1959CF75CB}
 		{6230C000-352F-4CB5-93A4-7288294A7B8B} = {2349BDEC-C532-4518-A3AE-AF1959CF75CB}
-		{C84F35FB-949A-44A4-87FA-28FD7763D0DB} = {E011A47A-CF1C-43EB-9A6F-6FA50F68D536}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E8BC5213-F0FD-4ABA-A5B9-41061C465589}
