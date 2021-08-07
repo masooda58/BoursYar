@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(WDbContext))]
-    [Migration("20210721210046_seeddatawebservice")]
-    partial class seeddatawebservice
+    [Migration("20210807125855_F1")]
+    partial class F1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
