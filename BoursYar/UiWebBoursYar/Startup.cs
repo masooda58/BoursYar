@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DAL;
+using DAL.Services;
 using UiWebBoursYar.Data;
 
 namespace UiWebBoursYar
@@ -34,11 +35,13 @@ namespace UiWebBoursYar
             services.AddDbContext<WDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("WDbContext")));
+
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
+            services.AddScoped<UnitOfWorkDapper, UnitOfWorkDapper>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

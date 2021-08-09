@@ -37,6 +37,7 @@ namespace DAL
         public WDbContext(DbContextOptions<WDbContext> options)
             : base(options)
         {
+            
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

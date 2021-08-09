@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Linq;
 
 
 namespace DAL
@@ -228,9 +229,10 @@ namespace DAL
         public static string GetConnectionString(string StringName)
         {
             string c = Directory.GetCurrentDirectory();
-            IConfigurationRoot configuration = new ConfigurationBuilder().SetBasePath(c).AddJsonFile("appsettings.json").Build();
-                
-            string connectionStringIs = configuration.GetConnectionString("StringName"); 
+            string MyFilePath = Path.Combine(c, "appsettings.json");
+            //IConfigurationRoot configuration = new ConfigurationBuilder().SetBasePath(c).AddJsonFile("appsettings.json").Build();
+            JObject data = JObject.Parse(File.ReadAllText(MyFilePath));
+            string connectionStringIs = data["ConnectionStrings"][StringName].ToString();
             return connectionStringIs;
         }
     }

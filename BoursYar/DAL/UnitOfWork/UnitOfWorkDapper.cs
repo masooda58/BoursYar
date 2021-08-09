@@ -1,18 +1,22 @@
 ﻿using System;
-using System.Configuration;
+
 using System.Data;
 using System.Data.SqlClient;
+using DAL.Services;
 using Microsoft.Data.SqlClient;
 using Microsoft.IdentityModel.Protocols;
-using Microsoft.Extensions.Configuration;
+
 
 
 namespace DAL
 {
-    public class UnitOfWorkDapper:IDisposable
+    public class UnitOfWorkDapper:IDisposable,IDapperGenric
 
     {
-        private static string connectionString = "Server=.;Database=WDb_1;Trusted_Connection=True;";
+      
+
+
+        private static string connectionString = InitialSettingData.GetConnectionString("WDbContext");
            
           //  ConfigurationManager<>.ConnectionStrings["WDbContext"].ConnectionString;
 
@@ -33,9 +37,8 @@ namespace DAL
         private GenericDapperRepository<Arz> _arzdDapperRepository;
         private GenericDapperRepository<CallWebServiceSetting> _callwebservicesettingDapperRepository;
         private GenericDapperRepository<Logger> _loggerdDapperRepository;
-       
 
-
+    
 
         public GenericDapperRepository<Codal> CodalDapperRepository
         {
