@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Threading;
-using DAL;
-using Newtonsoft.Json;
+﻿using DAL;
 using PersianTools.Core;
+using System;
+using System.Collections.Generic;
 
 namespace WebServiceManager
 {
@@ -14,9 +11,9 @@ namespace WebServiceManager
         public static void DailyNamdeInfo()
         {
 
-            var pdt = new PersianDateTime(1399, 12, 08);
-            var panShanbe = new PersianDateTime(1400, 02, 9);
-           
+            var pdt = new PersianDateTime(1400, 02, 26);
+            var panShanbe = new PersianDateTime(1400, 05, 28);
+
             for (int i = 1; i <= 50; i++)
             {
 
@@ -33,10 +30,15 @@ namespace WebServiceManager
                         string Url = "https://sourcearena.ir/api/?token=722b65c8184942a55aebc5253895f8d9" +
                                      "&all&type=0&time=" + pdt.ShamsiDate;
                         WebReadJson<List<AllNamadInfo_Daily>> webReadJson = new WebReadJson<List<AllNamadInfo_Daily>>(Url);
-                        var allnamadobject = webReadJson.WebReadjsonResult()?? throw new ArgumentNullException("webReadJson.WebReadjsonResult()");
+                        var allnamadobject = webReadJson.WebReadjsonResult() ?? throw new ArgumentNullException("webReadJson.WebReadjsonResult()");
+
+                        if (allnamadobject.ToString().Contains("Error"))
+                        {
+                            continue;
+                        }
                         Utilities utl = new Utilities();
                         var allnamadinfo =
-                            (List<AllNamadInfo_Daily>) utl.AddExtraData<List<AllNamadInfo_Daily>>(allnamadobject,shamsiDate:pdt.ShamsiDate);
+                            (List<AllNamadInfo_Daily>)utl.AddExtraData<List<AllNamadInfo_Daily>>(allnamadobject, shamsiDate: pdt.ShamsiDate);
 
                         using (UnitOfWorkDapper db = new UnitOfWorkDapper())
                         {
@@ -48,7 +50,7 @@ namespace WebServiceManager
                     catch (Exception e)
                     {
                         Console.WriteLine(e);
-                       
+
                     }
 
 

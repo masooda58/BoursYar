@@ -13,7 +13,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using DAL;
 using DAL.Services;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using UiWebBoursYar.Data;
+using UiWebBoursYar.Helpers;
 
 namespace UiWebBoursYar
 {
@@ -42,6 +44,7 @@ namespace UiWebBoursYar
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
             services.AddScoped<UnitOfWorkDapper, UnitOfWorkDapper>();
+            services.AddScoped<TableHelper, TableHelper>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

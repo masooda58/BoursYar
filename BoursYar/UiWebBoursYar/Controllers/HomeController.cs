@@ -9,6 +9,7 @@ using DAL;
 using DAL.Services;
 using UiWebBoursYar.Helpers;
 using UiWebBoursYar.Models;
+using WebServiceManager;
 
 namespace UiWebBoursYar.Controllers
 {
@@ -25,11 +26,11 @@ namespace UiWebBoursYar.Controllers
 
         public IActionResult Index()
         {
-             
+            InitialDailyHistoryData.DailyNamdeInfo();
                
-                ViewBag.table =
-                    TableHelper.BuildTable(_db.CallwebservicesettingDapperRepository.GetAllData().ToList(),
-                        "table1");
+                //ViewBag.table =
+                //    TableHelper.BuildTable(_db.CallwebservicesettingDapperRepository.GetAllData().ToList(),
+                //        "table1");
                 return View();
 
          

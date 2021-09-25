@@ -11,7 +11,7 @@ namespace UiWebBoursYar.Helpers
 {
     public class TableHelper
     {
-        public static  IHtmlContent  BuildTable<T>(List<T> data, string classname) where T:class
+        public   IHtmlContent  BuildTable<T>(List<T> data, string classname) where T:class
         {
             //Tags
             var table = new TagBuilder("table class="+"'"+classname+"'");

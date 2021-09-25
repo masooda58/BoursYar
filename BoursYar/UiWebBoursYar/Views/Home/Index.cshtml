@@ -1,4 +1,4 @@
-﻿@using UiWebBoursYar.Helpers
+﻿
 
     @{
         ViewData["Title"] = "Home Page";
@@ -6,10 +6,13 @@
 
 
 <div>
-    @ViewBag.table
+    @*@ViewBag.table*@
+</div>
+<div>
+   
 </div>
 <div class="test">
- 
+    <partial name="_settingname"/>
 </div>
 
     @section Scripts{
@@ -19,9 +22,11 @@
 
             $(function () {
 
-                setInterval(function () { $('.test').load('/Home/DatetimeResult'); }, 3000); // every 3 sec
+                /* setInterval(function () { $('.test').load(); }, 3000); // every 3 sec*/
+                setInterval(function () { $(".test").load(location.href + " .test"); }, 3000);
 
             });
+
 
  
 
