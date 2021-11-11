@@ -26,8 +26,8 @@ namespace UiWebBoursYar.Controllers
 
         public IActionResult Index()
         {
-            InitialDailyHistoryData.DailyNamdeInfo();
-               
+          
+               CreatJob.RunAllTimer(); // run all timer
                 //ViewBag.table =
                 //    TableHelper.BuildTable(_db.CallwebservicesettingDapperRepository.GetAllData().ToList(),
                 //        "table1");

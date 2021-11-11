@@ -17,10 +17,10 @@ namespace DAL
                
 
                 Code = 1,
-                Faal = true,
+              Faal=false,
                 Name = "AllNamadInfo",
-                StartTime = "14:50:00",
-                FinishTime = "16:55:00",
+                StartTime = "09:00:00",
+                FinishTime = "12:30:00",
                 Interval = 120,
                 NeedAddDate = true,
                 Url = "https://sourcearena.ir/api/?token=722b65c8184942a55aebc5253895f8d9" + "&all&type=0",
@@ -32,7 +32,7 @@ namespace DAL
             {
                
                 Code = 2,
-                Faal = true,
+              Faal=false,
                 Name = "market_bourse",
                 NeedAddDate = true,
                 StartTime = "14:50:00",
@@ -46,7 +46,7 @@ namespace DAL
             {
                
                 Code = 3,
-                Faal = true,
+              Faal=false,
                 Name = "market_farabourse",
                 NeedAddDate = true,
                 StartTime = "14:50:00",
@@ -60,7 +60,7 @@ namespace DAL
             {
                
                 Code = 4,
-                Faal = true,
+              Faal=false,
                 Name = "IndusteryIndex",
                 NeedAddDate = true,
                 StartTime = "14:50:00",
@@ -74,7 +74,7 @@ namespace DAL
             {
                
                 Code = 5,
-                Faal = true,
+              Faal=false,
                 Name = "fav_namad_bourse",
                 StartTime = "14:50:00",
                 FinishTime = "16:55:00",
@@ -88,7 +88,7 @@ namespace DAL
             {
                
                 Code = 6,
-                Faal = true,
+              Faal=false,
                 Name = "fav_namad_farabourse",
                 StartTime = "14:50:00",
                 FinishTime = "16:55:00",
@@ -102,7 +102,7 @@ namespace DAL
             {
                
                 Code = 7,
-                Faal = true,
+              Faal=false,
                 Name = "ind_namad_bourse",
                 StartTime = "14:50:00",
                 FinishTime = "16:55:00",
@@ -116,7 +116,7 @@ namespace DAL
             {
                
                 Code = 8,
-                Faal = true,
+              Faal=false,
                 Name = "ind_namad_farabourse",
                 StartTime = "14:50:00",
                 FinishTime = "16:55:00",
@@ -130,7 +130,7 @@ namespace DAL
             {
                
                 Code = 9,
-                Faal = true,
+              Faal=false,
                 Name = "Codal",
                 StartTime = "14:50:00",
                 FinishTime = "16:55:00",
@@ -144,7 +144,7 @@ namespace DAL
             {
                
                 Code = 10,
-                Faal = true,
+              Faal=false,
                 Name = "Payamnazer",
                 StartTime = "14:50:00",
                 FinishTime = "16:55:00",
@@ -158,7 +158,7 @@ namespace DAL
             {
                
                 Code = 11,
-                Faal = true,
+              Faal=false,
                 Name = "Khodro",
                 StartTime = "14:50:00",
                 FinishTime = "18:30:00",
@@ -172,7 +172,7 @@ namespace DAL
             {
                
                 Code = 12,
-                Faal = true,
+              Faal=false,
                 Name = "Crypto",
                 StartTime = "14:50:00",
                 FinishTime = "18:30:00",
@@ -185,7 +185,7 @@ namespace DAL
             {
                
                 Code = 13,
-                Faal = true,
+              Faal=false,
                 Name = "Arz",
                 StartTime = "14:50:00",
                 FinishTime = "18:30:00",
@@ -199,7 +199,7 @@ namespace DAL
             {
 
                 Code = 14,
-                Faal = true,
+              Faal=false,
                 Name = "AllNamadInfo_Daily",
                 StartTime = "14:50:00",
                 FinishTime = "18:30:00",
@@ -213,7 +213,7 @@ namespace DAL
             {
 
                 Code = 15,
-                Faal = true,
+              Faal=false,
                 Name = "AllNamadOption",
                 StartTime = "14:50:00",
                 FinishTime = "18:30:00",
