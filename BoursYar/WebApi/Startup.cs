@@ -11,6 +11,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DAL;
+using Identity;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebApi
 {
@@ -25,7 +29,19 @@ namespace WebApi
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        {
+        {   services.AddDbContext<IdentityContext>(options =>
+                options.UseSqlServer(
+                    Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<WDbContext>(options =>
+                options.UseSqlServer(
+                    Configuration.GetConnectionString("WDbContext")));
+
+           
+
+           
+            services.AddControllersWithViews();
+            services.AddScoped<UnitOfWorkDapper, UnitOfWorkDapper>();
+            
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
