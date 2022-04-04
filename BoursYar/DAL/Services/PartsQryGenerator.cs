@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using MoralesLarios.Data.Helper;
+using MoralesLarios.Data.Helper; 
 
 namespace DAL
 {
