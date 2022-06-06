@@ -23,9 +23,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Identity\Controllers\" />
+    <Folder Include="Areas\Identity\Context\" />
     <Folder Include="Areas\Identity\Data\" />
-    <Folder Include="Areas\Identity\Migrations\" />
+    <Folder Include="Areas\Identity\Models\" />
     <Folder Include="Areas\Identity\Views\" />
   </ItemGroup>
 

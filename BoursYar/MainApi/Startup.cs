@@ -10,14 +10,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using MainApi.Areas.Identity.ContextDb;
 using MainApi.Areas.Identity.Models;
-using MainIdentity.ContextDb;
-using MainIdentity.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 
 
-namespace MainIdentity
+namespace MainApi
 {
     public class Startup
     {
@@ -74,9 +72,11 @@ namespace MainIdentity
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
-                
+                    //   name: "default",
+                    //    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    name: "areas",
+                    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
             });
         }
     }
