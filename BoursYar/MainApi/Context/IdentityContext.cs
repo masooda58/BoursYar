@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using MainApi.Areas.Identity.Models;
+﻿using IdentityApi.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace MainApi.Areas.Identity.ContextDb
+namespace IdentityApi.Context
 {
     public class IdentityContext:IdentityDbContext<ApplicationUser>
     {
@@ -18,6 +14,7 @@ namespace MainApi.Areas.Identity.ContextDb
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            
             // Customize the ASP.NET Identity model and override the defaults if needed.
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);

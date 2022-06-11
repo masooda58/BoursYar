@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using MainApi.Areas.Identity.ContextDb;
-using MainApi.Areas.Identity.Helpers;
-using MainApi.Areas.Identity.Models;
+using IdentityApi.Context;
+using IdentityApi.Helpers;
+using IdentityApi.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace MainApi.Areas.Identity.Services.UserManagementService
+namespace IdentityApi.Services.UserManagementService
 {
     public class UserManagementService:IUserManagementService
     {

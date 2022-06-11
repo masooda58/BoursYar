@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <UserSecretsId>de5ef7aa-a629-4543-9f4b-8d9197fae645</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,14 +22,6 @@
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Areas\Identity\Controllers\Account\" />
-    <Folder Include="Areas\Identity\Data\" />
-    <Folder Include="Areas\Identity\Views\" />
-    <Folder Include="Controllers\" />
-    <Folder Include="Models\" />
   </ItemGroup>
 
 </Project>

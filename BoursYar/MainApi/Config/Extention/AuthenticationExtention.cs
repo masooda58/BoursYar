@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MainApi.Config.Extention.Models;
+using IdentityApi.Config.Extention.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
-namespace MainApi.Config.Extention
+namespace IdentityApi.Config.Extention
 {
     public static class AuthenticationExtention
     {

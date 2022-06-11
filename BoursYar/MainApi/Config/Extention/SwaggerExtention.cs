@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 
 // masoud: swagger setting here and use in Startup.cs
-namespace MainApi.Config.Extention
+namespace IdentityApi.Config.Extention
 {
     public static class SwaggerExtention
     {

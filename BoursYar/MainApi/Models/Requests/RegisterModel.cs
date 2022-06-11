@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿#nullable enable
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace MainApi.Areas.Identity.ViewModel
+namespace IdentityApi.Models.Requests
 {
     public class RegisterModel
     {
-        [Required(ErrorMessage = "User Name is required")]
+        [Required(ErrorMessage = "نام کاربری را وراد کنید")]
         public string? Username { get; set; }
 
-        [EmailAddress]
-        [Required(ErrorMessage = "Email is required")]
+        [EmailAddress(ErrorMessage = "ایمیل معتبر نیست")]
+        [Required(ErrorMessage = "ایمیل را وارد کنید")]
         public string? Email { get; set; }
 
         [Required(ErrorMessage = "Password is required")]

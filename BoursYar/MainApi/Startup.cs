@@ -8,18 +8,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MainApi.Areas.Identity.ContextDb;
-using MainApi.Areas.Identity.Models;
-using MainApi.Areas.Identity.Services.UserManagementService;
-using MainApi.Config.Extention;
-using MainApi.Config.Extention.Models;
+using IdentityApi.Config.Extention.Models;
+using IdentityApi.Config.Extention;
+using IdentityApi.Context;
+using IdentityApi.Models;
+using IdentityApi.Services.TokenGenrators;
+using IdentityApi.Services.UserManagementService;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Swagger;
 
 
-namespace MainApi
+namespace IdentityApi
 {
     public class Startup
     {
@@ -36,19 +37,22 @@ namespace MainApi
             services.AddDbContext<IdentityContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("IdetityDb")));
-            
+
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<IdentityContext>()
                 .AddDefaultTokenProviders();
 
             // bari gerftan jwt setting  az file appsetting.json estefadeh mishavad
-            var JwtSettingSection = Configuration.GetSection("JWT");
-            var JwtSetting = JwtSettingSection.Get<JwtSettingModel>();
+            //var jwtSettingSection = Configuration.GetSection("JWT");
+            //var jwtSetting = jwtSettingSection.Get<JwtSettingModel>();
+            JwtSettingModel jwtSetting = new JwtSettingModel();
+            Configuration.Bind("JWT",jwtSetting);
+
             //..........
             // services.Configure<JwtSettingModel>(JwtSettingSection);
             
-            services.AddOurAuthentication(JwtSetting);
+            services.AddOurAuthentication(jwtSetting);
 
             //Authorization bari claim hai mokhtalef 
             services.AddAuthorization(options =>
@@ -59,13 +63,18 @@ namespace MainApi
                 });
             });
             // cors Settings
-            var CorsOrigin= Configuration.GetSection("Cors:Origin").Get<string[]>();
-            var CorsMethod= Configuration.GetSection("Cors:Method").Get<string[]>();
-            services.AddOurCors(CorsOrigin,CorsMethod);
+            var corsOrigin= Configuration.GetSection("Cors:Origin").Get<string[]>();
+            var corsMethod= Configuration.GetSection("Cors:Method").Get<string[]>();
+            services.AddOurCors(corsOrigin,corsMethod);
             //..
             services.AddControllers();
-          services.AddOurSwagger();
-          services.AddScoped<IUserManagementService, UserManagementService>();
+            services.AddOurSwagger();
+
+            //dependances
+            services.AddScoped<IUserManagementService, UserManagementService>();
+            services.AddSingleton<TokenGenrator>();
+            services.AddSingleton(jwtSetting);
+            //....
         }
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

@@ -21,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PersianTools", "PersianTool
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebServiceManager", "WebServiceManager\WebServiceManager.csproj", "{E8E75E92-C472-4454-A689-BCAFF458E5A4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MainApi", "MainApi\MainApi.csproj", "{5D46D0B8-2324-4ECF-9B42-CBC87BCFC7CB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityApi", "MainApi\IdentityApi.csproj", "{5D46D0B8-2324-4ECF-9B42-CBC87BCFC7CB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

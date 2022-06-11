@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using MainApi.Areas.Identity.Models;
+using IdentityApi.Models;
 using Microsoft.AspNetCore.Identity;
 
-namespace MainApi.Areas.Identity.Services.UserManagementService
+namespace IdentityApi.Services.UserManagementService
 {
     public interface IUserManagementService
     {

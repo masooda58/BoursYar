@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace MainApi.Migrations
+namespace IdentityApi.Migrations
 {
     public partial class fisrt : Migration
     {

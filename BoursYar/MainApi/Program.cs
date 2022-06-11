@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 
-namespace MainApi
+namespace IdentityApi
 {
     public class Program
     {

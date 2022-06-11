@@ -4,12 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace MainApi.Config.Extention
+namespace IdentityApi.Config.Extention
 {
     public static class CorsExtention
     {
         public static IServiceCollection AddOurCors(this IServiceCollection services,
-            string[] CorsOrigin,string[] CorsMethod)
+            string[] corsOrigin,string[] CorsMethod)
         {
             services.AddCors(options =>
             {
