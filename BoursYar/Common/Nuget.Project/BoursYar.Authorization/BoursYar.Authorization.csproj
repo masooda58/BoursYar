@@ -2,6 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <Authors>masoud Alaei</Authors>
+    <Company>BoursYar</Company>
+    <Product>BoursYar</Product>
+    <Description>use for boursyar  authorization</Description>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 
-namespace BoursYarAuthorization.Requirement
+namespace BoursYar.Authorization.Requirement
 {
     public class ClaimBaseRequirement:IAuthorizationRequirement
     {

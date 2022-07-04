@@ -1,0 +1,9 @@
+﻿
+سرویس زیر را اضافه می کنیم StartUp در
+  services.AddBoursYarAuthorize();
+  ...................................................
+  IClaimBaseAuthorizationUtilities.cs 
+داردClaim که کاربر درخواست کرده چه Rout
+.....................................................
+IMvcUtilities.cs
+ را دارندAttribute BoursYarAuthoriz دو متغیر دارد یکی برای همه اجزا و دیگری اجزای که

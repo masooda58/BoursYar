@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
-using BoursYarAuthorization.repositories;
-using BoursYarAuthorization.Requirement;
-using BoursYarAuthorization.Utilities;
+using BoursYar.Authorization.repositories;
+using BoursYar.Authorization.Requirement;
+using BoursYar.Authorization.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 
-namespace BoursYarAuthorization.Handler
+namespace BoursYar.Authorization.Handler
 {
     public class ClaimBaseHandler:AuthorizationHandler<ClaimBaseRequirement>
     {

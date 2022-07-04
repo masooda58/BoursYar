@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using BoursYarAuthorization.Attribute;
-using BoursYarAuthorization.Utilities.MvcNameUtilities;
+using BoursYar.Authorization.Attribute;
+using BoursYar.Authorization.Utilities.MvcNameUtilities;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -34,7 +34,7 @@ namespace MainApi.Controllers
    
         [HttpGet]
         [Route("test")]
-        [ClaimBaseAuthoriz(claimToAuthoriz:"x")]
+        [BoursYarAuthoriz(claimToAuthoriz:"x")]
         //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         //[Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
       

@@ -33,11 +33,11 @@ namespace Jwt.Identity.Api
             {
                 var env = hostingContext.HostingEnvironment;
                 // find the shared folder in the parent folder
-                var sharedFolder = Path.Combine(env.ContentRootPath, "..", "Shared");
+                //var sharedFolder = Path.Combine(env.ContentRootPath, "..", "Shared");
                 //load the SharedSettings first, so that appsettings.json overrwrites it
                 config
                 .AddJsonFile("appsettings.json", true)
-                .AddJsonFile("TextFile1.json", true)
+                .AddJsonFile("JwtIdentitySharedSettings.json", true)
                 .AddJsonFile($"SharedSettings.{env.EnvironmentName}.json", true);
                 config.AddEnvironmentVariables();
             }) //end

@@ -12,10 +12,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BoursYarAuthorization;
-using BoursYarAuthorization.IOC;
-using BoursYarAuthorization.Requirement;
-using BoursYarAuthorization.Utilities.MvcNameUtilities;
+using BoursYar.Authorization.IOC;
+using BoursYar.Authorization.Utilities.MvcNameUtilities;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -107,7 +105,7 @@ namespace MainApi
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
                     };
                 });
-            services.AddScoped<IMvcUtilities, MvcUtilities>();
+           // services.AddScoped<IMvcUtilities, MvcUtilities>();
             services.AddHttpContextAccessor();
             services.AddBoursYarAuthorize();
     

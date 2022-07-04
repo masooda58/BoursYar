@@ -23,7 +23,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DAL\DAL.csproj" />
-    <ProjectReference Include="..\PersianTools\PersianTools.csproj" />
   </ItemGroup>
 
 </Project>

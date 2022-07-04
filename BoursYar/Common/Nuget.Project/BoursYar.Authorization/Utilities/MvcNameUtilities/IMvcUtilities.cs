@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 
-namespace BoursYarAuthorization.Utilities.MvcNameUtilities
+namespace BoursYar.Authorization.Utilities.MvcNameUtilities
 {
     public interface IMvcUtilities
     {

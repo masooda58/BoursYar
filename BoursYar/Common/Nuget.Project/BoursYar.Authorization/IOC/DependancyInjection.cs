@@ -1,11 +1,11 @@
-﻿using BoursYarAuthorization.Handler;
-using BoursYarAuthorization.Requirement;
-using BoursYarAuthorization.Utilities;
-using BoursYarAuthorization.Utilities.MvcNameUtilities;
+﻿using BoursYar.Authorization.Handler;
+using BoursYar.Authorization.Requirement;
+using BoursYar.Authorization.Utilities;
+using BoursYar.Authorization.Utilities.MvcNameUtilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BoursYarAuthorization.IOC
+namespace BoursYar.Authorization.IOC
 {
     public static class DependancyInjection
     {
@@ -20,7 +20,7 @@ namespace BoursYarAuthorization.IOC
             
             service.AddAuthorizationCore(option =>
             {
-                option.AddPolicy("ClaimBaseAuthorization", policy =>
+                option.AddPolicy("BoursYarAuthorization", policy =>
                     policy.Requirements.Add(new ClaimBaseRequirement())
                 );
             });

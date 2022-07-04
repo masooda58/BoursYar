@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PersianTools\PersianTools.csproj" />
+    <ProjectReference Include="..\Common\Nuget.Project\PersianTools\PersianTools.csproj" />
   </ItemGroup>
 
 </Project>

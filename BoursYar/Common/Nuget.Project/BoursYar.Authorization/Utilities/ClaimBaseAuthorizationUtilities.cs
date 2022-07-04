@@ -1,8 +1,8 @@
-﻿using BoursYarAuthorization.Utilities.MvcNameUtilities;
+﻿using BoursYar.Authorization.Utilities.MvcNameUtilities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace BoursYarAuthorization.Utilities
+namespace BoursYar.Authorization.Utilities
 {
     public class ClaimBaseAuthorizationUtilities:IClaimBaseAuthorizationUtilities
     {

@@ -1,13 +1,13 @@
 ﻿using System;
 using Microsoft.AspNetCore.Authorization;
 
-namespace BoursYarAuthorization.Attribute
+namespace BoursYar.Authorization.Attribute
 {
     // این اتریبیوت برای این است که فقط روی متد کار کند
     [AttributeUsage(AttributeTargets.Method)]
-    public class ClaimBaseAuthorizAttribute:AuthorizeAttribute
+    public class BoursYarAuthorizAttribute:AuthorizeAttribute
     {
-        public ClaimBaseAuthorizAttribute(string claimToAuthoriz):base("ClaimBaseAuthorization")
+        public BoursYarAuthorizAttribute(string claimToAuthoriz):base("BoursYarAuthorization")
         {
             ClaimToAuthoriz = claimToAuthoriz;
         }

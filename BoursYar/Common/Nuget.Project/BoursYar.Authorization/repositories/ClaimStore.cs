@@ -1,4 +1,4 @@
-﻿namespace BoursYarAuthorization.repositories
+﻿namespace BoursYar.Authorization.repositories
 { 
     public  static  class  ClaimStore
     {

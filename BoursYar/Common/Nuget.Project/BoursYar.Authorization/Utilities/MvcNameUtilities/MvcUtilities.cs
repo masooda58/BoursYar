@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Reflection;
-using BoursYarAuthorization.Attribute;
+using BoursYar.Authorization.Attribute;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 
-namespace BoursYarAuthorization.Utilities.MvcNameUtilities
+namespace BoursYar.Authorization.Utilities.MvcNameUtilities
 {
     public class MvcUtilities:IMvcUtilities
     {
@@ -21,7 +21,7 @@ namespace BoursYarAuthorization.Utilities.MvcNameUtilities
                 if (!(descriptor is ControllerActionDescriptor controllerActionDescriptor))  continue;
                 var controllerTypeInfo = controllerActionDescriptor.ControllerTypeInfo;
                 var claimToAuthoriz = controllerActionDescriptor.MethodInfo
-                    .GetCustomAttribute<ClaimBaseAuthorizAttribute>()?.ClaimToAuthoriz;
+                    .GetCustomAttribute<BoursYarAuthorizAttribute>()?.ClaimToAuthoriz;
                 mvcInfo.Add(new MvcNamesModel(
                     areaName:controllerTypeInfo.GetCustomAttribute<AreaAttribute>()?.RouteValue,
                    controllerName: controllerActionDescriptor.ControllerName,

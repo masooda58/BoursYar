@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BoursYarAuthorization.Utilities.MvcNameUtilities
+namespace BoursYar.Authorization.Utilities.MvcNameUtilities
 {
     // می کند OverrRide را Equal یک اینتر فیس است که متد IEquatable
     public class MvcNamesModel:IEquatable<MvcNamesModel>
