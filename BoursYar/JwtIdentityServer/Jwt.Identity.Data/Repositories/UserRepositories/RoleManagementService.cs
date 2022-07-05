@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Jwt.Identity.Domain.IServices.IUserServices;
+using Jwt.Identity.Domain.Interfaces.IUserRepositories;
 using Jwt.Identity.Domain.Models;
 
-namespace Jwt.Identity.Data.Repositories
+namespace Jwt.Identity.Data.Repositories.UserRepositories
 {
     public class RoleManagementService:IRoleManagementService
     {

@@ -1,22 +1,16 @@
+using BoursYar.Authorization.IOC;
+using Common.Api.Dependency.Cors;
+using Common.Api.Dependency.Swagger;
+using Common.Jwt.Authentication;
+using Jwt.Identity.Data.Context;
+using Jwt.Identity.Domain.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Common.Api.Dependency.Cors;
-using Common.Api.Dependency.Swagger;
-using Jwt.Identity.Data.Context;
-using Jwt.Identity.Domain.Models;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace Jwt.Identity.Api
 {
@@ -40,14 +34,35 @@ namespace Jwt.Identity.Api
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<IdentityContext>()
                 .AddDefaultTokenProviders();
+
+            #region Authentication
+            //Nuget.Project:Common.Jwt.Authentication
+            JwtSettingModel jwtSetting = new JwtSettingModel();
+            Configuration.Bind("JWT", jwtSetting);
+            services.AddOurAuthentication(jwtSetting);
+            #endregion
+
+
             services.AddControllers();
+
+            #region Swaager&Cors
+            //Nuget.Project:Common.Api.Dependency
             services.AddOurSwagger();
             var corsOrigin = Configuration.GetSection("Cors:Origin").Get<string[]>();
             var corsMethod = Configuration.GetSection("Cors:Method").Get<string[]>();
             services.AddOurCors(corsOrigin, corsMethod);
+            #endregion
+
+            #region Authorization
+
+            //Nuget.Project:BoursYar.Authorization
+            services.AddBoursYarAuthorize();
+
+            #endregion
+
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())

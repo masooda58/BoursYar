@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Jwt.Identity.Domain.Models;
 
-namespace Jwt.Identity.Domain.IServices.IUserServices
+namespace Jwt.Identity.Domain.Interfaces.IUserRepositories
 {
     public interface IRoleManagementService
     {

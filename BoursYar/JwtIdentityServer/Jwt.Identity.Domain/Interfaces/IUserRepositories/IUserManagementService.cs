@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Jwt.Identity.Domain.Models;
 using Microsoft.AspNetCore.Identity;
 
-namespace Jwt.Identity.Domain.IServices.IUserServices
+namespace Jwt.Identity.Domain.Interfaces.IUserRepositories
 {
     public interface IUserManagementService
     {

@@ -2,7 +2,7 @@
 using System.Security.Claims;
 using Jwt.Identity.Domain.IServices.ITokenServices.TokenModels;
 
-namespace Jwt.Identity.Domain.IServices.ITokenServices
+namespace Jwt.Identity.Domain.Interfaces.ITokenServices
 {
     public interface ITokenGenrators
     {

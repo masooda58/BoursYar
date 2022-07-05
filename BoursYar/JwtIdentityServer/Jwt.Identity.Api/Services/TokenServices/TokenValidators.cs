@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.IdentityModel.Tokens;
+using Jwt.Identity.Domain.Interfaces.ITokenServices;
 using Jwt.Identity.Domain.IServices.ITokenServices;
 
-namespace Jwt.Identity.Api.TokenServices
+namespace Jwt.Identity.Api.Services.TokenServices
 {
     public class TokenValidators:ITokenValidators
     {

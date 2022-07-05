@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
+using Jwt.Identity.Domain.Interfaces.ITokenServices;
 using Jwt.Identity.Domain.IServices.ITokenServices;
 using Jwt.Identity.Domain.IServices.ITokenServices.TokenModels;
 
-namespace Jwt.Identity.Api.TokenServices
+namespace Jwt.Identity.Api.Services.TokenServices
 {
     public class TokenGenrators:ITokenGenrators
     {

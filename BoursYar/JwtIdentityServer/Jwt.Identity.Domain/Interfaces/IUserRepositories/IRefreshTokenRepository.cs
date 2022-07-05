@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Jwt.Identity.Domain.IServices.IUserServices
+namespace Jwt.Identity.Domain.Interfaces.IUserRepositories
 {
     public interface IRefreshTokenRepository
     {

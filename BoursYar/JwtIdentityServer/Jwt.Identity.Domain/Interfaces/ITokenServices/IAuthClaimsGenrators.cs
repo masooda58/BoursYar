@@ -3,7 +3,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Jwt.Identity.Domain.Models;
 
-namespace Jwt.Identity.Domain.IServices.ITokenServices
+namespace Jwt.Identity.Domain.Interfaces.ITokenServices
 {
     public interface IAuthClaimsGenrators
     {

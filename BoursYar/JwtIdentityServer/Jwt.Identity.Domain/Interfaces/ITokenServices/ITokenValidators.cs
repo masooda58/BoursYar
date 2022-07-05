@@ -1,4 +1,4 @@
-﻿namespace Jwt.Identity.Domain.IServices.ITokenServices
+﻿namespace Jwt.Identity.Domain.Interfaces.ITokenServices
 {
     public interface ITokenValidators
     {
