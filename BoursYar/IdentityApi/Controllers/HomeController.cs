@@ -14,7 +14,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using IdentityApi.Authoriz.ClaimBaseAuthoriz;
+
 using IdentityApi.Services.AuthClaimsGenrators;
 using IdentityApi.Services.TokenValidators;
 using IdentityModel.Client;

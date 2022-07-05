@@ -7,6 +7,6 @@ namespace IdentityApi.repositories
 { 
     public  static  class  ClaimStore
     {
-        public const string UserAccess = nameof(UserAccess);
+        public const string BoursYarAccess = nameof(BoursYarAccess);
     }
 }

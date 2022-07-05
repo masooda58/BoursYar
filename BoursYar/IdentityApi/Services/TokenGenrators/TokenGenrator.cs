@@ -11,20 +11,20 @@ namespace IdentityApi.Services.TokenGenrators
 {
     public class TokenGenrator:ITokenGenrators
     {
-        private readonly JwtSettingModel jwtSetting;
+        private readonly JwtSettingModel _jwtSetting;
 
         public TokenGenrator(JwtSettingModel config)
         {
-            jwtSetting = config;
+            _jwtSetting = config;
         }
         public UserTokenResponse GetAccessToken(List<Claim> authClaims)
         {
-            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSetting.Secret));
+            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSetting.Secret));
 
             var token = new JwtSecurityToken(
-                issuer: jwtSetting.ValidIssuer,
-                audience: jwtSetting.ValidAudience,
-                expires: DateTime.Now.AddMinutes(jwtSetting.AccessTokenExpirationMinutes),
+                issuer: _jwtSetting.ValidIssuer,
+                audience: _jwtSetting.ValidAudience,
+                expires: DateTime.Now.AddMinutes(_jwtSetting.AccessTokenExpirationMinutes),
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
             );
@@ -42,13 +42,13 @@ namespace IdentityApi.Services.TokenGenrators
         }
         public TokenModel GetRefreshToken()
         {
-            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSetting.RefreshSecret));
+            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSetting.RefreshSecret));
 
             var token = new JwtSecurityToken(
                 
-                issuer: jwtSetting.ValidIssuer,
-                audience: jwtSetting.ValidAudience,
-                expires: DateTime.Now.AddMinutes(jwtSetting.RefreshTokenExpirationminutes),
+                issuer: _jwtSetting.ValidIssuer,
+                audience: _jwtSetting.ValidAudience,
+                expires: DateTime.Now.AddMinutes(_jwtSetting.RefreshTokenExpirationminutes),
                 
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
             );

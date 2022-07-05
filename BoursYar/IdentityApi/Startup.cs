@@ -1,6 +1,6 @@
 
 
-using IdentityApi.Authoriz.ClaimBaseAuthoriz;
+
 using IdentityApi.Config.Extention;
 using IdentityApi.Config.Extention.Models;
 using IdentityApi.Context;
@@ -71,7 +71,7 @@ namespace IdentityApi
             #endregion
 
             services.AddHttpContextAccessor();
-            services.AddClaimBaseAuthorize();
+           
             services.AddControllers();
             services.AddOurSwagger();
 

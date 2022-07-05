@@ -78,7 +78,7 @@ namespace MainApi
             });
             services.AddAuthentication(options =>
                 {
-                    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                  //  options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;

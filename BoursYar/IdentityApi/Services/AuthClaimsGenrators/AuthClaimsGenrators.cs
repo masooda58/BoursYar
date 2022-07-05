@@ -29,8 +29,8 @@ namespace IdentityApi.Services.AuthClaimsGenrators
             var authClaims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(ClaimStore.UserAccess,"x"),
-                new Claim(ClaimStore.UserAccess,"y"),
+                new Claim(ClaimStore.BoursYarAccess,"x"),
+                new Claim(ClaimStore.BoursYarAccess,"y"),
                 new Claim("id",user.Id),
                 
             };

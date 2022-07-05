@@ -11,6 +11,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Common.Api.Dependency.Cors;
+using Common.Api.Dependency.Swagger;
+using Jwt.Identity.Data.Context;
+using Jwt.Identity.Domain.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Jwt.Identity.Api
 {
@@ -26,12 +32,19 @@ namespace Jwt.Identity.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<IdentityContext>(options =>
+                options.UseSqlServer(
+                    Configuration.GetConnectionString("IdetityDb")));
 
+
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<IdentityContext>()
+                .AddDefaultTokenProviders();
             services.AddControllers();
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Jwt.Identity.Api", Version = "v1" });
-            });
+            services.AddOurSwagger();
+            var corsOrigin = Configuration.GetSection("Cors:Origin").Get<string[]>();
+            var corsMethod = Configuration.GetSection("Cors:Method").Get<string[]>();
+            services.AddOurCors(corsOrigin, corsMethod);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
