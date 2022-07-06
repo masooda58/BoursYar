@@ -1,24 +1,70 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
+using Jwt.Identity.Data.Context;
 using Jwt.Identity.Domain.Interfaces.IUserRepositories;
+using Jwt.Identity.Domain.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Jwt.Identity.Data.Repositories.UserRepositories
 {
    public  class RefreshTokenRepository:IRefreshTokenRepository
     {
-        public Task<bool> WritRefreshTokenAsync(string userId, string refreshToken)
+        private readonly IdentityContext _context;
+
+        public RefreshTokenRepository(IdentityContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
         }
 
-        public Task<string> GetUserIdByRefreshToken(string refreshToken)
+        public async Task<bool> WritRefreshTokenAsync(string userId, string refreshToken)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var result=  await _context.AddAsync(new RefreshToken()
+
+                {
+                    UserId = userId,
+                    TempRefreshToken=refreshToken,
+                    CreatTime = DateTime.Now
+                
+
+                });
+                await _context.SaveChangesAsync();
+                return result != null;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
         }
 
-        public Task<bool> DeleteRefreshTokenByuserId(string userId)
+    
+
+     
+
+        public async Task<string> GetUserIdByRefreshTokenAsync(string refreshToken)
         {
-            throw new NotImplementedException();
+            var result = await _context.RefreshTokens.FirstOrDefaultAsync
+                (r => r.TempRefreshToken == refreshToken);
+            return result?.UserId;
+        }
+
+        public async Task<bool> DeleteRefreshTokenByuserIdAsync(string userId)
+        {
+            try
+            {
+               
+                _context.RemoveRange(_context.RefreshTokens.Where(u => u.UserId == userId));
+              var result=  await  _context.SaveChangesAsync();
+              return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+
+  
         }
     }
 }

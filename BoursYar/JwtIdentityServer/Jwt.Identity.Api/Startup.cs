@@ -2,7 +2,11 @@ using BoursYar.Authorization.IOC;
 using Common.Api.Dependency.Cors;
 using Common.Api.Dependency.Swagger;
 using Common.Jwt.Authentication;
+using Jwt.Identity.Api.Services.TokenServices;
 using Jwt.Identity.Data.Context;
+using Jwt.Identity.Data.Repositories.UserRepositories;
+using Jwt.Identity.Domain.Interfaces.ITokenServices;
+using Jwt.Identity.Domain.Interfaces.IUserRepositories;
 using Jwt.Identity.Domain.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -58,6 +62,14 @@ namespace Jwt.Identity.Api
             //Nuget.Project:BoursYar.Authorization
             services.AddBoursYarAuthorize();
 
+            #endregion
+            
+
+            #region dependancy
+            services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+            services.AddSingleton<ITokenGenrators, TokenGenrators>();
+            services.AddSingleton<ITokenValidators, TokenValidators>();
+            services.AddSingleton<IAuthClaimsGenrators, AuthClaimsGenrators>();
             #endregion
 
         }

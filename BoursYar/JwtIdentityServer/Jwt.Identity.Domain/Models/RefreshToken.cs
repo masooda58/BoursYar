@@ -8,12 +8,14 @@ namespace Jwt.Identity.Domain.Models
     {
         [Key]
         public Guid IdGuid { get; set; }
-
-   
+        [ForeignKey("UserId")]
         public string UserId { get; set; }
         public string TempRefreshToken { get; set; }
-
-        [ForeignKey("UserId")]
+        public DateTime CreatTime
+        {
+            get;
+            set;
+        }
 
         public virtual ApplicationUser User { get; set; }
     }

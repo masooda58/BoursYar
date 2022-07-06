@@ -15,7 +15,7 @@ namespace IdentityApi.Services.UserManagementService
     public class UserManagementService : IUserManagementService
     {
         private readonly IdentityContext _context;
-        private readonly UserManager<ApplicationUser> _userManager;
+       private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
 
         public UserManagementService(IdentityContext context, UserManager<ApplicationUser> userManager,

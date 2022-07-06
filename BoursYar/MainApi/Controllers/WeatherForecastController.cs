@@ -51,5 +51,17 @@ namespace MainApi.Controllers
             var xx = _utilities.MvcInfo;
             return Ok(xx);
         }
+        [HttpGet]
+        [Route("GetTime")]
+        public ActionResult getTime()
+        {
+
+            var xx = DateTime.Now;
+            var ww = DateTime.Now.ToLocalTime();
+            var gg = DateTime.Now.ToUniversalTime();
+            var ff = DateTime.UtcNow.AddHours(4).AddMinutes(30);
+            
+            return Ok($"now={xx} local={ww} touniversal={gg} utcnow+1.30={ff} ");
+        }
     }
 }

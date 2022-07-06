@@ -24,4 +24,8 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\JwtIdentityServer\Jwt.Identity.Data\Jwt.Identity.Data.csproj" />
+  </ItemGroup>
+
 </Project>

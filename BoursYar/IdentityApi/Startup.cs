@@ -9,6 +9,7 @@ using IdentityApi.Services.AuthClaimsGenrators;
 using IdentityApi.Services.TokenGenrators;
 using IdentityApi.Services.TokenValidators;
 using IdentityApi.Services.UserManagementService;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;

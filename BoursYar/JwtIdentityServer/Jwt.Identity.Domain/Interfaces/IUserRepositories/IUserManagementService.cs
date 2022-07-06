@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Jwt.Identity.Domain.Interfaces.IUserRepositories
 {
+    // فقط در پیاده ساز این ماژول استفاده می شود IdentityCore موجود در UserManager از
     public interface IUserManagementService
     {
         Task<List<string>> GetUserRoleAsync(ApplicationUser user);
@@ -13,18 +14,18 @@ namespace Jwt.Identity.Domain.Interfaces.IUserRepositories
         Task<List<ApplicationUser>> GetAllUsersAsync(string searchString);
         // Task<PaginatedList<ApplicationUser>> GetAllUsersPaginatedAsync(int pageIndex, int pageSize, string searchString, string sortOrder);
         Task<List<ApplicationUser>> GetUsersAsync(int offset, int limit, string sortOrder, string searchString);
-        Task<string> GetUserRoleAsync(string userId, bool returnName);
-        Task<string> GetUserRoleAsync(string email);
+        Task<List<string>> GetUserRoleAsync(string userIdOrEmail);
+       
         Task<ApplicationUser> FindUserAsync(string userId);
         Task<IdentityResult> AddUserAsync(ApplicationUser user, string password, string role);
-        Task<IdentityResult> UpdateUserAsync(ApplicationUser user, string newUserRole, byte[] rowVersion);
+        Task<IdentityResult> UpdateUserAsync(ApplicationUser user, string newUserRole);
         Task<IdentityResult> DeleteUserAsync(string userId);
-        Task<IdentityResult> ChangePasswordAsync(ApplicationUser user, string password);
-        Task<bool> IsEmailInUseAsync(string email, string excludeUserID);
+        Task<IdentityResult> ChangePasswordAsync(ApplicationUser user, string newPassword);
+        Task<bool> IsEmailInUseAsync(string email, string excludeUserId);
         Task<bool> IsEmailInUseAsync(string email);
         Task<ApplicationUser> GetUserAsync(ClaimsPrincipal claimsPrincipal);
 
-       
 
+        Task<IdentityResult> DeleteUserAsync(ApplicationUser user);
     }
 }
