@@ -46,6 +46,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Jwt.Authentication",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BoursYar.Authorization", "Common\Nuget.Project\BoursYar.Authorization\BoursYar.Authorization.csproj", "{43062358-586A-467C-8CD6-341F857860C5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jwt.Identity.Test", "JwtIdentityServer\Jwt.Identity.Test\Jwt.Identity.Test.csproj", "{5814A53B-9A1D-4FBF-B422-BBCC27BF3EA2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -100,6 +102,10 @@ Global
 		{43062358-586A-467C-8CD6-341F857860C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{43062358-586A-467C-8CD6-341F857860C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{43062358-586A-467C-8CD6-341F857860C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5814A53B-9A1D-4FBF-B422-BBCC27BF3EA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5814A53B-9A1D-4FBF-B422-BBCC27BF3EA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5814A53B-9A1D-4FBF-B422-BBCC27BF3EA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5814A53B-9A1D-4FBF-B422-BBCC27BF3EA2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -119,6 +125,7 @@ Global
 		{C9A04999-B3D3-48BA-978C-8B4C60C10881} = {94F24191-527C-4337-9847-43185A7B97D5}
 		{F92F045F-C036-44B3-881C-4A014A7DE1F5} = {94F24191-527C-4337-9847-43185A7B97D5}
 		{43062358-586A-467C-8CD6-341F857860C5} = {94F24191-527C-4337-9847-43185A7B97D5}
+		{5814A53B-9A1D-4FBF-B422-BBCC27BF3EA2} = {8C35286C-F2C1-493F-9C13-FBE17FE0D8F6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E8BC5213-F0FD-4ABA-A5B9-41061C465589}

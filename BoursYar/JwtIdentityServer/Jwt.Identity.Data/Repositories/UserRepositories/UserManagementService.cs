@@ -24,7 +24,7 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
         }
 
         #region User-Role
-
+        // GetUserRoleAsync باهم تست می شوند
         public async Task<List<string>> GetUserRoleAsync(ApplicationUser user)
         {
             var roles= await _userManager.GetRolesAsync(user);
@@ -61,7 +61,7 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
             return await users.CountAsync();
         }
 
-        public async Task<List<ApplicationUser>> GetAllUsersAsync(string searchString)
+        public async Task<List<ApplicationUser>> GetAllUsersAsync(string searchString=null)
         {
             var users = _userManager.Users.AsNoTracking();
 

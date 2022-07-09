@@ -32,8 +32,8 @@ namespace Jwt.Identity.Api
         {
             services.AddDbContext<IdentityContext>(options =>
                 options.UseSqlServer(
-                    Configuration.GetConnectionString("IdetityDb")));
-
+                    Configuration.GetConnectionString("IdetityDb")), ServiceLifetime.Transient);
+            
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<IdentityContext>()
@@ -70,6 +70,7 @@ namespace Jwt.Identity.Api
             services.AddSingleton<ITokenGenrators, TokenGenrators>();
             services.AddSingleton<ITokenValidators, TokenValidators>();
             services.AddSingleton<IAuthClaimsGenrators, AuthClaimsGenrators>();
+            services.AddTransient<IRoleManagementService, RoleManagementService>();
             #endregion
 
         }

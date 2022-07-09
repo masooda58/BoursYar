@@ -26,14 +26,17 @@ namespace Jwt.Identity.Api.Controllers
         private readonly IAuthClaimsGenrators _claimsGenrators;
 
         private readonly ITokenGenrators _tokenGenrator;
+
+        private readonly IRoleManagementService _roleManagement;
         //private readonly UserManager<ApplicationUser> _userManager;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger, IRefreshTokenRepository refreshTokenRepository, IAuthClaimsGenrators claimsGenrators, ITokenGenrators tokenGenrator)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, IRefreshTokenRepository refreshTokenRepository, IAuthClaimsGenrators claimsGenrators, ITokenGenrators tokenGenrator, IRoleManagementService roleManagement)
         {
             _logger = logger;
             _refreshTokenRepository = refreshTokenRepository;
             _claimsGenrators = claimsGenrators;
             _tokenGenrator = tokenGenrator;
+            _roleManagement = roleManagement;
 
             //_userManager = userManager;
         }
@@ -42,14 +45,18 @@ namespace Jwt.Identity.Api.Controllers
         [Route("test1")]
         public async Task<ActionResult>  tester()
         {
-            //var user = new ApplicationUser()
-            //{
-            //    Email = "user@user.com",
-            //    SecurityStamp = Guid.NewGuid().ToString(),
-            //    UserName = "user"
-            //};
-            //var result = await _userManager.CreateAsync(user,"Ma@1234567890");
+            List<string> rolesNames = new List<string>();
+            rolesNames.Add("Admin");
+            rolesNames.Add("Regular");
+            var c = await _roleManagement.CreateRoleAsync("Admin");
+            var role = await _roleManagement.FindRoleByNameAsync("Admin");
+            var t = await _roleManagement.DeleteRoleAsync(role);
+            var cc = await _roleManagement.CreateRoleAsync("Admin");
+            await _roleManagement.DeleteRolesByNameAsync(rolesNames);
+
+
             return Ok();
+
         }
 
         [HttpGet]

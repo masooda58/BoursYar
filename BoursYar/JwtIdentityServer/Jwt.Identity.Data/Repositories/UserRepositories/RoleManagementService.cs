@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -28,7 +29,7 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
         {
             
             var existRole = await _roleManager.RoleExistsAsync(roleName);
-            if (!existRole)
+            if (existRole)
             {
                 return IdentityResult.Failed(new IdentityError() { Description = "Role name already in use!" });
             }
@@ -41,8 +42,8 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
         }
         public async Task<IdentityResult> CreateRoleAsync(IdentityRole role)
         {
-            var roleid = await _roleManager.GetRoleIdAsync(role);
-            if(!string.IsNullOrEmpty(roleid))
+            var roleExist = await _roleManager.RoleExistsAsync(role.Name);
+            if(!roleExist)
             {
                 return await _roleManager.CreateAsync(role);
             }
@@ -54,26 +55,31 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
         {
             return await _roleManager.DeleteAsync(role);
         }
-
-        public async void DeleteRolesByNameAsync(List<string> rolesName)
+      
+        public async Task<bool> DeleteRolesByNameAsync(List<string> rolesName)
         {
-            var roles = new List<IdentityRole>();
-            foreach (var name in rolesName)
-            {
-                var role = await _roleManager.FindByNameAsync(name);
-                if (role != null)
-                {
-                    roles.Add(role);
-                }
-               
-            }
+           // var results = new List<IdentityResult>();
+         
 
-            await _context.Roles.AddRangeAsync(roles);
-            await _context.SaveChangesAsync();
-            
+          
+               foreach (var name in rolesName)
+               {
+                   var role = await _roleManager.FindByNameAsync(name);
+                   if (role!=null)
+                   {
+                       var result = await _roleManager.DeleteAsync(role);
+                   }
+                       
+                
+
+               }
+
+               return true;
+
         }
+         
 
-        public async Task<List<IdentityRole>> GetAllRolesAsync(string searchRoleName)
+        public async Task<List<IdentityRole>> GetAllRolesAsync(string? searchRoleName=null)
         {
             if (!string.IsNullOrEmpty(searchRoleName))
             {
@@ -93,41 +99,29 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
             return await _roleManager.FindByIdAsync(roleId);
         }
 
-        public async Task<List<Claim>> GetClaimsByRoleNameAsync(string roleName)
-        {
-            var role = await _roleManager.FindByNameAsync(roleName);
-            return ( List<Claim>)await _roleManager.GetClaimsAsync(role);
-
-        }
-
-        public async Task<List<Claim>> GetClaimsByRoleAsync(IdentityRole role)
-        {
-            return ( List<Claim>)await _roleManager.GetClaimsAsync(role);
-        }
-
+        
         public async Task<IdentityResult> AddClaimToRoleAsync(IdentityRole role, Claim claim)
         {
             return await _roleManager.AddClaimAsync(role, claim);
         }
 
-        public async Task<IdentityResult> AddClaimsToRoleAsync(IdentityRole role, List<Claim> claims)
+        public async Task<List<IdentityResult>> AddClaimsToRoleAsync(IdentityRole role, List<Claim> claims)
         {
-            try
-            {
+            var result = new List<IdentityResult>();
+         
                 foreach (var claim in claims)
                 {
-                    await _roleManager.AddClaimAsync(role, claim);
+                    var resultOfClaim=await _roleManager.AddClaimAsync(role, claim);
+                    result.Add(resultOfClaim);
                 }
 
-                return IdentityResult.Success;
-            }
-            catch
-            {
-                return IdentityResult.Failed();
-            }
+                return result;
+
+
+
 
         }
-
+        //start heare
         public async Task<IdentityResult> RemoveClaimsToRoleAsync(IdentityRole role, List<Claim> claims)
         {
             try
@@ -145,6 +139,17 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
             }
         }
 
+        public async Task<List<Claim>> GetClaimsByRoleNameAsync(string roleName)
+        {
+            var role = await _roleManager.FindByNameAsync(roleName);
+            return ( List<Claim>)await _roleManager.GetClaimsAsync(role);
+
+        }
+
+        public async Task<List<Claim>> GetClaimsByRoleAsync(IdentityRole role)
+        {
+            return ( List<Claim>)await _roleManager.GetClaimsAsync(role);
+        }
         public async Task<IdentityResult> UpdateAsync(IdentityRole role)
         {
             role.Name = "test";
