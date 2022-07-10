@@ -1,7 +1,7 @@
-﻿using System;
-using System.ComponentModel;
-using Dapper.Contrib.Extensions;
+﻿using Dapper.Contrib.Extensions;
 using Newtonsoft.Json;
+using System;
+using System.ComponentModel;
 
 namespace DAL
 {
@@ -12,16 +12,16 @@ namespace DAL
         [System.ComponentModel.DataAnnotations.Key]
         public int Id { get; set; }
 
-        public DateTime ReqDateTime{ get; set; }
+        public DateTime ReqDateTime { get; set; }
         public DateTime MiladiDate { get; set; }
-        public string  ShamsiDate { get; set; }
+        public string ShamsiDate { get; set; }
         [DisplayName("نام")]
         [JsonProperty("name", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
-        private string _name {  set=>Name=value.Replace("ي", "ی").Replace("ك", "ک"); }
+        private string _name { set => Name = value.Replace("ي", "ی").Replace("ك", "ک"); }
         public string Name { get; set; }
 
         [JsonProperty("market", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
-        
+
         public string Market { get; set; }
 
         [JsonProperty("instance_code", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
@@ -36,13 +36,13 @@ namespace DAL
         [JsonProperty("industry", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
         public string Industry { get; set; }
         [JsonProperty("Type")]
-        private string Type{ set => Industry = value; }
+        private string Type { set => Industry = value; }
         [JsonProperty("state", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
         public string State { get; set; }
 
         public string FullName { get; set; }
         [JsonProperty("full_name", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
-        private string Full_Name { set=>FullName=value.Replace("ي", "ی").Replace("ك", "ک"); }
+        private string Full_Name { set => FullName = value.Replace("ي", "ی").Replace("ك", "ک"); }
 
 
         [JsonProperty("first_price", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
@@ -73,7 +73,7 @@ namespace DAL
         [JsonProperty("final_price_change_percent", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
         public string FinalPriceChangePercent { get; set; }
 
-        [JsonProperty("eps" )]
+        [JsonProperty("eps")]
         public string Eps { get; set; }
 
         [JsonProperty("free_float", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
@@ -97,13 +97,13 @@ namespace DAL
 
         [JsonProperty("daily_price_low", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
         [JsonConverter(typeof(ParseStringConverter))]
-        private  double? _DailyPriceLow
+        private double? _DailyPriceLow
         {
-            set => DailyPriceLow = (long) value;
+            set => DailyPriceLow = (long)value;
         }
 
-        public long? DailyPriceLow { get; set; } 
-        [JsonProperty("P:E" )]
+        public long? DailyPriceLow { get; set; }
+        [JsonProperty("P:E")]
         public double? PE { get; set; }
 
         [JsonProperty("trade_number", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
@@ -151,98 +151,98 @@ namespace DAL
         [JsonProperty("real_sell_value", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
         public long? RealSellValue { get; set; }
 
-        [JsonProperty("co_sell_value" )]
+        [JsonProperty("co_sell_value")]
         public long? CoSellValue { get; set; }
 
-        [JsonProperty("real_buy_count" )]
+        [JsonProperty("real_buy_count")]
         [JsonConverter(typeof(ParseStringConverter))]
         public long? RealBuyCount { get; set; }
 
-        [JsonProperty("co_buy_count" )]
+        [JsonProperty("co_buy_count")]
         [JsonConverter(typeof(ParseStringConverter))]
         public long? CoBuyCount { get; set; }
 
-        [JsonProperty("real_sell_count" )]
+        [JsonProperty("real_sell_count")]
         [JsonConverter(typeof(ParseStringConverter))]
         public long? RealSellCount { get; set; }
 
-        [JsonProperty("co_sell_count" )]
+        [JsonProperty("co_sell_count")]
         [JsonConverter(typeof(ParseStringConverter))]
         public long? CoSellCount { get; set; }
 
-        [JsonProperty("1_sell_count" )]
+        [JsonProperty("1_sell_count")]
         [JsonConverter(typeof(ParseStringConverter))]
         public long? The1_SellCount { get; set; }
 
-        [JsonProperty("2_sell_count" )]
+        [JsonProperty("2_sell_count")]
         [JsonConverter(typeof(ParseStringConverter))]
         public long? The2_SellCount { get; set; }
 
-        [JsonProperty("3_sell_count" )]
+        [JsonProperty("3_sell_count")]
         [JsonConverter(typeof(ParseStringConverter))]
         public long? The3_SellCount { get; set; }
 
-        [JsonProperty("1_buy_count" )]
+        [JsonProperty("1_buy_count")]
         [JsonConverter(typeof(ParseStringConverter))]
         public long? The1_BuyCount { get; set; }
 
-        [JsonProperty("2_buy_count" )]
+        [JsonProperty("2_buy_count")]
         [JsonConverter(typeof(ParseStringConverter))]
         public long? The2_BuyCount { get; set; }
 
-        [JsonProperty("3_buy_count" )]
+        [JsonProperty("3_buy_count")]
         [JsonConverter(typeof(ParseStringConverter))]
         public long? The3_BuyCount { get; set; }
 
-        [JsonProperty("1_sell_price" )]
+        [JsonProperty("1_sell_price")]
         [JsonConverter(typeof(ParseStringConverter))]
         public long? The1_SellPrice { get; set; }
 
-        [JsonProperty("2_sell_price" )]
+        [JsonProperty("2_sell_price")]
         [JsonConverter(typeof(ParseStringConverter))]
         public long? The2_SellPrice { get; set; }
 
-        [JsonProperty("3_sell_price" )]
+        [JsonProperty("3_sell_price")]
         [JsonConverter(typeof(ParseStringConverter))]
         public long? The3_SellPrice { get; set; }
 
-        [JsonProperty("1_buy_price" )]
+        [JsonProperty("1_buy_price")]
         [JsonConverter(typeof(ParseStringConverter))]
         public long? The1_BuyPrice { get; set; }
 
-        [JsonProperty("2_buy_price" )]
+        [JsonProperty("2_buy_price")]
         [JsonConverter(typeof(ParseStringConverter))]
         public long? The2_BuyPrice { get; set; }
 
-        [JsonProperty("3_buy_price" )]
+        [JsonProperty("3_buy_price")]
         [JsonConverter(typeof(ParseStringConverter))]
         public long? The3_BuyPrice { get; set; }
 
-        [JsonProperty("1_sell_volume" )]
+        [JsonProperty("1_sell_volume")]
         [JsonConverter(typeof(ParseStringConverter))]
         public long? The1_SellVolume { get; set; }
 
-        [JsonProperty("2_sell_volume" )]
+        [JsonProperty("2_sell_volume")]
         [JsonConverter(typeof(ParseStringConverter))]
         public long? The2_SellVolume { get; set; }
 
-        [JsonProperty("3_sell_volume" )]
+        [JsonProperty("3_sell_volume")]
         [JsonConverter(typeof(ParseStringConverter))]
         public long? The3_SellVolume { get; set; }
 
-        [JsonProperty("1_buy_volume" )]
+        [JsonProperty("1_buy_volume")]
         [JsonConverter(typeof(ParseStringConverter))]
         public long? The1_BuyVolume { get; set; }
 
-        [JsonProperty("2_buy_volume" )]
+        [JsonProperty("2_buy_volume")]
         [JsonConverter(typeof(ParseStringConverter))]
         public long? The2_BuyVolume { get; set; }
 
-        [JsonProperty("3_buy_volume" )]
+        [JsonProperty("3_buy_volume")]
         [JsonConverter(typeof(ParseStringConverter))]
         public long? The3_BuyVolume { get; set; }
 
-        [JsonProperty("market_value" )]
+        [JsonProperty("market_value")]
         public long? MarketValue { get; set; }
 
 

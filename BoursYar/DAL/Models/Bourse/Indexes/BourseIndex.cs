@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Dapper.Contrib.Extensions;
 using Newtonsoft.Json;
+using System;
 using System.ComponentModel.DataAnnotations;
-using Dapper.Contrib.Extensions;
 
 namespace DAL
 {
@@ -63,7 +63,7 @@ namespace DAL
         public double TradeVolume { get; set; }
     }
 
-    
+
 
     public partial class Index
     {

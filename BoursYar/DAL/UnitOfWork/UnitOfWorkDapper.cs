@@ -1,28 +1,25 @@
-﻿using System;
-
-using System.Data;
-using System.Data.SqlClient;
-using DAL.Services;
+﻿using DAL.Services;
 using Microsoft.Data.SqlClient;
-using Microsoft.IdentityModel.Protocols;
+using System;
+using System.Data;
 
 
 
 namespace DAL
 {
-    public class UnitOfWorkDapper:IDisposable,IDapperGenric
+    public class UnitOfWorkDapper : IDisposable, IDapperGenric
 
     {
-      
+
 
 
         private static string connectionString = InitialSettingData.GetConnectionString("WDbContext");
-           
-          //  ConfigurationManager<>.ConnectionStrings["WDbContext"].ConnectionString;
 
-       IDbConnection db= new SqlConnection(connectionString);
+        //  ConfigurationManager<>.ConnectionStrings["WDbContext"].ConnectionString;
 
-      
+        IDbConnection db = new SqlConnection(connectionString);
+
+
         private GenericDapperRepository<Codal> _codaldapperrepository;
         private GenericDapperRepository<BourseIndex> _bourseDapperRepository;
         private GenericDapperRepository<FavNamad> _favdDapperRepository;
@@ -38,7 +35,7 @@ namespace DAL
         private GenericDapperRepository<CallWebServiceSetting> _callwebservicesettingDapperRepository;
         private GenericDapperRepository<Logger> _loggerdDapperRepository;
 
-    
+
 
         public GenericDapperRepository<Codal> CodalDapperRepository
         {
@@ -48,7 +45,7 @@ namespace DAL
                 {
                     _codaldapperrepository = new GenericDapperRepository<Codal>(db);
                 }
-                    return _codaldapperrepository;
+                return _codaldapperrepository;
             }
 
         }
@@ -156,7 +153,7 @@ namespace DAL
             {
                 if (_khodrodDapperRepository == null)
                 {
-                    _khodrodDapperRepository=new GenericDapperRepository<Khodro>(db);
+                    _khodrodDapperRepository = new GenericDapperRepository<Khodro>(db);
                 }
                 return _khodrodDapperRepository;
             }
@@ -168,7 +165,7 @@ namespace DAL
             {
                 if (_cryptoDapperRepository == null)
                 {
-                    _cryptoDapperRepository= new GenericDapperRepository<Crypto>(db);
+                    _cryptoDapperRepository = new GenericDapperRepository<Crypto>(db);
                 }
                 return _cryptoDapperRepository;
             }
@@ -180,7 +177,7 @@ namespace DAL
             {
                 if (_arzdDapperRepository == null)
                 {
-                    _arzdDapperRepository= new GenericDapperRepository<Arz>(db);
+                    _arzdDapperRepository = new GenericDapperRepository<Arz>(db);
                 }
                 return _arzdDapperRepository;
             }
@@ -192,7 +189,7 @@ namespace DAL
             {
                 if (_callwebservicesettingDapperRepository == null)
                 {
-                    _callwebservicesettingDapperRepository=new GenericDapperRepository<CallWebServiceSetting>(db);
+                    _callwebservicesettingDapperRepository = new GenericDapperRepository<CallWebServiceSetting>(db);
                 }
                 return _callwebservicesettingDapperRepository;
             }
@@ -204,13 +201,13 @@ namespace DAL
             {
                 if (_loggerdDapperRepository == null)
                 {
-                    _loggerdDapperRepository= new GenericDapperRepository<Logger>(db);
+                    _loggerdDapperRepository = new GenericDapperRepository<Logger>(db);
                 }
                 return _loggerdDapperRepository;
             }
         }
 
-        public void  Dispose ()
+        public void Dispose()
         {
             db.Dispose();
         }

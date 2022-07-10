@@ -1,12 +1,12 @@
-﻿using System;
-using Dapper.Contrib.Extensions;
+﻿using Dapper.Contrib.Extensions;
 using Newtonsoft.Json;
+using System;
 
 namespace DAL
 {
 
-       [Table("IndusteryIndex")] // dapper contrib
-   public class IndusteryIndex
+    [Table("IndusteryIndex")] // dapper contrib
+    public class IndusteryIndex
     {
         [System.ComponentModel.DataAnnotations.Key]
         public int Id { get; set; }
@@ -21,7 +21,7 @@ namespace DAL
         [JsonProperty("value", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
         [JsonConverter(typeof(ParseStringConverterDouble))]
         public double Value { get; set; }
-      
+
         [JsonProperty("change", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
         [JsonConverter(typeof(ParseStringConverterDouble))]
         public double? Change { get; set; }

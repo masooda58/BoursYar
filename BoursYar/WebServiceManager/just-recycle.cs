@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PersianTools.Core;
+﻿using PersianTools.Core;
 
 namespace WDbManager
 {
@@ -18,10 +13,10 @@ namespace WDbManager
         //UnitOfWork db = new UnitOfWork();
         //var pdt = new PersianDateTime(1400, 01, 17);
         //var panShanbe = new PersianDateTime(1400, 02, 9);
-            
+
         //    for (int i = 1; i <= 100; i++)
         //{
-               
+
         //    pdt = pdt.AddDays(-1);
         //    if (pdt.IsHoliDay || pdt.DayOfWeek==panShanbe.DayOfWeek || (pdt.Day==30 && pdt.Month==12))
         //    {
@@ -248,14 +243,14 @@ namespace WDbManager
 
 //)
 
- 
+
 //select * from tt where ReqDateTime=maxdate ").ToList();
 //t = x.Count;
 //}
 
 // string input ="اختيارخ تاپيكو-9000-00/07/18";
 
-              
+
 //input= input.Replace("ي", "ی").Replace("ك", "ک");
 //var x = input.IndexOf("ی");
 

@@ -1,12 +1,12 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using Dapper.Contrib.Extensions;
+﻿using Dapper.Contrib.Extensions;
 using Newtonsoft.Json;
+using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace DAL
 {
 
-        [Table("FavNamad")] // dapper contrib
+    [Table("FavNamad")] // dapper contrib
     public class FavNamad
     {
         [System.ComponentModel.DataAnnotations.Key]

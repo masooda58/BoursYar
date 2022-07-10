@@ -1,16 +1,10 @@
 ﻿
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using DAL;
 using Newtonsoft.Json;
-using System.ComponentModel;
-using System.Drawing;
+using System;
+using System.Net.Http;
 using System.Net.NetworkInformation;
+using System.Threading;
 
 
 namespace WebServiceManager
@@ -22,10 +16,10 @@ namespace WebServiceManager
         private string _url;
         private int _waittime;
 
-        public WebReadJson(string url, int waitTime=5000)
+        public WebReadJson(string url, int waitTime = 5000)
         {
             _url = url;
-            _waittime= waitTime;
+            _waittime = waitTime;
         }
 
         // نیست و باید  Null حاوی خطا مالک وب سرویس باشد خروجی  Json بر می گرداند در صورتی که فایل  NULL در صورت عدم توانای در خواند فایل مقدار
@@ -50,7 +44,7 @@ namespace WebServiceManager
                             if (res == null)
                             {
                                 stauts = "خروجی فایل جیسون خالی است";
-                               
+
                                 return null;
                             }
 
@@ -64,7 +58,7 @@ namespace WebServiceManager
                             };
                             success = true;
                             stauts = "فایل جیسون بدرستی دریافت شد";
-                            
+
                             return JsonConvert.DeserializeObject<TJson>(res, settings);
 
                         }
@@ -72,7 +66,7 @@ namespace WebServiceManager
                         {
                             success = false;
                             stauts = "فایل جیسون بدرستی  دی سریال نشده است";
-                            
+
                             return null;
                         }
                         finally
@@ -82,7 +76,7 @@ namespace WebServiceManager
                             logger.ReqTime = reqDateTime;
                             logger.Status = stauts;
                             logger.Success = success;
-                         
+
                             //Program.LogbBox.Text += string.Format("{0} name = {1}*****reqTime ={2}*****status= {3}", Environment.NewLine, _name,reqDateTime.ToString(@"T"),success);
                             using (UnitOfWorkDapper db = new UnitOfWorkDapper())
                             {
@@ -115,8 +109,8 @@ namespace WebServiceManager
             }
             catch (Exception)
             {
-                Logger logger=new Logger();
-                logger.ReqTime= DateTime.Now;
+                Logger logger = new Logger();
+                logger.ReqTime = DateTime.Now;
                 logger.Name = typeof(TJson).FullName;
                 logger.Status = "اتصال اینترنت بر قرار نیست ";
                 logger.Success = false;
@@ -129,5 +123,5 @@ namespace WebServiceManager
         }
     }
 }
-   
+
 

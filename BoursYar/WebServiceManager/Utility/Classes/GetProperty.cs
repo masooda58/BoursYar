@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace WebServiceManager
 {
@@ -21,7 +18,7 @@ namespace WebServiceManager
         public static List<string> GetFeildName<T>(List<T> listData) where T : class
         {
             IList<string> fieldNames = Array.ConvertAll<PropertyInfo, String>(typeof(T).GetProperties(),
-                delegate(PropertyInfo fo)
+                delegate (PropertyInfo fo)
                 {
 
 
@@ -34,9 +31,9 @@ namespace WebServiceManager
         public static List<string> GetFeildDisplayNameAttribute<T>(List<T> listData) where T : class
         {
             IList<string> fieldNames = Array.ConvertAll<PropertyInfo, String>(typeof(T).GetProperties(),
-                delegate(PropertyInfo fo)
+                delegate (PropertyInfo fo)
                 {
-                 
+
 
                     return fo.GetCustomAttributes<DisplayNameAttribute>().ToList().Count == 0
                         ? fo.Name
@@ -49,17 +46,17 @@ namespace WebServiceManager
             // Do something with the fieldNames array....
         }
 
-        public static List<CBT> GetDictionaryOfName<T>(List<T> listData ) where T:class
+        public static List<CBT> GetDictionaryOfName<T>(List<T> listData) where T : class
         {
             List<string> feildname = GetFeildName(listData);
             List<string> feildattribut = GetFeildDisplayNameAttribute(listData);
-            List<CBT> returndictionary=new List<CBT>();
-            for (int i = 0; i < feildname.Count-1; i++)
+            List<CBT> returndictionary = new List<CBT>();
+            for (int i = 0; i < feildname.Count - 1; i++)
             {
                 returndictionary.Add(new CBT()
                 {
-                    key=feildname[i],
-                    Value=feildattribut[i]
+                    key = feildname[i],
+                    Value = feildattribut[i]
                 });
             }
 

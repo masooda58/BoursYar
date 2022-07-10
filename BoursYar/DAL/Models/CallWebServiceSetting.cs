@@ -1,16 +1,15 @@
-﻿using System.ComponentModel;
+﻿using Dapper.Contrib.Extensions;
 using System.ComponentModel.DataAnnotations;
-using Dapper.Contrib.Extensions;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DAL
 {
     [Dapper.Contrib.Extensions.Table("CallWebServiceSetting")]
-   public class CallWebServiceSetting
+    public class CallWebServiceSetting
     {
 
         // public int Id { get; set; }
-        [ExplicitKey] 
+        [ExplicitKey]
         [System.ComponentModel.DataAnnotations.Key]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Code { get; set; }

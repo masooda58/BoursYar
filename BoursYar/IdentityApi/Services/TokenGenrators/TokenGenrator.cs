@@ -9,7 +9,7 @@ using System.Text;
 
 namespace IdentityApi.Services.TokenGenrators
 {
-    public class TokenGenrator:ITokenGenrators
+    public class TokenGenrator : ITokenGenrators
     {
         private readonly JwtSettingModel _jwtSetting;
 
@@ -35,8 +35,8 @@ namespace IdentityApi.Services.TokenGenrators
                 AccessToken = mainToken,
                 Expiration = token.ValidTo,
                 RefreshToken = refreshToken.Token,
-                RefreshExpiration =refreshToken.Expiration
-                
+                RefreshExpiration = refreshToken.Expiration
+
 
             };
         }
@@ -45,11 +45,11 @@ namespace IdentityApi.Services.TokenGenrators
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSetting.RefreshSecret));
 
             var token = new JwtSecurityToken(
-                
+
                 issuer: _jwtSetting.ValidIssuer,
                 audience: _jwtSetting.ValidAudience,
                 expires: DateTime.Now.AddMinutes(_jwtSetting.RefreshTokenExpirationminutes),
-                
+
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
             );
 

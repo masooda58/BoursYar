@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace DAL
 {
     public partial class CandelPattern
-      
+
     {
         [Key]
         public int Id { get; set; }
@@ -24,5 +24,5 @@ namespace DAL
         [JsonProperty("name", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
         public string Name { get; set; }
     }
-   
+
 }

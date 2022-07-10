@@ -33,7 +33,7 @@ namespace Jwt.Identity.Api
             services.AddDbContext<IdentityContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("IdetityDb")), ServiceLifetime.Transient);
-            
+
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<IdentityContext>()
@@ -63,7 +63,7 @@ namespace Jwt.Identity.Api
             services.AddBoursYarAuthorize();
 
             #endregion
-            
+
 
             #region dependancy
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();

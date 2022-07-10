@@ -1,22 +1,21 @@
-﻿using System;
+﻿using IdentityApi.Config.Extention.Models;
+using Microsoft.IdentityModel.Tokens;
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
-using IdentityApi.Config.Extention.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 
 namespace IdentityApi.Services.TokenValidators
 {
-   public class TokenValidators
-   {
-       private readonly JwtSettingModel _jwtSetting;
+    public class TokenValidators
+    {
+        private readonly JwtSettingModel _jwtSetting;
 
-       public TokenValidators(JwtSettingModel jwtSetting)
-       {
-           _jwtSetting = jwtSetting;
-       }
+        public TokenValidators(JwtSettingModel jwtSetting)
+        {
+            _jwtSetting = jwtSetting;
+        }
 
-       public bool Validate(string refreshToken)
+        public bool Validate(string refreshToken)
         {
             JwtSecurityTokenHandler jwtTokenHandler = new JwtSecurityTokenHandler();
             //in tanzimat dar clint ham hast
@@ -34,8 +33,8 @@ namespace IdentityApi.Services.TokenValidators
             };
             try
             {
-              
-                jwtTokenHandler.ValidateToken(refreshToken,validationParameters, out SecurityToken validatedToken);
+
+                jwtTokenHandler.ValidateToken(refreshToken, validationParameters, out SecurityToken validatedToken);
                 return true;
             }
             catch (Exception e)

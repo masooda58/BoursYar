@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Routing;
 
 namespace BoursYar.Authorization.Utilities
 {
-    public class ClaimBaseAuthorizationUtilities:IClaimBaseAuthorizationUtilities
+    public class ClaimBaseAuthorizationUtilities : IClaimBaseAuthorizationUtilities
     {
         private readonly IMvcUtilities _mvcUtilities;
         // می خواهد دسترسی داشته باشد action کاربر به کدام
@@ -18,7 +18,7 @@ namespace BoursYar.Authorization.Utilities
             var areaName = httpContext.GetRouteValue("area")?.ToString();
             var controllerName = httpContext.GetRouteValue("controller")?.ToString();
             var actionName = httpContext.GetRouteValue("action")?.ToString();
-          
+
             // chon dastorat linq roi Ienumerable Ha ka mikonad va roi Hashset kar nemikonad khat zir comment shode
 
             /* IEnumerable
@@ -37,8 +37,8 @@ namespace BoursYar.Authorization.Utilities
                 out var actualMvc);
 
             #endregion
-           
-             
+
+
 
 
             return actualMvc?.ClaimToAuthoriz;

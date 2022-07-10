@@ -2,7 +2,7 @@
 
 namespace BoursYar.Authorization.Requirement
 {
-    public class ClaimBaseRequirement:IAuthorizationRequirement
+    public class ClaimBaseRequirement : IAuthorizationRequirement
     {
 
     }

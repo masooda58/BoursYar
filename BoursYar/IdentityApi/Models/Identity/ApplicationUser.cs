@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using IdentityApi.Models.Identity;
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using IdentityApi.Models.Identity;
 
 namespace IdentityApi.Models
 {
@@ -20,7 +19,7 @@ namespace IdentityApi.Models
 
         [NotMapped]
         public string FullName => FirstName + " " + LastName;
-        
+
         public virtual RefreshTokenDto RefreshTokenDto { get; set; }
     }
 }

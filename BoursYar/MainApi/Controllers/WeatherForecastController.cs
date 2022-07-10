@@ -1,15 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BoursYar.Authorization.Attribute;
+using BoursYar.Authorization.Utilities.MvcNameUtilities;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
-using BoursYar.Authorization.Attribute;
-using BoursYar.Authorization.Utilities.MvcNameUtilities;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 
 namespace MainApi.Controllers
 {
@@ -31,17 +25,17 @@ namespace MainApi.Controllers
             _logger = logger;
             _utilities = utilities;
         }
-   
+
         [HttpGet]
         [Route("test")]
-        [BoursYarAuthoriz(claimToAuthoriz:"x")]
+        [BoursYarAuthoriz(claimToAuthoriz: "x")]
         //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         //[Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
-      
+
         public ActionResult testauth()
         {
             var id = HttpContext.User.FindFirstValue("id");
-            return Ok("is auth id="+id);
+            return Ok("is auth id=" + id);
         }
         [HttpGet]
         [Route("getname")]
@@ -60,7 +54,7 @@ namespace MainApi.Controllers
             var ww = DateTime.Now.ToLocalTime();
             var gg = DateTime.Now.ToUniversalTime();
             var ff = DateTime.UtcNow.AddHours(4).AddMinutes(30);
-            
+
             return Ok($"now={xx} local={ww} touniversal={gg} utcnow+1.30={ff} ");
         }
     }

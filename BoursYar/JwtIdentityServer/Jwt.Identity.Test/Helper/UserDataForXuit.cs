@@ -1,10 +1,6 @@
-﻿using System;
+﻿using Jwt.Identity.Domain.Models;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Jwt.Identity.Domain.Models;
 
 namespace Jwt.Identity.Test.Helper
 {
@@ -13,7 +9,9 @@ namespace Jwt.Identity.Test.Helper
     /// </summary>
     public class UserDataForXuit : IEnumerable<object[]>
     {
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member 'UserDataForXuit.GetEnumerator()'
         public IEnumerator<object[]> GetEnumerator()
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member 'UserDataForXuit.GetEnumerator()'
         {
             yield return new object[] {
 

@@ -1,14 +1,14 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Jwt.Identity.Data.Context;
+﻿using Jwt.Identity.Data.Context;
 using Jwt.Identity.Domain.Interfaces.IUserRepositories;
 using Jwt.Identity.Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Jwt.Identity.Data.Repositories.UserRepositories
 {
-   public  class RefreshTokenRepository:IRefreshTokenRepository
+    public class RefreshTokenRepository : IRefreshTokenRepository
     {
         private readonly IdentityContext _context;
 
@@ -21,13 +21,13 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
         {
             try
             {
-                var result=  await _context.AddAsync(new RefreshToken()
+                var result = await _context.AddAsync(new RefreshToken()
 
                 {
                     UserId = userId,
-                    TempRefreshToken=refreshToken,
+                    TempRefreshToken = refreshToken,
                     CreatTime = DateTime.Now
-                
+
 
                 });
                 await _context.SaveChangesAsync();
@@ -39,9 +39,9 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
             }
         }
 
-    
 
-     
+
+
 
         public async Task<string> GetUserIdByRefreshTokenAsync(string refreshToken)
         {
@@ -54,17 +54,17 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
         {
             try
             {
-               
+
                 _context.RemoveRange(_context.RefreshTokens.Where(u => u.UserId == userId));
-              var result=  await  _context.SaveChangesAsync();
-              return true;
+                var result = await _context.SaveChangesAsync();
+                return true;
             }
             catch (Exception e)
             {
                 return false;
             }
 
-  
+
         }
     }
 }

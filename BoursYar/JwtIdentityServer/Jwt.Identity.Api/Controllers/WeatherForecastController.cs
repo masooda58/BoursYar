@@ -1,13 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Jwt.Identity.Domain.Interfaces.ITokenServices;
+﻿using Jwt.Identity.Domain.Interfaces.ITokenServices;
 using Jwt.Identity.Domain.Interfaces.IUserRepositories;
 using Jwt.Identity.Domain.Models;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Jwt.Identity.Api.Controllers
 {
@@ -43,7 +40,7 @@ namespace Jwt.Identity.Api.Controllers
 
         [HttpGet]
         [Route("test1")]
-        public async Task<ActionResult>  tester()
+        public async Task<ActionResult> tester()
         {
             List<string> rolesNames = new List<string>();
             rolesNames.Add("Admin");
@@ -64,10 +61,10 @@ namespace Jwt.Identity.Api.Controllers
         public async Task<ActionResult> test()
         {
             var user = new ApplicationUser();
-            var authClaims =await  _claimsGenrators.CreatClaims(user);
+            var authClaims = await _claimsGenrators.CreatClaims(user);
 
             var token = _tokenGenrator.GetAccessToken(authClaims);
-           return Ok(token);
+            return Ok(token);
         }
     }
 }

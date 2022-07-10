@@ -3,15 +3,15 @@
 namespace BoursYar.Authorization.Utilities.MvcNameUtilities
 {
     // می کند OverrRide را Equal یک اینتر فیس است که متد IEquatable
-    public class MvcNamesModel:IEquatable<MvcNamesModel>
+    public class MvcNamesModel : IEquatable<MvcNamesModel>
     {
-        public string AreaName { get;  }
-        public string ControllerName { get;  }
-        public string ActionName { get;  }
-        public string ClaimToAuthoriz { get;  }
-        public bool IsClaimBaseAuthoraztionRequired { get;  }
+        public string AreaName { get; }
+        public string ControllerName { get; }
+        public string ActionName { get; }
+        public string ClaimToAuthoriz { get; }
+        public bool IsClaimBaseAuthoraztionRequired { get; }
 
-        public MvcNamesModel( string claimToAuthoriz, string actionName, string controllerName, string areaName)
+        public MvcNamesModel(string claimToAuthoriz, string actionName, string controllerName, string areaName)
         {
             IsClaimBaseAuthoraztionRequired = !string.IsNullOrWhiteSpace(claimToAuthoriz);
             ClaimToAuthoriz = claimToAuthoriz;

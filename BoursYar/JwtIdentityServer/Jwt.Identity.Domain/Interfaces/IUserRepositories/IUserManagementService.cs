@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Jwt.Identity.Domain.Models;
+using Microsoft.AspNetCore.Identity;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Jwt.Identity.Domain.Models;
-using Microsoft.AspNetCore.Identity;
 
 namespace Jwt.Identity.Domain.Interfaces.IUserRepositories
 {
@@ -15,7 +15,7 @@ namespace Jwt.Identity.Domain.Interfaces.IUserRepositories
         // Task<PaginatedList<ApplicationUser>> GetAllUsersPaginatedAsync(int pageIndex, int pageSize, string searchString, string sortOrder);
         Task<List<ApplicationUser>> GetUsersAsync(int offset, int limit, string sortOrder, string searchString);
         Task<List<string>> GetUserRoleAsync(string userIdOrEmail);
-       
+
         Task<ApplicationUser> FindUserAsync(string userId);
         Task<IdentityResult> AddUserAsync(ApplicationUser user, string password, string role);
         Task<IdentityResult> UpdateUserAsync(ApplicationUser user, string newUserRole);

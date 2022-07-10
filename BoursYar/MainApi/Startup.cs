@@ -1,22 +1,15 @@
+using BoursYar.Authorization.IOC;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using BoursYar.Authorization.IOC;
-using BoursYar.Authorization.Utilities.MvcNameUtilities;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 
 namespace MainApi
 {
@@ -78,7 +71,7 @@ namespace MainApi
             });
             services.AddAuthentication(options =>
                 {
-                  //  options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    //  options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -101,14 +94,14 @@ namespace MainApi
                         ValidIssuer = Configuration["JWT:ValidIssuer"],
                         RequireExpirationTime = true,
                         ClockSkew = TimeSpan.Zero,
-                        
+
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
                     };
                 });
-           // services.AddScoped<IMvcUtilities, MvcUtilities>();
+            // services.AddScoped<IMvcUtilities, MvcUtilities>();
             services.AddHttpContextAccessor();
             services.AddBoursYarAuthorize();
-    
+
 
         }
 

@@ -1,21 +1,21 @@
-﻿using System.Threading.Tasks;
-using BoursYar.Authorization.repositories;
+﻿using BoursYar.Authorization.repositories;
 using BoursYar.Authorization.Requirement;
 using BoursYar.Authorization.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using System.Threading.Tasks;
 
 namespace BoursYar.Authorization.Handler
 {
-    public class ClaimBaseHandler:AuthorizationHandler<ClaimBaseRequirement>
+    public class ClaimBaseHandler : AuthorizationHandler<ClaimBaseRequirement>
     {
         //private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IClaimBaseAuthorizationUtilities _utilities;
         private readonly IHttpContextAccessor _contextAccessor;
 
-        public ClaimBaseHandler( IClaimBaseAuthorizationUtilities utilities, IHttpContextAccessor contextAccessor)
+        public ClaimBaseHandler(IClaimBaseAuthorizationUtilities utilities, IHttpContextAccessor contextAccessor)
         {
-           // _signInManager = signInManager;
+            // _signInManager = signInManager;
             _utilities = utilities;
             _contextAccessor = contextAccessor;
         }
@@ -38,7 +38,7 @@ namespace BoursYar.Authorization.Handler
             // وجود داشت user های Claim درخواستی کاربر در لیست Rout موجود در Claim اگر
             if (context.User.HasClaim(ClaimStore.BoursYarAccess, claimToAuthoriz))
             {
-             
+
                 context.Succeed(requirement);
                 return Task.CompletedTask;
             }

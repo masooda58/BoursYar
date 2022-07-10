@@ -1,25 +1,24 @@
-﻿using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 
 namespace DAL
 {
-   public class WDbContext : DbContext
+    public class WDbContext : DbContext
     {
-   
 
-        public virtual DbSet<AllNamadInfo> AllNamadInfo{ get; set; }
+
+        public virtual DbSet<AllNamadInfo> AllNamadInfo { get; set; }
         public virtual DbSet<AllNamadInfo_Daily> AllNamadInfo_Daily { get; set; }
         public virtual DbSet<BourseIndex> BourseIndix { get; set; }
         public virtual DbSet<IndusteryIndex> IndusteryIndex { get; set; }
-        public virtual DbSet<PayamNazer> PayamNazer{ get; set; }
+        public virtual DbSet<PayamNazer> PayamNazer { get; set; }
         public virtual DbSet<AllNamadOption> AllNamadOption { get; set; }
         public virtual DbSet<Codal> Codal { get; set; }
         public virtual DbSet<FavNamad> FavNamad { get; set; }
-        public virtual DbSet<IndNamad> IndNamad{ get; set; }
+        public virtual DbSet<IndNamad> IndNamad { get; set; }
         public virtual DbSet<Crypto> Crypto { get; set; }
-        public virtual DbSet<Arz> Arz{ get; set; }
-        public virtual DbSet<Khodro> Khodro{ get; set; }
+        public virtual DbSet<Arz> Arz { get; set; }
+        public virtual DbSet<Khodro> Khodro { get; set; }
         public virtual DbSet<CallWebServiceSetting> CallWebServiceSetting { get; set; }
         public virtual DbSet<Logger> Logger { get; set; }
 
@@ -37,7 +36,7 @@ namespace DAL
         public WDbContext(DbContextOptions<WDbContext> options)
             : base(options)
         {
-            
+
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -46,7 +45,7 @@ namespace DAL
             modelBuilder.Entity<CallWebServiceSetting>().HasData(settings);
             modelBuilder.HasAnnotation("Relational:Collation", "Arabic_CI_AS");
         }
-       
+
         //protected override void OnModelCreating(DbModelBuilder dbModelBuilder)
         //{
         //    dbModelBuilder.Conventions.Remove<PluralizingTableNameConvention>();

@@ -1,10 +1,9 @@
-﻿using System;
-using IdentityApi.Config.Extention.Models;
+﻿using IdentityApi.Config.Extention.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using System;
 using System.Text;
-using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace IdentityApi.Config.Extention
 {
@@ -15,13 +14,13 @@ namespace IdentityApi.Config.Extention
         {
             services.AddAuthentication(options =>
                 {
-                   //options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    //options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
                 })
-            
-                    // Adding Jwt Bearer
+
+                        // Adding Jwt Bearer
                         .AddJwtBearer(options =>
                         {
                             options.SaveToken = true;
@@ -38,7 +37,7 @@ namespace IdentityApi.Config.Extention
                                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSetting.Secret))
                             };
                         });
-                
+
             return services;
         }
     }

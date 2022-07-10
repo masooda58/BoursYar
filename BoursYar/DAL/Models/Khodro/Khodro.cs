@@ -1,10 +1,10 @@
-﻿using Newtonsoft.Json;
-using Dapper.Contrib.Extensions;
+﻿using Dapper.Contrib.Extensions;
+using Newtonsoft.Json;
 
 namespace DAL
 {
     [Table("Khodro")]
-   public class Khodro
+    public class Khodro
     {
         [System.ComponentModel.DataAnnotations.Key]
         public int Id { get; set; }
@@ -21,7 +21,7 @@ namespace DAL
         public string Description { get; set; }
 
         [JsonProperty("year", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
-       
+
         public string Year { get; set; }
 
         [JsonProperty("price", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]

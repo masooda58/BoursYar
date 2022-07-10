@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Text;
 
 namespace Common.Jwt.Authentication
 {
@@ -20,7 +17,7 @@ namespace Common.Jwt.Authentication
                     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
                 })
-            
+
                 // Adding Jwt Bearer
                 .AddJwtBearer(options =>
                 {
@@ -39,9 +36,9 @@ namespace Common.Jwt.Authentication
                     };
                 });
             services.AddSingleton(jwtSetting);
-                
+
             return services;
         }
     }
-   
+
 }

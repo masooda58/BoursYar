@@ -1,14 +1,14 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Text;
-using Common.Jwt.Authentication;
+﻿using Common.Jwt.Authentication;
 using Jwt.Identity.Domain.Interfaces.ITokenServices;
 using Microsoft.IdentityModel.Tokens;
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 
 
 namespace Jwt.Identity.Api.Services.TokenServices
 {
-    public class TokenValidators:ITokenValidators
+    public class TokenValidators : ITokenValidators
     {
         private readonly JwtSettingModel _jwtSetting;
 
@@ -35,8 +35,8 @@ namespace Jwt.Identity.Api.Services.TokenServices
             };
             try
             {
-              
-                jwtTokenHandler.ValidateToken(refreshToken,validationParameters, out SecurityToken validatedToken);
+
+                jwtTokenHandler.ValidateToken(refreshToken, validationParameters, out SecurityToken validatedToken);
                 return true;
             }
             catch (Exception e)

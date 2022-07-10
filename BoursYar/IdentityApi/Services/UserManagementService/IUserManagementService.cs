@@ -9,7 +9,7 @@ namespace IdentityApi.Services.UserManagementService
     public interface IUserManagementService
     {
         Task<IdentityRole> GetRoleByNameAsync(string name);
- 
+
         Task<List<string>> GetUserRoleAsync(ApplicationUser user);
         Task<int> GetAllUsersCountAsync(string searchString);
         Task<List<ApplicationUser>> GetAllUsersAsync(string searchString);
@@ -27,7 +27,7 @@ namespace IdentityApi.Services.UserManagementService
         Task<ApplicationUser> GetUserAsync(ClaimsPrincipal claimsPrincipal);
 
         //for refresh token in RefreshTokenDto dar database
-        Task<bool> WritRefreshTokenAsync(string userId,string refreshToken);
+        Task<bool> WritRefreshTokenAsync(string userId, string refreshToken);
         Task<string> GetUserIdByRefreshToken(string refreshToken);
         Task<bool> DeleteRefreshTokenByuserId(string userId);
     }

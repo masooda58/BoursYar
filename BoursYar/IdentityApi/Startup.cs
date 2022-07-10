@@ -33,7 +33,7 @@ namespace IdentityApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-       
+
             services.AddDbContext<IdentityContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("IdetityDb")));
@@ -72,7 +72,7 @@ namespace IdentityApi
             #endregion
 
             services.AddHttpContextAccessor();
-           
+
             services.AddControllers();
             services.AddOurSwagger();
 
@@ -80,13 +80,13 @@ namespace IdentityApi
 
             //dependances
             services.AddScoped<IUserManagementService, UserManagementService>();
-            services.AddSingleton<ITokenGenrators,TokenGenrator>();
+            services.AddSingleton<ITokenGenrators, TokenGenrator>();
             services.AddScoped<IAuthClaimsGenrators, AuthClaimsGenrators>();
             services.AddSingleton<TokenValidators>();
             services.AddSingleton(jwtSetting);
             //....
             #endregion
-       
+
         }
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

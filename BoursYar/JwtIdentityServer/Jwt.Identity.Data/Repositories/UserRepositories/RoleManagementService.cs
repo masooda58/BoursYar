@@ -115,18 +115,18 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
             return result;
 
         }
-       
+
         public async Task<List<IdentityResult>> RemoveClaimsToRoleAsync(IdentityRole role, List<Claim> claims)
         {
             var result = new List<IdentityResult>();
-          
+
             foreach (var claim in claims)
             {
-                var resultOfClaim=await _roleManager.RemoveClaimAsync(role, claim);
+                var resultOfClaim = await _roleManager.RemoveClaimAsync(role, claim);
                 result.Add(resultOfClaim.Succeeded
                     ? resultOfClaim
                     : IdentityResult.Failed(new IdentityError()
-                        { Description = $"This claim={claim.Type}can not remove" }));
+                    { Description = $"This claim={claim.Type}can not remove" }));
             }
 
             return result;
@@ -135,8 +135,8 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
         public async Task<List<Claim>?> GetClaimsByRoleNameAsync(string roleName)
         {
             var role = await _roleManager.FindByNameAsync(roleName);
-            
-            return role==null?null:(List<Claim>)await _roleManager.GetClaimsAsync(role);
+
+            return role == null ? null : (List<Claim>)await _roleManager.GetClaimsAsync(role);
 
         }
 
@@ -146,13 +146,13 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
             if (roleExist)
             {
                 var claimList = await _roleManager.GetClaimsAsync(role);
-                return (List<Claim>) claimList ;
+                return (List<Claim>)claimList;
             }
 
             return null;
 
         }
-        public async Task<IdentityResult> ChangRoleNameAsync(IdentityRole role ,string newName)
+        public async Task<IdentityResult> ChangRoleNameAsync(IdentityRole role, string newName)
         {
             var roleExist = await _roleManager.RoleExistsAsync(role.Name);
             if (roleExist)
@@ -160,10 +160,10 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
                 role.Name = newName;
                 return await _roleManager.UpdateAsync(role);
             }
-            return IdentityResult.Failed(new IdentityError(){Description = $"this role:{role.Name} not exist"});
-           
+            return IdentityResult.Failed(new IdentityError() { Description = $"this role:{role.Name} not exist" });
+
         }
 
- 
+
     }
 }

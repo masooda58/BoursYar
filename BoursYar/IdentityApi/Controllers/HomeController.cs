@@ -1,7 +1,9 @@
 ﻿using IdentityApi.Models;
 using IdentityApi.Models.Requests;
 using IdentityApi.Models.Response;
+using IdentityApi.Services.AuthClaimsGenrators;
 using IdentityApi.Services.TokenGenrators;
+using IdentityApi.Services.TokenValidators;
 using IdentityApi.Services.UserManagementService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -9,17 +11,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-
-using IdentityApi.Services.AuthClaimsGenrators;
-using IdentityApi.Services.TokenValidators;
-using IdentityModel.Client;
-using IdentityServer4.Models;
-using Microsoft.EntityFrameworkCore;
 using RefreshTokenRequest = IdentityApi.Models.Requests.RefreshTokenRequest;
 
 namespace IdentityApi.Controllers
@@ -36,8 +30,8 @@ namespace IdentityApi.Controllers
         private readonly IAuthClaimsGenrators _claimsGenrators;
         private readonly TokenValidators _tokenValidators;
         private readonly SignInManager<ApplicationUser> _uSignInManager;
-        public HomeController(UserManager<ApplicationUser> userManager, 
-            RoleManager<IdentityRole> roleManager, IConfiguration configuration, 
+        public HomeController(UserManager<ApplicationUser> userManager,
+            RoleManager<IdentityRole> roleManager, IConfiguration configuration,
             IUserManagementService userManagementService, ITokenGenrators tokenGenrator,
             IAuthClaimsGenrators claimsGenrators, TokenValidators tokenValidators, SignInManager<ApplicationUser> uSignInManager)
         {
@@ -59,7 +53,7 @@ namespace IdentityApi.Controllers
         }
         [HttpPost]
         [Route("register")]
-        
+
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
             if (!ModelState.IsValid)
@@ -92,14 +86,14 @@ namespace IdentityApi.Controllers
             var user = await _userManager.FindByNameAsync(model.Username);
             if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
             {
-        
-                var authClaims =await  _claimsGenrators.CreatClaims(user);
+
+                var authClaims = await _claimsGenrators.CreatClaims(user);
 
                 var token = _tokenGenrator.GetAccessToken(authClaims);
                 await _userManagementService.DeleteRefreshTokenByuserId(user.Id);
                 await _userManagementService.WritRefreshTokenAsync(user.Id, token.RefreshToken);
-              Response.Cookies.Append("jwt",token.AccessToken,new CookieOptions() { HttpOnly = true} );
-            var cc= await _uSignInManager.PasswordSignInAsync(model.Username, model.Password, true,true);
+                Response.Cookies.Append("jwt", token.AccessToken, new CookieOptions() { HttpOnly = true });
+                var cc = await _uSignInManager.PasswordSignInAsync(model.Username, model.Password, true, true);
                 return Ok(token);
             }
             return Unauthorized();
@@ -108,7 +102,7 @@ namespace IdentityApi.Controllers
         [HttpPost("Refresh")]
         public async Task<ActionResult> Refresh([FromBody] RefreshTokenRequest refreshToken)
         {
-         
+
 
             bool isValidRefreshToken = _tokenValidators.Validate(refreshToken.Refreshtoken);
             if (!isValidRefreshToken)
@@ -116,16 +110,16 @@ namespace IdentityApi.Controllers
                 return BadRequest("توکن معتبر نیست");
             }
 
-           string userId=await _userManagementService.GetUserIdByRefreshToken(refreshToken.Refreshtoken);
-           if (userId == null) return Unauthorized();
-           var user = await _userManager.FindByIdAsync(userId);
-           var authClaims =await  _claimsGenrators.CreatClaims(user);
-           
-           var token = _tokenGenrator.GetAccessToken(authClaims);
-           await _userManagementService.DeleteRefreshTokenByuserId(userId);
-           await _userManagementService.WritRefreshTokenAsync(user.Id, token.RefreshToken);
+            string userId = await _userManagementService.GetUserIdByRefreshToken(refreshToken.Refreshtoken);
+            if (userId == null) return Unauthorized();
+            var user = await _userManager.FindByIdAsync(userId);
+            var authClaims = await _claimsGenrators.CreatClaims(user);
 
-           return Ok(token);
+            var token = _tokenGenrator.GetAccessToken(authClaims);
+            await _userManagementService.DeleteRefreshTokenByuserId(userId);
+            await _userManagementService.WritRefreshTokenAsync(user.Id, token.RefreshToken);
+
+            return Ok(token);
 
         }
 
@@ -134,7 +128,7 @@ namespace IdentityApi.Controllers
         public async Task<ActionResult> test()
         {
             var id = HttpContext.User.FindFirstValue("id");
-            var x=await _userManagementService.DeleteRefreshTokenByuserId(id);
+            var x = await _userManagementService.DeleteRefreshTokenByuserId(id);
             var g = HttpContext.Request.Cookies;
             return Ok(g);
         }
@@ -143,13 +137,13 @@ namespace IdentityApi.Controllers
         [Authorize]
         public async Task addClaimsToRole()
         {
-           // var role = new IdentityRole("admin");
-        // var v=  await _roleManager.CreateAsync(role);
-         // var x= await _roleManager.AddClaimAsync(role, new Claim("per", "manage"));
-         var userid = HttpContext.User.FindFirstValue("id");
-         var user =await _userManager.FindByIdAsync(userid);
-         await _userManager.AddToRoleAsync(user, "admin");
+            // var role = new IdentityRole("admin");
+            // var v=  await _roleManager.CreateAsync(role);
+            // var x= await _roleManager.AddClaimAsync(role, new Claim("per", "manage"));
+            var userid = HttpContext.User.FindFirstValue("id");
+            var user = await _userManager.FindByIdAsync(userid);
+            await _userManager.AddToRoleAsync(user, "admin");
         }
-     }
+    }
 }
 

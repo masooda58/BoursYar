@@ -1,7 +1,4 @@
-﻿using PersianTools.Core;
-using System;
-
-namespace PersianTools.Core
+﻿namespace PersianTools.Core
 {
     public partial class PersianDateTime
     {

@@ -1,16 +1,15 @@
-﻿using System;
-using System.Linq;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using System;
 using System.Globalization;
 
 namespace DAL
 {
     public class ParseStringConverter : JsonConverter
-        /* برای فیلد های موجود در کلاس که خروجی آنها از نوع لانگ است 
-         *  
-         *  استفاده می شود درواقع اگر نوع اصلی دابل یا لانگ باشد که در 
-        که در جیسان استرینگ ذخیره شده باشد این تابع کار تبدیل را انجام می دهد 
-        */
+    /* برای فیلد های موجود در کلاس که خروجی آنها از نوع لانگ است 
+     *  
+     *  استفاده می شود درواقع اگر نوع اصلی دابل یا لانگ باشد که در 
+    که در جیسان استرینگ ذخیره شده باشد این تابع کار تبدیل را انجام می دهد 
+    */
     {
         public override bool CanConvert(Type t) => t == typeof(long) || t == typeof(long?);
 
@@ -30,9 +29,9 @@ namespace DAL
 
         public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
         {
-           
+
             long g = 0;
-           // if (reader.TokenType == JsonToken.Null) return null;
+            // if (reader.TokenType == JsonToken.Null) return null;
             var value = serializer.Deserialize<string>(reader);
             int megdar = 1;
             long l;
@@ -53,9 +52,9 @@ namespace DAL
             }
 
 
-            if (Int64.TryParse(value,NumberStyles.Number, CultureInfo.CurrentCulture,out l))
+            if (Int64.TryParse(value, NumberStyles.Number, CultureInfo.CurrentCulture, out l))
             {
-                return l*megdar;
+                return l * megdar;
             }
             else if (double.TryParse(value, System.Globalization.NumberStyles.Number, CultureInfo.CurrentCulture, out x) ||
                      //Then try in US english
@@ -63,18 +62,18 @@ namespace DAL
                      //Then in neutral language
                      double.TryParse(value, System.Globalization.NumberStyles.Number, CultureInfo.InvariantCulture, out x))
             {
-                return x*megdar;
+                return x * megdar;
             }
 
             throw new Exception("Cannot unmarshal type long");
         }
     }
     public class ParseStringConverterDouble : JsonConverter
-        /* برای فیلد های موجود در کلاس که خروجی آنها از نوع لانگ است 
-         *  
-         *  استفاده می شود درواقع اگر نوع اصلی دابل یا لانگ باشد که در 
-        که در جیسان استرینگ ذخیره شده باشد این تابع کار تبدیل را انجام می دهد 
-        */
+    /* برای فیلد های موجود در کلاس که خروجی آنها از نوع لانگ است 
+     *  
+     *  استفاده می شود درواقع اگر نوع اصلی دابل یا لانگ باشد که در 
+    که در جیسان استرینگ ذخیره شده باشد این تابع کار تبدیل را انجام می دهد 
+    */
     {
         public override bool CanConvert(Type t) => t == typeof(long) || t == typeof(long?);
 
@@ -86,7 +85,7 @@ namespace DAL
         public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
         {
 
-         double g = 0;
+            double g = 0;
             // if (reader.TokenType == JsonToken.Null) return null;
             var value = serializer.Deserialize<string>(reader);
             int megdar = 1;
@@ -113,7 +112,7 @@ namespace DAL
                      //Then in neutral language
                      double.TryParse(value, System.Globalization.NumberStyles.Number, CultureInfo.InvariantCulture, out x))
             {
-                return x*megdar;
+                return x * megdar;
             }
 
             throw new Exception("Cannot unmarshal type long");

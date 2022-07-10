@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace PersianTools.Core
 {
@@ -14,7 +13,7 @@ namespace PersianTools.Core
             this.Number = number;
         }
     }
-    
+
     public static class CharacterUtil
     {
         private static Dictionary<long, string> numDic = new Dictionary<long, string>()

@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Jwt.Identity.Data.Context;
+﻿using Jwt.Identity.Data.Context;
 using Jwt.Identity.Domain.Interfaces.IUserRepositories;
 using Jwt.Identity.Domain.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace Jwt.Identity.Data.Repositories.UserRepositories
 {
-    public class UserManagementService:IUserManagementService
+    public class UserManagementService : IUserManagementService
 
     {
         private readonly IdentityContext _context;
@@ -27,7 +26,7 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
         // GetUserRoleAsync باهم تست می شوند
         public async Task<List<string>> GetUserRoleAsync(ApplicationUser user)
         {
-            var roles= await _userManager.GetRolesAsync(user);
+            var roles = await _userManager.GetRolesAsync(user);
             return (List<string>)roles;
         }
         public async Task<List<string>> GetUserRoleAsync(string userIdOrEmail)
@@ -43,7 +42,7 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
             return null;
 
         }
- 
+
 
         #endregion
 
@@ -61,7 +60,7 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
             return await users.CountAsync();
         }
 
-        public async Task<List<ApplicationUser>> GetAllUsersAsync(string searchString=null)
+        public async Task<List<ApplicationUser>> GetAllUsersAsync(string searchString = null)
         {
             var users = _userManager.Users.AsNoTracking();
 
@@ -158,7 +157,7 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
 
             // _context.Entry(departmentToUpdate).Property("RowVersion").OriginalValue = rowVersion;
             _context.Entry(user).State = EntityState.Modified;
-         
+
 
             // var result = await _userManager.UpdateAsync(user);
             // var result = _context.Users.Update(user);
@@ -181,7 +180,7 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
         }
         public async Task<IdentityResult> DeleteUserAsync(ApplicationUser user)
         {
-           
+
             return await _userManager.DeleteAsync(user);
         }
 
@@ -199,7 +198,7 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
             return result;
         }
 
-        public  async Task<bool> IsEmailInUseAsync(string email, string excludeUserId)
+        public async Task<bool> IsEmailInUseAsync(string email, string excludeUserId)
         {
             ApplicationUser user = await _userManager.FindByEmailAsync(email);
 

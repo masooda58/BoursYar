@@ -1,37 +1,35 @@
-﻿using System;
+﻿using Dapper;
+using Dapper.Contrib.Extensions;
+using MoralesLarios.Data.Helper;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 
-using Dapper;
-using Dapper.Contrib.Extensions;
-using MoralesLarios.Data.Helper;
-
 namespace DAL
 {
-  
-    public class GenericDapperRepository<TEntity>:IGenericDapperRepository<TEntity> where TEntity:class
-   {
-       
-       private IDbConnection _db;
-       public PartsQryGenerator<TEntity> partsQryGenerator { private get; set; }
-       private char ParameterIdentified { get; set; }
+
+    public class GenericDapperRepository<TEntity> : IGenericDapperRepository<TEntity> where TEntity : class
+    {
+
+        private IDbConnection _db;
+        public PartsQryGenerator<TEntity> partsQryGenerator { private get; set; }
+        private char ParameterIdentified { get; set; }
 
         public GenericDapperRepository(IDbConnection db)
-       {
+        {
 
-         
-               _db = db;
-               if (_db.State == ConnectionState.Closed)
-               {
-                   _db.Open();
-               }
-               ParameterIdentified = '@';
-               partsQryGenerator = new PartsQryGenerator<TEntity>(ParameterIdentified);
-          
-        
-          
-        
+
+            _db = db;
+            if (_db.State == ConnectionState.Closed)
+            {
+                _db.Open();
+            }
+            ParameterIdentified = '@';
+            partsQryGenerator = new PartsQryGenerator<TEntity>(ParameterIdentified);
+
+
+
+
         }
         public IEnumerable<TEntity> GetData(object filter)
         {
@@ -85,33 +83,33 @@ namespace DAL
 
         public void DeleteAllData()
         {
-           
-          var c=  _db.DeleteAllAsync<TEntity>();
+
+            var c = _db.DeleteAllAsync<TEntity>();
         }
 
-       public void DeleteData(string qry, object parameters)
-       {
-           _db.Execute(qry, parameters);
+        public void DeleteData(string qry, object parameters)
+        {
+            _db.Execute(qry, parameters);
         }
 
-       public void Remove(object key)
-       {
-           ParameterValidator.ValidateObject(key, nameof(key));
+        public void Remove(object key)
+        {
+            ParameterValidator.ValidateObject(key, nameof(key));
 
-           var deleteQry = partsQryGenerator.GenerateDelete(key);
+            var deleteQry = partsQryGenerator.GenerateDelete(key);
 
-           _db.Execute(deleteQry, key);
-       }
+            _db.Execute(deleteQry, key);
+        }
 
         public void UpdateData(TEntity entity)
-       {
-           _db.Update(entity);
-       }
+        {
+            _db.Update(entity);
+        }
 
-       public void UpdateDataList(List<TEntity> entities)
-       {
-           _db.Update(entities);
-       }
+        public void UpdateDataList(List<TEntity> entities)
+        {
+            _db.Update(entities);
+        }
         public IEnumerable<TEntity> GetQureyData(string qry, object parameters)
         {
 
@@ -143,6 +141,6 @@ namespace DAL
             return result;
         }
     }
-  
-  
+
+
 }

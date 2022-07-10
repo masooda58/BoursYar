@@ -1,14 +1,14 @@
-﻿using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Reflection;
-using BoursYar.Authorization.Attribute;
+﻿using BoursYar.Authorization.Attribute;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Reflection;
 
 namespace BoursYar.Authorization.Utilities.MvcNameUtilities
 {
-    public class MvcUtilities:IMvcUtilities
+    public class MvcUtilities : IMvcUtilities
     {
         public MvcUtilities(IActionDescriptorCollectionProvider actionDescriptorCollectionProvider)
         {
@@ -18,23 +18,23 @@ namespace BoursYar.Authorization.Utilities.MvcNameUtilities
                 .ActionDescriptors.Items;
             foreach (var descriptor in actionDescriptors)
             {
-                if (!(descriptor is ControllerActionDescriptor controllerActionDescriptor))  continue;
+                if (!(descriptor is ControllerActionDescriptor controllerActionDescriptor)) continue;
                 var controllerTypeInfo = controllerActionDescriptor.ControllerTypeInfo;
                 var claimToAuthoriz = controllerActionDescriptor.MethodInfo
                     .GetCustomAttribute<BoursYarAuthorizAttribute>()?.ClaimToAuthoriz;
                 mvcInfo.Add(new MvcNamesModel(
-                    areaName:controllerTypeInfo.GetCustomAttribute<AreaAttribute>()?.RouteValue,
+                    areaName: controllerTypeInfo.GetCustomAttribute<AreaAttribute>()?.RouteValue,
                    controllerName: controllerActionDescriptor.ControllerName,
-                    actionName:controllerActionDescriptor.ActionName,
-                    claimToAuthoriz:claimToAuthoriz
+                    actionName: controllerActionDescriptor.ActionName,
+                    claimToAuthoriz: claimToAuthoriz
                     ));
                 if (!string.IsNullOrWhiteSpace(claimToAuthoriz))
                 {
                     actionThatRequireClaimBaseAuthorazition.Add(new MvcNamesModel(
-                       areaName:controllerTypeInfo.GetCustomAttribute<AreaAttribute>()?.RouteValue,
-                       controllerName:controllerActionDescriptor.ControllerName,
-                       actionName:controllerActionDescriptor.ActionName,
-                       claimToAuthoriz:claimToAuthoriz
+                       areaName: controllerTypeInfo.GetCustomAttribute<AreaAttribute>()?.RouteValue,
+                       controllerName: controllerActionDescriptor.ControllerName,
+                       actionName: controllerActionDescriptor.ActionName,
+                       claimToAuthoriz: claimToAuthoriz
                         ));
                 }
 
@@ -45,7 +45,7 @@ namespace BoursYar.Authorization.Utilities.MvcNameUtilities
                 ImmutableHashSet.CreateRange(actionThatRequireClaimBaseAuthorazition);
         }
 
-       
+
 
         public ImmutableHashSet<MvcNamesModel> MvcInfo { get; }
         public ImmutableHashSet<MvcNamesModel> ActionThatRequireClaimBaseAuthorazition { get; }

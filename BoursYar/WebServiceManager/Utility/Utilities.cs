@@ -1,12 +1,12 @@
-﻿using System;
+﻿using DAL;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Net.NetworkInformation;
 using System.Threading.Tasks;
-using DAL;
-using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
 
 namespace WebServiceManager
 {
@@ -14,7 +14,7 @@ namespace WebServiceManager
     {
         //را مقدار دهی می کند  ShamsiDate وREqDateTime, MiladiDate  این تابع فیلد های
 
-        public object AddExtraData<TClass>(object tClass, string market ="بورس",string shamsiDate = null,DateTime? cryptoAllDate=null ) where TClass:class 
+        public object AddExtraData<TClass>(object tClass, string market = "بورس", string shamsiDate = null, DateTime? cryptoAllDate = null) where TClass : class
         {
             if (typeof(TClass) == typeof(List<AllNamadInfo>))
             {
@@ -27,7 +27,7 @@ namespace WebServiceManager
                     dm = shamsiDate.ToMiladi();
                 }
 
-                foreach (var item in (List<AllNamadInfo>) tClass)
+                foreach (var item in (List<AllNamadInfo>)tClass)
                 {
                     if (item != null)
                     {
@@ -37,7 +37,7 @@ namespace WebServiceManager
 
                     }
                 }
-                return  tClass;
+                return tClass;
             }
             else if (typeof(TClass) == typeof(List<AllNamadInfo_Daily>))
             {
@@ -172,34 +172,34 @@ namespace WebServiceManager
                     ds = shamsiDate;
                     dm = shamsiDate.ToMiladi();
                 }
-                var item = (BourseIndex) tClass;
+                var item = (BourseIndex)tClass;
                 item.Market = market;
-                    if (item != null)
-                    {
-                        item.ReqDateTime = dd;
-                        item.MiladiDate = dm;
-                        item.ShamsiDate = ds;
+                if (item != null)
+                {
+                    item.ReqDateTime = dd;
+                    item.MiladiDate = dm;
+                    item.ShamsiDate = ds;
 
-                    }
-               
+                }
+
                 return tClass;
             } // فرابورس و بورس 
             else if (typeof(TClass) == typeof(List<Crypto>))//add date
             {
 
-            
+
 
                 foreach (var item in (List<Crypto>)tClass)
                 {
                     if (!cryptoAllDate.HasValue)
                     {
-                        cryptoAllDate=DateTime.Now;
+                        cryptoAllDate = DateTime.Now;
                     }
                     if (item != null)
                     {
-                     
-                            item.Date = cryptoAllDate.Value;
-                      
+
+                        item.Date = cryptoAllDate.Value;
+
                     }
                 }
                 return tClass;
@@ -210,7 +210,7 @@ namespace WebServiceManager
                 DateTime dd = DateTime.Now;
                 string ds = dd.ToShamsi(); // date shamsi
                 DateTime dm = ds.ToMiladi(); //date miladi
-             
+
 
                 foreach (var item in (List<Arz>)tClass)
                 {
@@ -242,7 +242,7 @@ namespace WebServiceManager
             {
                 Logger logger = new Logger();
                 logger.ReqTime = DateTime.Now;
-                logger.Name ="main";
+                logger.Name = "main";
                 logger.Status = "اتصال اینترنت بر قرار نیست ";
                 logger.Success = false;
                 using (UnitOfWorkDapper db = new UnitOfWorkDapper())
@@ -253,38 +253,38 @@ namespace WebServiceManager
             }
         }
 
-        public Task<bool> CheckDbConnection(string dbconnectionstring="WDbContext")
+        public Task<bool> CheckDbConnection(string dbconnectionstring = "WDbContext")
         {
 
-           return Task.Run(() =>
-            {
+            return Task.Run(() =>
+             {
 
-                try
-                {
-                    string connectionString = dbconnectionstring;
-                    //ConfigurationManager.ConnectionStrings["WDbContext"].ConnectionString;
+                 try
+                 {
+                     string connectionString = dbconnectionstring;
+                     //ConfigurationManager.ConnectionStrings["WDbContext"].ConnectionString;
 
-                    IDbConnection db = new SqlConnection(connectionString);
-                    db.Open();
-                    db.Close();
-                    return true;
-                }
-                catch (Exception e)
-                {
-                    return false;
-                }
-            });
-           
+                     IDbConnection db = new SqlConnection(connectionString);
+                     db.Open();
+                     db.Close();
+                     return true;
+                 }
+                 catch (Exception e)
+                 {
+                     return false;
+                 }
+             });
+
         }
-       
-        public  string GetConnectionString(string StringName)
+
+        public string GetConnectionString(string StringName)
         {
             string c = Directory.GetCurrentDirectory();
             IConfigurationRoot configuration = new ConfigurationBuilder().SetBasePath(c).AddJsonFile("appsettings.json").Build();
-                
-            string connectionStringIs = configuration.GetConnectionString("StringName"); 
+
+            string connectionStringIs = configuration.GetConnectionString("StringName");
             return connectionStringIs;
         }
     }
-    
+
 }

@@ -1,12 +1,12 @@
 ﻿//نحوه استفاده در ذیل کد
 // پکیج مورد استفاده  <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
-using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
+using System.Collections.Generic;
 
 namespace Common.Api.Dependency.Swagger
 {
-   public static class SwaggerExtension
+    public static class SwaggerExtension
     {
         public static IServiceCollection AddOurSwagger(this IServiceCollection services)
         {

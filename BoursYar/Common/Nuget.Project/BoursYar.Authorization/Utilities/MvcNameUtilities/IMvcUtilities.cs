@@ -9,7 +9,7 @@ namespace BoursYar.Authorization.Utilities.MvcNameUtilities
         // barai zakhireh hame action ha area ha va... estefadeh mishavad
         public ImmutableHashSet<MvcNamesModel> MvcInfo { get; }
         // list action hai keh bari dastresi be system dastrsi daynamic niyaz darand
-        public ImmutableHashSet<MvcNamesModel> ActionThatRequireClaimBaseAuthorazition { get;}
+        public ImmutableHashSet<MvcNamesModel> ActionThatRequireClaimBaseAuthorazition { get; }
 
     }
 }

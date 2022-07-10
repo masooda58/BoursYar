@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Identity;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Jwt.Identity.Domain.Models;
-using Microsoft.AspNetCore.Identity;
 
 namespace Jwt.Identity.Domain.Interfaces.IUserRepositories
 {
@@ -21,8 +20,8 @@ namespace Jwt.Identity.Domain.Interfaces.IUserRepositories
         Task<List<IdentityResult>> AddClaimsToRoleAsync(IdentityRole role, List<Claim> claims);
         Task<List<IdentityResult>> RemoveClaimsToRoleAsync(IdentityRole role, List<Claim> claims);
 
-        Task<IdentityResult> ChangRoleNameAsync(IdentityRole role,string newName);
-     
+        Task<IdentityResult> ChangRoleNameAsync(IdentityRole role, string newName);
+
 
         Task<IdentityResult> CreateRoleAsync(IdentityRole role);
     }

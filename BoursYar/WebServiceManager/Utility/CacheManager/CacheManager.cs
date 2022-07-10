@@ -1,20 +1,19 @@
 ﻿using DAL;
-using System;
-using System.Collections.Generic;
 using Microsoft.Extensions.Caching.Memory;
+using System;
 
 namespace WebServiceManager
 {
 
     public class CacheManager
     {
-        public static IMemoryCache Cache=new MemoryCache(new MemoryCacheOptions());
+        public static IMemoryCache Cache = new MemoryCache(new MemoryCacheOptions());
 
         public static EventHandler ChangeCache;
 
-    
 
-      //        public static void OnRemoveCache(string k, object v, CacheItemRemovedReason r)
+
+        //        public static void OnRemoveCache(string k, object v, CacheItemRemovedReason r)
         //    
         protected static void OnChangeCache(EventArgs e)
         {
@@ -23,12 +22,12 @@ namespace WebServiceManager
 
         public static void EmptyCache_allnamadinfo()
         {
-         
-                RefreshCache_allnamadinfo();
 
-                OnChangeCache(EventArgs.Empty);
-           
-          
+            RefreshCache_allnamadinfo();
+
+            OnChangeCache(EventArgs.Empty);
+
+
 
         }
 
@@ -51,17 +50,17 @@ namespace WebServiceManager
             using (var db = new UnitOfWorkDapper())
             {
                 var d = db.AllnamadDapperRepository.GetQureyData(qureylastdataallnamad);
-           Cache.Set("allnamadinfo", d, DateTimeOffset.MaxValue);
+                Cache.Set("allnamadinfo", d, DateTimeOffset.MaxValue);
 
             }
-          
+
 
 
         }
 
         public static void CacheData(string key, object value)
         {
-          
+
             Cache.Set(key, value, DateTimeOffset.MaxValue);
             OnChangeCache(EventArgs.Empty);
 

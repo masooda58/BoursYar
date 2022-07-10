@@ -1,9 +1,9 @@
-﻿using System;
-using Skender.Stock.Indicators;
+﻿using Skender.Stock.Indicators;
+using System;
 
 namespace DAL
 {
-    public class MyCustomQuote: IQuote
+    public class MyCustomQuote : IQuote
     {
         public DateTime Date { get; set; }
         public decimal Open { get; set; }

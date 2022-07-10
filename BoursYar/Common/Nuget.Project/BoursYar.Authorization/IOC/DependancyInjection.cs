@@ -16,8 +16,8 @@ namespace BoursYar.Authorization.IOC
             service.AddSingleton<IMvcUtilities, MvcUtilities>();
             service.AddScoped<IAuthorizationHandler, ClaimBaseHandler>();
             service.AddHttpContextAccessor();
-           // استفاده می کنیم AuthorizeCore آز AddAuthorize هستیم بجای Class Liberary چون در
-            
+            // استفاده می کنیم AuthorizeCore آز AddAuthorize هستیم بجای Class Liberary چون در
+
             service.AddAuthorizationCore(option =>
             {
                 option.AddPolicy("BoursYarAuthorization", policy =>

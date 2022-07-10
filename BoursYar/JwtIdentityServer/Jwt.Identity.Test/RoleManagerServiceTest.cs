@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Xunit;
@@ -127,7 +126,7 @@ namespace Jwt.Identity.Test
         public async Task DeleteRolesByNameAsync_ReturnOk(List<string> rolesName)
         {
             using (var dbContext = Helpers.CreateDbContext())
-                //using (var userManager = Helpers.CreateUserManager(dbContext))
+            //using (var userManager = Helpers.CreateUserManager(dbContext))
             using (var roleManager = Helpers.CreateRoleManager(dbContext))
             {
 
@@ -161,7 +160,7 @@ namespace Jwt.Identity.Test
         public async Task CreateRoleAsync_ByRole_Returnok(string roleName, bool expected)
         {
             using (var dbContext = Helpers.CreateDbContext())
-                //using (var userManager = Helpers.CreateUserManager(dbContext))
+            //using (var userManager = Helpers.CreateUserManager(dbContext))
             using (var roleManager = Helpers.CreateRoleManager(dbContext))
             {
 
@@ -169,19 +168,19 @@ namespace Jwt.Identity.Test
                 var rolemanagerService = new RoleManagementService(dbContext, roleManager);
                 var roles = new IdentityRole(roleName);
                 //Act
-                var result =await rolemanagerService.CreateRoleAsync(roles);
+                var result = await rolemanagerService.CreateRoleAsync(roles);
                 //Assert
-                Assert.Equal(expected,result.Succeeded);
+                Assert.Equal(expected, result.Succeeded);
 
             }
         }
-       
+
         [Theory]
         [InlineData("Admin", "Admin")]
-        public async Task  FindRoleByIdAsync_Returnok(string roleName, string expected)
+        public async Task FindRoleByIdAsync_Returnok(string roleName, string expected)
         {
             using (var dbContext = Helpers.CreateDbContext())
-                //using (var userManager = Helpers.CreateUserManager(dbContext))
+            //using (var userManager = Helpers.CreateUserManager(dbContext))
             using (var roleManager = Helpers.CreateRoleManager(dbContext))
             {
 
@@ -190,9 +189,9 @@ namespace Jwt.Identity.Test
                 var role = new IdentityRole(roleName);
                 //Act
                 await rolemanagerService.CreateRoleAsync(role);
-                var result =await rolemanagerService.FindRoleByIdAsync(role.Id);
+                var result = await rolemanagerService.FindRoleByIdAsync(role.Id);
                 //Assert
-                Assert.Equal(expected,result.Name);
+                Assert.Equal(expected, result.Name);
 
             }
         }
@@ -201,11 +200,11 @@ namespace Jwt.Identity.Test
         public async Task AddClaimToRoleAsync_ReturnOk()
         {
             using (var dbContext = Helpers.CreateDbContext())
-                //using (var userManager = Helpers.CreateUserManager(dbContext))
+            //using (var userManager = Helpers.CreateUserManager(dbContext))
             using (var roleManager = Helpers.CreateRoleManager(dbContext))
             {
                 var rolemanagerService = new RoleManagementService(dbContext, roleManager);
-                var role =new IdentityRole("Admin");
+                var role = new IdentityRole("Admin");
                 var creatRole = await rolemanagerService.CreateRoleAsync(role);
                 var newClaim = new Claim(ClaimTypes.Name, "claim1");
                 //Act
@@ -222,11 +221,11 @@ namespace Jwt.Identity.Test
         public async Task AddClaimsToRoleAsync_ReturnOk()
         {
             using (var dbContext = Helpers.CreateDbContext())
-                //using (var userManager = Helpers.CreateUserManager(dbContext))
+            //using (var userManager = Helpers.CreateUserManager(dbContext))
             using (var roleManager = Helpers.CreateRoleManager(dbContext))
             {
                 var rolemanagerService = new RoleManagementService(dbContext, roleManager);
-                var role =new IdentityRole("Admin");
+                var role = new IdentityRole("Admin");
                 var creatRole = await rolemanagerService.CreateRoleAsync(role);
                 var authClaims = new List<Claim>
                 {
@@ -234,7 +233,7 @@ namespace Jwt.Identity.Test
                     new Claim("BoursYarAccess","x"),
                     new Claim("BoursYarAccess","y"),
                     new Claim("id","user.Id"),
-                
+
                 };
                 //Act
                 var results = await rolemanagerService.AddClaimsToRoleAsync(role, authClaims);
@@ -248,9 +247,9 @@ namespace Jwt.Identity.Test
         [Fact]
         public async Task RemoveClaimsToRoleAsync_ReturnOk()
         {
-           
+
             using (var dbContext = Helpers.CreateDbContext())
-                //using (var userManager = Helpers.CreateUserManager(dbContext))
+            //using (var userManager = Helpers.CreateUserManager(dbContext))
             using (var roleManager = Helpers.CreateRoleManager(dbContext))
             {
                 var rolemanagerService = new RoleManagementService(dbContext, roleManager);
@@ -261,9 +260,9 @@ namespace Jwt.Identity.Test
                     new Claim("BoursYarAccess","y"),
                     new Claim("id","user.Id"),
                     new Claim("notAdd","notAdd")
-                
+
                 };
-                var role =new IdentityRole("Admin");
+                var role = new IdentityRole("Admin");
                 var creatRole = await rolemanagerService.CreateRoleAsync(role);
                 var authClaims = new List<Claim>
                 {
@@ -271,25 +270,25 @@ namespace Jwt.Identity.Test
                     new Claim("BoursYarAccess","x"),
                     new Claim("BoursYarAccess","y"),
                     new Claim("id","user.Id"),
-                
+
                 };
                 //Act
                 var resultsAdd = await rolemanagerService.AddClaimsToRoleAsync(role, authClaims);
-              
-                
+
+
                 var resultsRemove = await rolemanagerService.RemoveClaimsToRoleAsync(role, removClaims);
                 var remainClaims = await rolemanagerService.GetClaimsByRoleNameAsync("Admin");
-                Assert.True(resultsRemove.Count(rr=>rr.Succeeded==true)==4
-                           &&remainClaims.Count==1&&
-                            remainClaims.FirstOrDefault(c=>c.Type=="BoursYarAccess")?.Value=="x");
+                Assert.True(resultsRemove.Count(rr => rr.Succeeded == true) == 4
+                           && remainClaims.Count == 1 &&
+                            remainClaims.FirstOrDefault(c => c.Type == "BoursYarAccess")?.Value == "x");
             }
         }
         [Fact]
         public async Task GetClaimsByRoleNameAsync_ReturnnNull()
         {
-           
+
             using (var dbContext = Helpers.CreateDbContext())
-                //using (var userManager = Helpers.CreateUserManager(dbContext))
+            //using (var userManager = Helpers.CreateUserManager(dbContext))
             using (var roleManager = Helpers.CreateRoleManager(dbContext))
             {
                 var rolemanagerService = new RoleManagementService(dbContext, roleManager);
@@ -299,16 +298,16 @@ namespace Jwt.Identity.Test
                 var resultsByName = await rolemanagerService.GetClaimsByRoleNameAsync("admin");
                 var resultsByRole = await rolemanagerService.GetClaimsByRoleAsync(role);
                 //Assert
-                Assert.True(resultsByName==resultsByRole);
-         
+                Assert.True(resultsByName == resultsByRole);
+
             }
         }
         [Fact]
         public async Task ChangRoleNameAsync_Returnok()
         {
-           
+
             using (var dbContext = Helpers.CreateDbContext())
-                //using (var userManager = Helpers.CreateUserManager(dbContext))
+            //using (var userManager = Helpers.CreateUserManager(dbContext))
             using (var roleManager = Helpers.CreateRoleManager(dbContext))
             {
                 var rolemanagerService = new RoleManagementService(dbContext, roleManager);
@@ -319,14 +318,14 @@ namespace Jwt.Identity.Test
                     new Claim("BoursYarAccess","x"),
                     new Claim("BoursYarAccess","y"),
                     new Claim("id","user.Id"),
-                
+
                 };
 
                 //Act
-               await rolemanagerService.CreateRoleAsync(role);
-               var resultAddClaim = await rolemanagerService.AddClaimsToRoleAsync(role, authClaims);
-               var result = await rolemanagerService.ChangRoleNameAsync(role, "NewName");
-                
+                await rolemanagerService.CreateRoleAsync(role);
+                var resultAddClaim = await rolemanagerService.AddClaimsToRoleAsync(role, authClaims);
+                var result = await rolemanagerService.ChangRoleNameAsync(role, "NewName");
+
                 //Assert
                 //var roleBack = await rolemanagerService.GetAllRolesAsync();
                 //var testRole = roleBack.FirstOrDefault(x => x.Name == "NewName");
@@ -334,7 +333,7 @@ namespace Jwt.Identity.Test
                 Assert.True(result.Succeeded);
             }
         }
-        
+
     }
 
 }

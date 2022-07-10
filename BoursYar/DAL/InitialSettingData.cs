@@ -1,23 +1,22 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 using System.IO;
-using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json.Linq;
 
 
 namespace DAL
 {
     public class InitialSettingData
     {
-        public static  List<CallWebServiceSetting>  Seed()
+        public static List<CallWebServiceSetting> Seed()
         {
             List<CallWebServiceSetting> defaultCallWebServiceSettings = new List<CallWebServiceSetting>();
 
             defaultCallWebServiceSettings.Add(new CallWebServiceSetting()
             {
-               
+
 
                 Code = 1,
-              Faal=false,
+                Faal = false,
                 Name = "AllNamadInfo",
                 StartTime = "09:00:00",
                 FinishTime = "12:30:00",
@@ -30,9 +29,9 @@ namespace DAL
             });
             defaultCallWebServiceSettings.Add(new CallWebServiceSetting()
             {
-               
+
                 Code = 2,
-              Faal=false,
+                Faal = false,
                 Name = "market_bourse",
                 NeedAddDate = true,
                 StartTime = "14:50:00",
@@ -44,9 +43,9 @@ namespace DAL
             });
             defaultCallWebServiceSettings.Add(new CallWebServiceSetting()
             {
-               
+
                 Code = 3,
-              Faal=false,
+                Faal = false,
                 Name = "market_farabourse",
                 NeedAddDate = true,
                 StartTime = "14:50:00",
@@ -58,9 +57,9 @@ namespace DAL
             });
             defaultCallWebServiceSettings.Add(new CallWebServiceSetting()
             {
-               
+
                 Code = 4,
-              Faal=false,
+                Faal = false,
                 Name = "IndusteryIndex",
                 NeedAddDate = true,
                 StartTime = "14:50:00",
@@ -72,9 +71,9 @@ namespace DAL
             });
             defaultCallWebServiceSettings.Add(new CallWebServiceSetting()
             {
-               
+
                 Code = 5,
-              Faal=false,
+                Faal = false,
                 Name = "fav_namad_bourse",
                 StartTime = "14:50:00",
                 FinishTime = "16:55:00",
@@ -86,9 +85,9 @@ namespace DAL
             });
             defaultCallWebServiceSettings.Add(new CallWebServiceSetting()
             {
-               
+
                 Code = 6,
-              Faal=false,
+                Faal = false,
                 Name = "fav_namad_farabourse",
                 StartTime = "14:50:00",
                 FinishTime = "16:55:00",
@@ -100,9 +99,9 @@ namespace DAL
             });
             defaultCallWebServiceSettings.Add(new CallWebServiceSetting()
             {
-               
+
                 Code = 7,
-              Faal=false,
+                Faal = false,
                 Name = "ind_namad_bourse",
                 StartTime = "14:50:00",
                 FinishTime = "16:55:00",
@@ -114,9 +113,9 @@ namespace DAL
             });
             defaultCallWebServiceSettings.Add(new CallWebServiceSetting()
             {
-               
+
                 Code = 8,
-              Faal=false,
+                Faal = false,
                 Name = "ind_namad_farabourse",
                 StartTime = "14:50:00",
                 FinishTime = "16:55:00",
@@ -128,9 +127,9 @@ namespace DAL
             });
             defaultCallWebServiceSettings.Add(new CallWebServiceSetting()
             {
-               
+
                 Code = 9,
-              Faal=false,
+                Faal = false,
                 Name = "Codal",
                 StartTime = "14:50:00",
                 FinishTime = "16:55:00",
@@ -142,9 +141,9 @@ namespace DAL
             });
             defaultCallWebServiceSettings.Add(new CallWebServiceSetting()
             {
-               
+
                 Code = 10,
-              Faal=false,
+                Faal = false,
                 Name = "Payamnazer",
                 StartTime = "14:50:00",
                 FinishTime = "16:55:00",
@@ -156,9 +155,9 @@ namespace DAL
             });
             defaultCallWebServiceSettings.Add(new CallWebServiceSetting()
             {
-               
+
                 Code = 11,
-              Faal=false,
+                Faal = false,
                 Name = "Khodro",
                 StartTime = "14:50:00",
                 FinishTime = "18:30:00",
@@ -170,9 +169,9 @@ namespace DAL
             });
             defaultCallWebServiceSettings.Add(new CallWebServiceSetting()
             {
-               
+
                 Code = 12,
-              Faal=false,
+                Faal = false,
                 Name = "Crypto",
                 StartTime = "14:50:00",
                 FinishTime = "18:30:00",
@@ -183,9 +182,9 @@ namespace DAL
                 ClassJsonType = typeof(List<Crypto>).FullName
             }); defaultCallWebServiceSettings.Add(new CallWebServiceSetting()
             {
-               
+
                 Code = 13,
-              Faal=false,
+                Faal = false,
                 Name = "Arz",
                 StartTime = "14:50:00",
                 FinishTime = "18:30:00",
@@ -199,13 +198,13 @@ namespace DAL
             {
 
                 Code = 14,
-              Faal=false,
+                Faal = false,
                 Name = "AllNamadInfo_Daily",
                 StartTime = "14:50:00",
                 FinishTime = "18:30:00",
                 Interval = 3600,
                 NeedAddDate = true,
-                Url = "https://sourcearena.ir/api/?token=722b65c8184942a55aebc5253895f8d9" +"&all&type=0",
+                Url = "https://sourcearena.ir/api/?token=722b65c8184942a55aebc5253895f8d9" + "&all&type=0",
                 ClassType = typeof(List<AllNamadInfo_Daily>).FullName,
                 ClassJsonType = typeof(List<AllNamadInfo_Daily>).FullName
             });
@@ -213,7 +212,7 @@ namespace DAL
             {
 
                 Code = 15,
-              Faal=false,
+                Faal = false,
                 Name = "AllNamadOption",
                 StartTime = "14:50:00",
                 FinishTime = "18:30:00",

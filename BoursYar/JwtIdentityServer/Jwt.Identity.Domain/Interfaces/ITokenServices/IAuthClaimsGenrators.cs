@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Jwt.Identity.Domain.Models;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Jwt.Identity.Domain.Models;
 
 namespace Jwt.Identity.Domain.Interfaces.ITokenServices
 {

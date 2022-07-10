@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Dapper.Contrib.Extensions;
 using Newtonsoft.Json;
-using Dapper.Contrib.Extensions;
+using System;
+using System.Collections.Generic;
 
 namespace DAL
 {
-    
 
-    public  class CryptoAll
+
+    public class CryptoAll
     {
         [JsonProperty("last_update", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
         public string LastUpdate { get; set; }
@@ -16,10 +16,10 @@ namespace DAL
         public List<Crypto> Data { get; set; }
     }
     [Table("Crypto")]
-    public  class Crypto
+    public class Crypto
     {
         [System.ComponentModel.DataAnnotations.Key]
-        public int Id { get; set; } 
+        public int Id { get; set; }
         public DateTime Date { get; set; }
 
         [JsonProperty("symbol", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
@@ -28,8 +28,8 @@ namespace DAL
         [JsonProperty("name", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
         public string Name { get; set; }
 
-       [JsonProperty("icon", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
-       public string Icon { get; set; }
+        [JsonProperty("icon", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
+        public string Icon { get; set; }
 
         [JsonProperty("price", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
         public string Price { get; set; }

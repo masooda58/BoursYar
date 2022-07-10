@@ -1,21 +1,21 @@
-﻿using System;
-using IdentityApi.Context;
+﻿using IdentityApi.Context;
 using IdentityApi.Helpers;
 using IdentityApi.Models;
+using IdentityApi.Models.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using IdentityApi.Models.Identity;
 
 namespace IdentityApi.Services.UserManagementService
 {
     public class UserManagementService : IUserManagementService
     {
         private readonly IdentityContext _context;
-       private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
 
         public UserManagementService(IdentityContext context, UserManager<ApplicationUser> userManager,
@@ -32,17 +32,17 @@ namespace IdentityApi.Services.UserManagementService
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<bool> WritRefreshTokenAsync(string userId,string refreshToken)
+        public async Task<bool> WritRefreshTokenAsync(string userId, string refreshToken)
         {
-         var result=  await _context.AddAsync(new RefreshTokenDto()
+            var result = await _context.AddAsync(new RefreshTokenDto()
 
             {
                 UserId = userId,
-                RefreshToken=refreshToken
+                RefreshToken = refreshToken
 
             });
-         _context.SaveChanges();
-         return result != null;
+            _context.SaveChanges();
+            return result != null;
         }
 
         public async Task<string> GetUserIdByRefreshToken(string refreshToken)
@@ -56,9 +56,9 @@ namespace IdentityApi.Services.UserManagementService
         {
             try
             {
-               
+
                 _context.RemoveRange(_context.RefreshTokenDtos.Where(u => u.UserId == userId));
-              await  _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
             }
             catch (Exception e)
             {
@@ -69,7 +69,7 @@ namespace IdentityApi.Services.UserManagementService
         }
 
 
-        public async  Task<List<string>> GetUserRoleAsync(ApplicationUser user)
+        public async Task<List<string>> GetUserRoleAsync(ApplicationUser user)
         {
             var role = await _userManager.GetRolesAsync(user);
             return (List<string>)role;

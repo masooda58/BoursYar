@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Dapper.Contrib.Extensions;
 using Newtonsoft.Json;
-using Dapper.Contrib.Extensions;
+using System;
+using System.Collections.Generic;
 
 namespace DAL
 {
     [Table("Arz")]
-   public class Arz
+    public class Arz
     {
         [System.ComponentModel.DataAnnotations.Key]
 
@@ -42,8 +42,8 @@ namespace DAL
         [JsonProperty("jalali_last_update", Required = Required.DisallowNull, NullValueHandling = NullValueHandling.Ignore)]
         public string JalaliLastUpdate { get; set; }
     }
-   public class LArz
-   {
-       public List<Arz> data { get; set; }
-   }
+    public class LArz
+    {
+        public List<Arz> data { get; set; }
+    }
 }

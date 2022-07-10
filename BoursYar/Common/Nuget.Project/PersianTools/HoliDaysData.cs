@@ -67,11 +67,11 @@ namespace PersianTools.Core
             DaysData.Add(new DaysData(1, 3, 14, CalenderType.Jalali, DateType.HoliDay, "رحلت حضرت امام خمینی"));
             DaysData.Add(new DaysData(1, 3, 15, CalenderType.Jalali, DateType.HoliDay, "قیام 15 خرداد"));
             DaysData.Add(new DaysData(1, 11, 22, CalenderType.Jalali, DateType.HoliDay, "پیروزی انقلاب اسلامی"));
-           DaysData.Add(new DaysData(1, 12, 29, CalenderType.Jalali, DateType.HoliDay, "روز ملی شدن صنعت نفت ایران"));
-           // etfaghi
-           DaysData.Add(new DaysData(1400, 05, 02, CalenderType.Jalali, DateType.HoliDay, "کرونا"));
-           DaysData.Add(new DaysData(1400, 05, 03, CalenderType.Jalali, DateType.HoliDay, "کرونا"));
-           DaysData.Add(new DaysData(1400, 04, 29, CalenderType.Jalali, DateType.HoliDay, "کرونا"));
+            DaysData.Add(new DaysData(1, 12, 29, CalenderType.Jalali, DateType.HoliDay, "روز ملی شدن صنعت نفت ایران"));
+            // etfaghi
+            DaysData.Add(new DaysData(1400, 05, 02, CalenderType.Jalali, DateType.HoliDay, "کرونا"));
+            DaysData.Add(new DaysData(1400, 05, 03, CalenderType.Jalali, DateType.HoliDay, "کرونا"));
+            DaysData.Add(new DaysData(1400, 04, 29, CalenderType.Jalali, DateType.HoliDay, "کرونا"));
         }
         private void FillJalaliNormalDays()
         {

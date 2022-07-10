@@ -1,8 +1,8 @@
-﻿using System;
+﻿using MoralesLarios.Data.Helper;
+using System;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using MoralesLarios.Data.Helper; 
 
 namespace DAL
 {
@@ -105,7 +105,7 @@ namespace DAL
 
         public string GenerateSelect(object fieldsFilter)
         {
-           ParameterValidator.ValidateObject(fieldsFilter, nameof(fieldsFilter));
+            ParameterValidator.ValidateObject(fieldsFilter, nameof(fieldsFilter));
 
             var initialSelect = GenerateSelect();
 
