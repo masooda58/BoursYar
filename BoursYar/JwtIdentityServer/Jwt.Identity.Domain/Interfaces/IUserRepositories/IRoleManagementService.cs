@@ -19,10 +19,10 @@ namespace Jwt.Identity.Domain.Interfaces.IUserRepositories
         Task<List<Claim>> GetClaimsByRoleAsync(IdentityRole role);
         Task<IdentityResult> AddClaimToRoleAsync(IdentityRole role, Claim claim);
         Task<List<IdentityResult>> AddClaimsToRoleAsync(IdentityRole role, List<Claim> claims);
-        Task<IdentityResult> RemoveClaimsToRoleAsync(IdentityRole role, List<Claim>claims);
+        Task<List<IdentityResult>> RemoveClaimsToRoleAsync(IdentityRole role, List<Claim> claims);
 
-        Task<IdentityResult> UpdateAsync(IdentityRole role);
-        Task<IdentityResult> SetRoleNameAsync(IdentityRole role, string newRoleName);
+        Task<IdentityResult> ChangRoleNameAsync(IdentityRole role,string newName);
+     
 
         Task<IdentityResult> CreateRoleAsync(IdentityRole role);
     }

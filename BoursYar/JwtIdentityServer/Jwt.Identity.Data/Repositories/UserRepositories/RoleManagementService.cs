@@ -1,22 +1,19 @@
 ﻿#nullable enable
-using System;
+using Jwt.Identity.Data.Context;
+using Jwt.Identity.Domain.Interfaces.IUserRepositories;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Jwt.Identity.Data.Context;
-using Jwt.Identity.Domain.Interfaces.IUserRepositories;
-using Jwt.Identity.Domain.Models;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic;
 
 namespace Jwt.Identity.Data.Repositories.UserRepositories
 {
-    public class RoleManagementService:IRoleManagementService
+    public class RoleManagementService : IRoleManagementService
     {
         private readonly IdentityContext _context;
-       
+
         private readonly RoleManager<IdentityRole> _roleManager;
 
         public RoleManagementService(IdentityContext context, RoleManager<IdentityRole> roleManager)
@@ -27,7 +24,7 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
 
         public async Task<IdentityResult> CreateRoleAsync(string roleName)
         {
-            
+
             var existRole = await _roleManager.RoleExistsAsync(roleName);
             if (existRole)
             {
@@ -43,43 +40,43 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
         public async Task<IdentityResult> CreateRoleAsync(IdentityRole role)
         {
             var roleExist = await _roleManager.RoleExistsAsync(role.Name);
-            if(!roleExist)
+            if (!roleExist)
             {
                 return await _roleManager.CreateAsync(role);
             }
             return IdentityResult.Failed
-                (new IdentityError(){ Description = "Role name already in use!" });
+                (new IdentityError() { Description = "Role name already in use!" });
         }
 
         public async Task<IdentityResult> DeleteRoleAsync(IdentityRole role)
         {
             return await _roleManager.DeleteAsync(role);
         }
-      
+
         public async Task<bool> DeleteRolesByNameAsync(List<string> rolesName)
         {
-           // var results = new List<IdentityResult>();
-         
+            // var results = new List<IdentityResult>();
 
-          
-               foreach (var name in rolesName)
-               {
-                   var role = await _roleManager.FindByNameAsync(name);
-                   if (role!=null)
-                   {
-                       var result = await _roleManager.DeleteAsync(role);
-                   }
-                       
-                
 
-               }
 
-               return true;
+            foreach (var name in rolesName)
+            {
+                var role = await _roleManager.FindByNameAsync(name);
+                if (role != null)
+                {
+                    var result = await _roleManager.DeleteAsync(role);
+                }
+
+
+
+            }
+
+            return true;
 
         }
-         
 
-        public async Task<List<IdentityRole>> GetAllRolesAsync(string? searchRoleName=null)
+
+        public async Task<List<IdentityRole>> GetAllRolesAsync(string? searchRoleName = null)
         {
             if (!string.IsNullOrEmpty(searchRoleName))
             {
@@ -99,7 +96,7 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
             return await _roleManager.FindByIdAsync(roleId);
         }
 
-        
+
         public async Task<IdentityResult> AddClaimToRoleAsync(IdentityRole role, Claim claim)
         {
             return await _roleManager.AddClaimAsync(role, claim);
@@ -108,57 +105,65 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
         public async Task<List<IdentityResult>> AddClaimsToRoleAsync(IdentityRole role, List<Claim> claims)
         {
             var result = new List<IdentityResult>();
-         
-                foreach (var claim in claims)
-                {
-                    var resultOfClaim=await _roleManager.AddClaimAsync(role, claim);
-                    result.Add(resultOfClaim);
-                }
 
-                return result;
+            foreach (var claim in claims)
+            {
+                var resultOfClaim = await _roleManager.AddClaimAsync(role, claim);
+                result.Add(resultOfClaim);
+            }
 
-
-
+            return result;
 
         }
-        //start heare
-        public async Task<IdentityResult> RemoveClaimsToRoleAsync(IdentityRole role, List<Claim> claims)
+       
+        public async Task<List<IdentityResult>> RemoveClaimsToRoleAsync(IdentityRole role, List<Claim> claims)
         {
-            try
+            var result = new List<IdentityResult>();
+          
+            foreach (var claim in claims)
             {
-                foreach (var claim in claims)
-                {
-                    await _roleManager.RemoveClaimAsync(role,claim);
-                }
+                var resultOfClaim=await _roleManager.RemoveClaimAsync(role, claim);
+                result.Add(resultOfClaim.Succeeded
+                    ? resultOfClaim
+                    : IdentityResult.Failed(new IdentityError()
+                        { Description = $"This claim={claim.Type}can not remove" }));
+            }
 
-                return IdentityResult.Success;
-            }
-            catch
-            {
-                return IdentityResult.Failed();
-            }
+            return result;
         }
 
-        public async Task<List<Claim>> GetClaimsByRoleNameAsync(string roleName)
+        public async Task<List<Claim>?> GetClaimsByRoleNameAsync(string roleName)
         {
             var role = await _roleManager.FindByNameAsync(roleName);
-            return ( List<Claim>)await _roleManager.GetClaimsAsync(role);
+            
+            return role==null?null:(List<Claim>)await _roleManager.GetClaimsAsync(role);
 
         }
 
-        public async Task<List<Claim>> GetClaimsByRoleAsync(IdentityRole role)
+        public async Task<List<Claim>?> GetClaimsByRoleAsync(IdentityRole role)
         {
-            return ( List<Claim>)await _roleManager.GetClaimsAsync(role);
+            var roleExist = await _roleManager.RoleExistsAsync(role.Name);
+            if (roleExist)
+            {
+                var claimList = await _roleManager.GetClaimsAsync(role);
+                return (List<Claim>) claimList ;
+            }
+
+            return null;
+
         }
-        public async Task<IdentityResult> UpdateAsync(IdentityRole role)
+        public async Task<IdentityResult> ChangRoleNameAsync(IdentityRole role ,string newName)
         {
-            role.Name = "test";
-            return await _roleManager.UpdateAsync(role);
+            var roleExist = await _roleManager.RoleExistsAsync(role.Name);
+            if (roleExist)
+            {
+                role.Name = newName;
+                return await _roleManager.UpdateAsync(role);
+            }
+            return IdentityResult.Failed(new IdentityError(){Description = $"this role:{role.Name} not exist"});
+           
         }
 
-        public async Task<IdentityResult> SetRoleNameAsync(IdentityRole role, string newRoleName)
-        {
-            return await _roleManager.SetRoleNameAsync(role,newRoleName);
-        }
+ 
     }
 }

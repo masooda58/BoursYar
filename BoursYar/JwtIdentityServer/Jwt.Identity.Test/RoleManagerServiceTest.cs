@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Xunit;
@@ -241,12 +242,99 @@ namespace Jwt.Identity.Test
                 {
                     Assert.True(result.Succeeded);
                 }
-                
-
-
 
             }
         }
+        [Fact]
+        public async Task RemoveClaimsToRoleAsync_ReturnOk()
+        {
+           
+            using (var dbContext = Helpers.CreateDbContext())
+                //using (var userManager = Helpers.CreateUserManager(dbContext))
+            using (var roleManager = Helpers.CreateRoleManager(dbContext))
+            {
+                var rolemanagerService = new RoleManagementService(dbContext, roleManager);
+                var removClaims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, "user.UserName"),
+                   // new Claim("BoursYarAccess","x"),
+                    new Claim("BoursYarAccess","y"),
+                    new Claim("id","user.Id"),
+                    new Claim("notAdd","notAdd")
+                
+                };
+                var role =new IdentityRole("Admin");
+                var creatRole = await rolemanagerService.CreateRoleAsync(role);
+                var authClaims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, "user.UserName"),
+                    new Claim("BoursYarAccess","x"),
+                    new Claim("BoursYarAccess","y"),
+                    new Claim("id","user.Id"),
+                
+                };
+                //Act
+                var resultsAdd = await rolemanagerService.AddClaimsToRoleAsync(role, authClaims);
+              
+                
+                var resultsRemove = await rolemanagerService.RemoveClaimsToRoleAsync(role, removClaims);
+                var remainClaims = await rolemanagerService.GetClaimsByRoleNameAsync("Admin");
+                Assert.True(resultsRemove.Count(rr=>rr.Succeeded==true)==4
+                           &&remainClaims.Count==1&&
+                            remainClaims.FirstOrDefault(c=>c.Type=="BoursYarAccess")?.Value=="x");
+            }
+        }
+        [Fact]
+        public async Task GetClaimsByRoleNameAsync_ReturnnNull()
+        {
+           
+            using (var dbContext = Helpers.CreateDbContext())
+                //using (var userManager = Helpers.CreateUserManager(dbContext))
+            using (var roleManager = Helpers.CreateRoleManager(dbContext))
+            {
+                var rolemanagerService = new RoleManagementService(dbContext, roleManager);
+                var role = new IdentityRole("admin");
+
+                //Act
+                var resultsByName = await rolemanagerService.GetClaimsByRoleNameAsync("admin");
+                var resultsByRole = await rolemanagerService.GetClaimsByRoleAsync(role);
+                //Assert
+                Assert.True(resultsByName==resultsByRole);
+         
+            }
+        }
+        [Fact]
+        public async Task ChangRoleNameAsync_Returnok()
+        {
+           
+            using (var dbContext = Helpers.CreateDbContext())
+                //using (var userManager = Helpers.CreateUserManager(dbContext))
+            using (var roleManager = Helpers.CreateRoleManager(dbContext))
+            {
+                var rolemanagerService = new RoleManagementService(dbContext, roleManager);
+                var role = new IdentityRole("admin");
+                var authClaims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, "user.UserName"),
+                    new Claim("BoursYarAccess","x"),
+                    new Claim("BoursYarAccess","y"),
+                    new Claim("id","user.Id"),
+                
+                };
+
+                //Act
+               await rolemanagerService.CreateRoleAsync(role);
+               var resultAddClaim = await rolemanagerService.AddClaimsToRoleAsync(role, authClaims);
+               var result = await rolemanagerService.ChangRoleNameAsync(role, "NewName");
+                
+                //Assert
+                //var roleBack = await rolemanagerService.GetAllRolesAsync();
+                //var testRole = roleBack.FirstOrDefault(x => x.Name == "NewName");
+                //var resultclaim = await rolemanagerService.GetClaimsByRoleAsync(testRole);
+                Assert.True(result.Succeeded);
+            }
+        }
+        
     }
 
 }
