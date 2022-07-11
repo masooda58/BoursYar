@@ -4,12 +4,9 @@ using Jwt.Identity.Domain.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Jwt.Identity.Api;
-
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
-using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
 
 namespace Jwt.Identity.Test.Helper
 {
@@ -21,12 +18,12 @@ namespace Jwt.Identity.Test.Helper
     /// <para>هر دو برای تست از این کلاس استفاده می کنند<see cref="RoleManagementService"/> و <see cref="RoleManagementService"/> </para>
     /// </remarks>
 
-    public static class DataServiceHelpers
+    public static class Helpers
 
     {
-
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member 'Helpers.CreateDbContext()'
         public static IdentityContext CreateDbContext()
-
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member 'Helpers.CreateDbContext()'
         {
             // Create a new service provider to create a new in-memory database.
             var serviceProvider = new ServiceCollection()
@@ -44,33 +41,32 @@ namespace Jwt.Identity.Test.Helper
             return new IdentityContext(dbContextOptions);
 
         }
-
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member 'Helpers.CreateUserManager(IdentityContext)'
         public static UserManager<ApplicationUser> CreateUserManager(IdentityContext context)
-
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member 'Helpers.CreateUserManager(IdentityContext)'
         {
             var userStore = new UserStore<ApplicationUser>(context);
             var passwordHasher = new PasswordHasher<ApplicationUser>();
             var userValidators = new List<UserValidator<ApplicationUser>> { new UserValidator<ApplicationUser>() };
-            var passwordValidators = new List<PasswordValidator<ApplicationUser>>
-                { new PasswordValidator<ApplicationUser>() };
+            var passwordValidators = new List<PasswordValidator<ApplicationUser>> { new PasswordValidator<ApplicationUser>() };
             var userLogger = (new LoggerFactory()).CreateLogger<UserManager<ApplicationUser>>();
 
             return new UserManager<ApplicationUser>(userStore, null, passwordHasher, userValidators, passwordValidators,
                 null, null, null, userLogger);
         }
-
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member 'Helpers.CreateRoleManager(IdentityContext)'
         public static RoleManager<IdentityRole> CreateRoleManager(IdentityContext context)
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member 'Helpers.CreateRoleManager(IdentityContext)'
         {
-
-    var roleStore = new RoleStore<IdentityRole>(context);
+            var roleStore = new RoleStore<IdentityRole>(context);
             var roleValidators = new List<RoleValidator<IdentityRole>> { new RoleValidator<IdentityRole>() };
             var roleLogger = (new LoggerFactory()).CreateLogger<RoleManager<IdentityRole>>();
 
             return new RoleManager<IdentityRole>(roleStore, roleValidators, null, null, roleLogger);
         }
-
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member 'Helpers.GetTestUsers()'
         public static List<ApplicationUser> GetTestUsers()
-
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member 'Helpers.GetTestUsers()'
         {
             List<ApplicationUser> returnList = new List<ApplicationUser>();
 
@@ -112,7 +108,5 @@ namespace Jwt.Identity.Test.Helper
 
             return returnList;
         }
-
-
     }
 }

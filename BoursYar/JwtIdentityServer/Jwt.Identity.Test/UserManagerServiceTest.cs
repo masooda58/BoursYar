@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Xunit;
-using static Jwt.Identity.Test.Helper.DataServiceHelpers;
+using static Jwt.Identity.Test.Helper.Helpers;
 
 // است Summery این خط برای نداشتن کامنت CS1591
 // در این فایل برای توابع راهنما نوشته نشده است
