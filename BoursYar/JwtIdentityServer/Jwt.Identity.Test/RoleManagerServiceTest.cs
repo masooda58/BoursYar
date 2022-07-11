@@ -26,9 +26,9 @@ namespace Jwt.Identity.Test
         [InlineData("NotExist", null)]
         public async Task GetRoleByNameAsync_TwoRole_ReturnsMatchingRole(string rolename, string expected)
         {
-            await using var dbContext = Helpers.CreateDbContext();
-            using var userManager = Helpers.CreateUserManager(dbContext);
-            using var roleManager = Helpers.CreateRoleManager(dbContext);
+            await using var dbContext = DataServiceHelpers.CreateDbContext();
+            using var userManager = DataServiceHelpers.CreateUserManager(dbContext);
+            using var roleManager = DataServiceHelpers.CreateRoleManager(dbContext);
             // Arrange
             var userManagementService = new UserManagementService(dbContext, userManager);
             var rolemanagerService = new RoleManagementService(dbContext, roleManager);
@@ -56,9 +56,9 @@ namespace Jwt.Identity.Test
         [InlineData("NotExist", true)]
         public async Task CreateRoleAsync_OneRole_ReturnsMatchingRole(string rolename, bool expected)
         {
-            await using var dbContext = Helpers.CreateDbContext();
+            await using var dbContext = DataServiceHelpers.CreateDbContext();
             //using var userManager = Helpers.CreateUserManager(dbContext);
-            using var roleManager = Helpers.CreateRoleManager(dbContext);
+            using var roleManager = DataServiceHelpers.CreateRoleManager(dbContext);
 
             //var userManagementService = new UserManagementService(dbContext, userManager);
             var rolemanagerService = new RoleManagementService(dbContext, roleManager);
@@ -81,9 +81,9 @@ namespace Jwt.Identity.Test
         [InlineData("NotExist", true)]
         public async Task DeletRoleAsync_TwoRole_ReturnsMatchingRole(string rolename, bool expected)
         {
-            await using var dbContext = Helpers.CreateDbContext();
+            await using var dbContext = DataServiceHelpers.CreateDbContext();
             //using var userManager = Helpers.CreateUserManager(dbContext);
-            using var roleManager = Helpers.CreateRoleManager(dbContext);
+            using var roleManager = DataServiceHelpers.CreateRoleManager(dbContext);
 
             //var userManagementService = new UserManagementService(dbContext, userManager);
             var rolemanagerService = new RoleManagementService(dbContext, roleManager);
@@ -102,9 +102,9 @@ namespace Jwt.Identity.Test
 
         public async Task GetAllRolesAsync__ReturnsMatchingRole(string rolename, int expected)
         {
-            using (var dbContext = Helpers.CreateDbContext())
-            using (var userManager = Helpers.CreateUserManager(dbContext))
-            using (var roleManager = Helpers.CreateRoleManager(dbContext))
+            using (var dbContext = DataServiceHelpers.CreateDbContext())
+            using (var userManager = DataServiceHelpers.CreateUserManager(dbContext))
+            using (var roleManager = DataServiceHelpers.CreateRoleManager(dbContext))
             {
                 //var userManagementService = new UserManagementService(dbContext, userManager);
                 var rolemanagerService = new RoleManagementService(dbContext, roleManager);
@@ -125,9 +125,9 @@ namespace Jwt.Identity.Test
         [ClassData(typeof(RoleDataForXuint))]
         public async Task DeleteRolesByNameAsync_ReturnOk(List<string> rolesName)
         {
-            using (var dbContext = Helpers.CreateDbContext())
+            using (var dbContext = DataServiceHelpers.CreateDbContext())
             //using (var userManager = Helpers.CreateUserManager(dbContext))
-            using (var roleManager = Helpers.CreateRoleManager(dbContext))
+            using (var roleManager = DataServiceHelpers.CreateRoleManager(dbContext))
             {
 
                 //var userManagementService = new UserManagementService(dbContext, userManager);
@@ -159,9 +159,9 @@ namespace Jwt.Identity.Test
         [InlineData("Admin", true)]
         public async Task CreateRoleAsync_ByRole_Returnok(string roleName, bool expected)
         {
-            using (var dbContext = Helpers.CreateDbContext())
+            using (var dbContext = DataServiceHelpers.CreateDbContext())
             //using (var userManager = Helpers.CreateUserManager(dbContext))
-            using (var roleManager = Helpers.CreateRoleManager(dbContext))
+            using (var roleManager = DataServiceHelpers.CreateRoleManager(dbContext))
             {
 
                 //var userManagementService = new UserManagementService(dbContext, userManager);
@@ -179,9 +179,9 @@ namespace Jwt.Identity.Test
         [InlineData("Admin", "Admin")]
         public async Task FindRoleByIdAsync_Returnok(string roleName, string expected)
         {
-            using (var dbContext = Helpers.CreateDbContext())
+            using (var dbContext = DataServiceHelpers.CreateDbContext())
             //using (var userManager = Helpers.CreateUserManager(dbContext))
-            using (var roleManager = Helpers.CreateRoleManager(dbContext))
+            using (var roleManager = DataServiceHelpers.CreateRoleManager(dbContext))
             {
 
                 //var userManagementService = new UserManagementService(dbContext, userManager);
@@ -199,9 +199,9 @@ namespace Jwt.Identity.Test
         [Fact]
         public async Task AddClaimToRoleAsync_ReturnOk()
         {
-            using (var dbContext = Helpers.CreateDbContext())
+            using (var dbContext = DataServiceHelpers.CreateDbContext())
             //using (var userManager = Helpers.CreateUserManager(dbContext))
-            using (var roleManager = Helpers.CreateRoleManager(dbContext))
+            using (var roleManager = DataServiceHelpers.CreateRoleManager(dbContext))
             {
                 var rolemanagerService = new RoleManagementService(dbContext, roleManager);
                 var role = new IdentityRole("Admin");
@@ -220,9 +220,9 @@ namespace Jwt.Identity.Test
         [Fact]
         public async Task AddClaimsToRoleAsync_ReturnOk()
         {
-            using (var dbContext = Helpers.CreateDbContext())
+            using (var dbContext = DataServiceHelpers.CreateDbContext())
             //using (var userManager = Helpers.CreateUserManager(dbContext))
-            using (var roleManager = Helpers.CreateRoleManager(dbContext))
+            using (var roleManager = DataServiceHelpers.CreateRoleManager(dbContext))
             {
                 var rolemanagerService = new RoleManagementService(dbContext, roleManager);
                 var role = new IdentityRole("Admin");
@@ -248,9 +248,9 @@ namespace Jwt.Identity.Test
         public async Task RemoveClaimsToRoleAsync_ReturnOk()
         {
 
-            using (var dbContext = Helpers.CreateDbContext())
+            using (var dbContext = DataServiceHelpers.CreateDbContext())
             //using (var userManager = Helpers.CreateUserManager(dbContext))
-            using (var roleManager = Helpers.CreateRoleManager(dbContext))
+            using (var roleManager = DataServiceHelpers.CreateRoleManager(dbContext))
             {
                 var rolemanagerService = new RoleManagementService(dbContext, roleManager);
                 var removClaims = new List<Claim>
@@ -287,9 +287,9 @@ namespace Jwt.Identity.Test
         public async Task GetClaimsByRoleNameAsync_ReturnnNull()
         {
 
-            using (var dbContext = Helpers.CreateDbContext())
+            using (var dbContext = DataServiceHelpers.CreateDbContext())
             //using (var userManager = Helpers.CreateUserManager(dbContext))
-            using (var roleManager = Helpers.CreateRoleManager(dbContext))
+            using (var roleManager = DataServiceHelpers.CreateRoleManager(dbContext))
             {
                 var rolemanagerService = new RoleManagementService(dbContext, roleManager);
                 var role = new IdentityRole("admin");
@@ -306,9 +306,9 @@ namespace Jwt.Identity.Test
         public async Task ChangRoleNameAsync_Returnok()
         {
 
-            using (var dbContext = Helpers.CreateDbContext())
+            using (var dbContext = DataServiceHelpers.CreateDbContext())
             //using (var userManager = Helpers.CreateUserManager(dbContext))
-            using (var roleManager = Helpers.CreateRoleManager(dbContext))
+            using (var roleManager = DataServiceHelpers.CreateRoleManager(dbContext))
             {
                 var rolemanagerService = new RoleManagementService(dbContext, roleManager);
                 var role = new IdentityRole("admin");

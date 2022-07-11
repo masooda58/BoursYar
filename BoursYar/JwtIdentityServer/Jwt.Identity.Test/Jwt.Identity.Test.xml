@@ -4,7 +4,12 @@
         <name>Jwt.Identity.Test</name>
     </assembly>
     <members>
-        <member name="T:Jwt.Identity.Test.Helper.Helpers">
+        <member name="T:Jwt.Identity.Test.Helper.ApiHelper">
+            <summary>
+             API برای پروژه Helper
+            </summary>
+        </member>
+        <member name="T:Jwt.Identity.Test.Helper.DataServiceHelpers">
             <summary>
             می باشد JWT.Identity های پروژه Test برای ساخت Helper این کلاس یک
             </summary>
