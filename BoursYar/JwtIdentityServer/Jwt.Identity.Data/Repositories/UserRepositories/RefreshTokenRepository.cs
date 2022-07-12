@@ -21,6 +21,10 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
         {
             try
             {
+                if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(refreshToken))
+                {
+                    return false;
+                }
                 var result = await _context.AddAsync(new RefreshToken()
 
                 {
@@ -45,7 +49,8 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
 
         public async Task<string> GetUserIdByRefreshTokenAsync(string refreshToken)
         {
-            var result = await _context.RefreshTokens.FirstOrDefaultAsync
+
+            var result =string.IsNullOrEmpty(refreshToken)?null: await _context.RefreshTokens.FirstOrDefaultAsync
                 (r => r.TempRefreshToken == refreshToken);
             return result?.UserId;
         }
@@ -54,7 +59,10 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
         {
             try
             {
-
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return false;
+                }
                 _context.RemoveRange(_context.RefreshTokens.Where(u => u.UserId == userId));
                 var result = await _context.SaveChangesAsync();
                 return true;
