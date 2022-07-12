@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+#pragma warning disable CS1591
 
 namespace Jwt.Identity.Test.Helper
 {
@@ -113,6 +114,10 @@ namespace Jwt.Identity.Test.Helper
             return returnList;
         }
 
+        public static RefreshTokenRepository CreatRefreshTokenRepository(IdentityContext context)
+        {
+            return new RefreshTokenRepository(context);
+        }
 
     }
 }
