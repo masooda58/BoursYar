@@ -21,7 +21,7 @@
 
   },
   "Cors": {
-    "Origin": [ "Https://localhost:3000", "Https://localhost:3001" ],
+    "Origin": [ "Https://localhost:44379", "Https://localhost:3001" ],
     "Method": [ "OPTIONS", "GET", "HEAD", "POST", "PUT", "DELETE" ]
   },
   "AllowedHosts": "*"
