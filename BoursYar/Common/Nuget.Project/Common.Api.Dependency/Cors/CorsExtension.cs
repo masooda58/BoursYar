@@ -20,7 +20,8 @@ namespace Common.Api.Dependency.Cors
                             builder
                                 .AllowAnyOrigin()
                                 .AllowAnyMethod()
-                                .AllowAnyHeader();
+                                .AllowAnyHeader()
+                                .AllowCredentials();
                         });
                 });
                 return services;
