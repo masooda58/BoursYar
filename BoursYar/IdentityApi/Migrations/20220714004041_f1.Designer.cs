@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IdentityApi.Migrations
 {
     [DbContext(typeof(IdentityContext))]
-    [Migration("20220611225005_first")]
-    partial class first
+    [Migration("20220714004041_f1")]
+    partial class f1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -119,7 +119,9 @@ namespace IdentityApi.Migrations
 
                     b.HasKey("IdGuid");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .IsUnique()
+                        .HasFilter("[UserId] IS NOT NULL");
 
                     b.ToTable("RefreshTokenDtos");
                 });
@@ -258,8 +260,8 @@ namespace IdentityApi.Migrations
             modelBuilder.Entity("IdentityApi.Models.Identity.RefreshTokenDto", b =>
                 {
                     b.HasOne("IdentityApi.Models.ApplicationUser", "User")
-                        .WithMany("RefreshTokenDto")
-                        .HasForeignKey("UserId");
+                        .WithOne("RefreshTokenDto")
+                        .HasForeignKey("IdentityApi.Models.Identity.RefreshTokenDto", "UserId");
 
                     b.Navigation("User");
                 });

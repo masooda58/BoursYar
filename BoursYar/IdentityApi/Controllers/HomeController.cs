@@ -92,7 +92,7 @@ namespace IdentityApi.Controllers
                 var token = _tokenGenrator.GetAccessToken(authClaims);
                 await _userManagementService.DeleteRefreshTokenByuserId(user.Id);
                 await _userManagementService.WritRefreshTokenAsync(user.Id, token.RefreshToken);
-                Response.Cookies.Append("jwt", token.AccessToken, new CookieOptions() { HttpOnly = true });
+                Response.Cookies.Append("jwt", token.AccessToken, new CookieOptions() { HttpOnly = true ,Secure = true});
                 var cc = await _uSignInManager.PasswordSignInAsync(model.Username, model.Password, true, true);
                 return Ok(token);
             }
