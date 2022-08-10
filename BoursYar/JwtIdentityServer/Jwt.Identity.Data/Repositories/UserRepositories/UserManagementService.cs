@@ -129,11 +129,16 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
 
         #region CRUD-USER
 
-        public async Task<ApplicationUser> FindUserAsync(string userId)
+        public async Task<ApplicationUser> FindUserAsync(string userIdOrName)
         {
-            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == userId);
-
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == userIdOrName)
+                       ?? await _userManager.Users.FirstOrDefaultAsync(u => u.UserName == userIdOrName);
             return user;
+        }
+
+        public async Task<bool> CheckPasswordAsync(ApplicationUser user, string password)
+        {
+            return await _userManager.CheckPasswordAsync(user, password);
         }
 
         public async Task<IdentityResult> AddUserAsync(ApplicationUser user, string password, string role)

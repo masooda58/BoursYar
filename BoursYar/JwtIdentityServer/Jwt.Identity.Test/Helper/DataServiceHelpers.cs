@@ -4,7 +4,7 @@ using Jwt.Identity.Domain.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Jwt.Identity.Api;
+using Jwt.Identity.BoursYarServer;
 
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;

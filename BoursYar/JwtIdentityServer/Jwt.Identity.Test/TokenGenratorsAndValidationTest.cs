@@ -7,15 +7,17 @@ using System.Text;
 using System.Threading.Tasks;
 using BoursYar.Authorization.repositories;
 using Common.Jwt.Authentication;
-using Jwt.Identity.Api.Services.TokenServices;
 using Jwt.Identity.Test.Helper;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xunit;
+#pragma warning disable CS1591
 
 namespace Jwt.Identity.Test
 {
+
     public class TokenGenratorsAndValidationTest
+
     {
         [Fact]
         public async Task TokenGenrators_CreatToken_returnJwtToken()

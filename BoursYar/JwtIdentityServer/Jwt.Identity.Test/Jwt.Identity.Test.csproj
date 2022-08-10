@@ -48,7 +48,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Jwt.Identity.Api\Jwt.Identity.Api.csproj" />
+    <ProjectReference Include="..\Jwt.Identity.Api\Jwt.Identity.BoursYarServer.csproj" />
+    <ProjectReference Include="..\Jwt.Identity.BoursYarServer\Jwt.Identity.BoursYarServer.csproj" />
     <ProjectReference Include="..\Jwt.Identity.Data\Jwt.Identity.Data.csproj" />
   </ItemGroup>
   <PropertyGroup>

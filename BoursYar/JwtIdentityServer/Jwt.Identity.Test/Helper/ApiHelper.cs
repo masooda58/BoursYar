@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Common.Jwt.Authentication;
-using Jwt.Identity.Api.Services.TokenServices;
+using Jwt.Identity.BoursYarServer.Services.TokenServices;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
