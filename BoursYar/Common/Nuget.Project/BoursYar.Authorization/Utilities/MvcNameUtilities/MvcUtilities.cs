@@ -8,8 +8,17 @@ using System.Reflection;
 
 namespace BoursYar.Authorization.Utilities.MvcNameUtilities
 {
+    /// <summary>
+    /// دو تابع دارد 
+    /// </summary>
     public class MvcUtilities : IMvcUtilities
     {
+        /// <summary>
+        /// mvcInfo  , ActionThatRequireClaimBaseAuthorazition
+        /// هر دو در سازنده مدل مقدار دهی می شوند
+        /// </summary>
+        /// <inheritdoc cref="IMvcUtilities"/>
+        /// <param name="actionDescriptorCollectionProvider"></param>
         public MvcUtilities(IActionDescriptorCollectionProvider actionDescriptorCollectionProvider)
         {
             var mvcInfo = new List<MvcNamesModel>();
@@ -46,8 +55,13 @@ namespace BoursYar.Authorization.Utilities.MvcNameUtilities
         }
 
 
-
+        /// <summary>
+        /// <inheritdoc cref="IMvcUtilities"/>
+        /// </summary>
         public ImmutableHashSet<MvcNamesModel> MvcInfo { get; }
+        /// <summary>
+        /// <inheritdoc cref="IMvcUtilities"/>
+        /// </summary>
         public ImmutableHashSet<MvcNamesModel> ActionThatRequireClaimBaseAuthorazition { get; }
     }
 }
