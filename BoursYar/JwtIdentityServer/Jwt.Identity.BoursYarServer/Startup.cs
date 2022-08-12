@@ -1,3 +1,4 @@
+using System;
 using BoursYar.Authorization.IOC;
 using Common.Api.Dependency.Cors;
 using Common.Api.Dependency.Swagger;
@@ -15,6 +16,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using PersianTranslation.Identity;
 
 namespace Jwt.Identity.BoursYarServer
 {
@@ -35,10 +37,28 @@ namespace Jwt.Identity.BoursYarServer
                     Configuration.GetConnectionString("IdetityDb")), ServiceLifetime.Transient);
 
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+                {
+                    // Password settings
+                    options.Password.RequireDigit = false;
+                    options.Password.RequiredLength = 1;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequireUppercase = false;
+                    options.Password.RequireLowercase = false;
+                    options.Password.RequiredUniqueChars = 1;
+
+                    // Lockout settings
+                    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
+                    options.Lockout.MaxFailedAccessAttempts = 10;
+                    options.Lockout.AllowedForNewUsers = true;
+
+                    // User settings
+                    options.User.RequireUniqueEmail = true;
+                })
                 .AddEntityFrameworkStores<IdentityContext>()
                 .AddDefaultUI()
-                .AddDefaultTokenProviders();
+                .AddDefaultTokenProviders()
+                .AddErrorDescriber<PersianIdentityErrorDescriber>();
 
             #region Authentication
             //Nuget.Project:Common.Jwt.Authentication
@@ -84,7 +104,7 @@ namespace Jwt.Identity.BoursYarServer
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Jwt.Identity.Api v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Jwt.Identity.BoursYarServer v1"));
             }
             app.UseCors();
             app.UseHttpsRedirection();

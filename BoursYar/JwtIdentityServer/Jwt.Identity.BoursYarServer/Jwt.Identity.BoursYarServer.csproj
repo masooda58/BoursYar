@@ -35,6 +35,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Jwt.Identity.Data\Jwt.Identity.Data.csproj" />
     <ProjectReference Include="..\Jwt.Identity.Domain\Jwt.Identity.Domain.csproj" />
+    <ProjectReference Include="..\PersianTranslation\PersianTranslation.csproj" />
   </ItemGroup>
 
 </Project>

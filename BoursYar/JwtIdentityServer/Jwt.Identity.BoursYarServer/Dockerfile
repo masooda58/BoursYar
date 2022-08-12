@@ -10,16 +10,16 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
-COPY ["Jwt.Identity.Api/Jwt.Identity.Api.csproj", "Jwt.Identity.Api/"]
-RUN dotnet restore "Jwt.Identity.Api/Jwt.Identity.Api.csproj"
+COPY ["Jwt.Identity.BoursYarServer/Jwt.Identity.BoursYarServer.csproj", "Jwt.Identity.BoursYarServer/"]
+RUN dotnet restore "Jwt.Identity.BoursYarServer/Jwt.Identity.BoursYarServer.csproj"
 COPY . .
-WORKDIR "/src/Jwt.Identity.Api"
-RUN dotnet build "Jwt.Identity.Api.csproj" -c Release -o /app/build
+WORKDIR "/src/Jwt.Identity.BoursYarServer"
+RUN dotnet build "Jwt.Identity.BoursYarServer.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "Jwt.Identity.Api.csproj" -c Release -o /app/publish
+RUN dotnet publish "Jwt.Identity.BoursYarServer.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Jwt.Identity.Api.dll"]
+ENTRYPOINT ["dotnet", "Jwt.Identity.BoursYarServer.dll"]

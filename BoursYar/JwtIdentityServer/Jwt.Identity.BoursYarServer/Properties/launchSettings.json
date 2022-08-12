@@ -17,7 +17,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Jwt.Identity.Api": {
+    "Jwt.Identity.BoursYarServer": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "swagger",
