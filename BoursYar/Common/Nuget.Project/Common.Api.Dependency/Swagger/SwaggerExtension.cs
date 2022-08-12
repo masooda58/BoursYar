@@ -6,8 +6,25 @@ using System.Collections.Generic;
 
 namespace Common.Api.Dependency.Swagger
 {
+    /// <summary>
+    /// SwaggerExtension with Authorize
+    /// </summary>
     public static class SwaggerExtension
     {
+        /// <summary>
+        /// Swagger تنظیمات
+        /// </summary>
+        /// <remarks>
+        /// استفاده می شود Extension از این Authorize با کلید Swagger جهت استفاده از
+        /// </remarks>
+        /// <example>
+        /// نحوه استفاده
+        /// <code>
+        /// services.AddOurSwagger();
+        /// </code>
+        /// </example>
+        /// <param name="services">services</param>
+        /// <returns>services</returns>
         public static IServiceCollection AddOurSwagger(this IServiceCollection services)
         {
             services.AddSwaggerGen(c =>
@@ -57,9 +74,9 @@ namespace Common.Api.Dependency.Swagger
     }
 }
 
-#region How use it
+//#region How use it
 
-//services.AddOurSwagger();
+////services.AddOurSwagger();
 
 
-#endregion
+//#endregion

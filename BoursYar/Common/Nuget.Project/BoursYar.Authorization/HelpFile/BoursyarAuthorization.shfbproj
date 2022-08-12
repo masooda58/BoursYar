@@ -21,8 +21,12 @@
     <DocumentationSources>
       <DocumentationSource sourceFile="..\bin\Debug\net5.0\BoursYar.Authorization.dll" />
 <DocumentationSource sourceFile="..\bin\Debug\net5.0\BoursYar.Authorization.xml" /></DocumentationSources>
-    <ProjectSummary>سرویس زیر را اضافه می کنیم StartUp در
-  services.AddBoursYarAuthorize%28%29%3b
+    <ProjectSummary>
+    </ProjectSummary>
+    <WarnOnMissingSourceContext>False</WarnOnMissingSourceContext>
+    <NamespaceSummaries>
+      <NamespaceSummaryItem name="(global)" isDocumented="True" xmlns="">سرویس زیر را اضافه می کنیم StartUp در
+  services.AddBoursYarAuthorize();
   ...................................................
   
  IClaimBaseAuthorizationUtilities.cs 
@@ -31,8 +35,8 @@
 IMvcUtilities.cs
  را دارندAttribute BoursYarAuthoriz دو متغیر دارد یکی برای همه اجزا و دیگری اجزای که
  ....................................................
-[BoursYarAuthoriz=%28ClaimToAuthoriz=&amp;quot%3bAction Name&amp;quot%3b%29] اضافه کردن</ProjectSummary>
-    <WarnOnMissingSourceContext>False</WarnOnMissingSourceContext>
+[BoursYarAuthoriz=(ClaimToAuthoriz="Action Name")] اضافه کردن</NamespaceSummaryItem>
+    </NamespaceSummaries>
   </PropertyGroup>
   <!-- There are no properties for these groups.  AnyCPU needs to appear in order for Visual Studio to perform
 			 the build.  The others are optional common platform types that may appear. -->

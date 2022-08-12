@@ -4,8 +4,31 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Common.Api.Dependency.Cors
 {
+    /// <summary>
+    ///  CorsExtension 
+    /// </summary>
     public static class CorsExtension
     {
+        /// <summary>
+        /// // های مورد نیاز Cors اضافه کردن 
+        /// </summary>
+        /// <param name="services">IServiceCollection</param>
+        /// <param name="corsOrigin"> string[] corsOrigin</param>
+        /// <param name="corsMethod">string[] corsMethod</param>
+        /// <example>
+        /// in AppSetting.Json file
+        /// <code>
+        /// "Cors": {
+        /// "Origin": [ "Https://localhost:3000", "Https://localhost:3001" ],
+        /// "Method": [ "OPTIONS","GET","HEAD","POST","PUT","DELETE" ]
+        /// },
+        /// </code>
+        /// i serviceConfig StartUp.cs file
+        /// var corsOrigin = Configuration.GetSection("Cors:Origin").Get&lt;string[]&gt;();
+        /// var corsMethod = Configuration.GetSection("Cors:Method").Get&lt;string[]&gt;();
+        /// services.AddOurCors(corsOrigin, corsMethod);
+        /// </example>
+        /// <returns> service </returns>
 
         public static IServiceCollection AddOurCors(this IServiceCollection services,
             string[] corsOrigin, string[] corsMethod)
@@ -81,16 +104,16 @@ namespace Common.Api.Dependency.Cors
 }
 //نحوه استفاده
 
-#region AppSettingCors
-//"Cors": {
-//"Origin": [ "Https://localhost:3000", "Https://localhost:3001" ],
-//"Method": [ "OPTIONS","GET","HEAD","POST","PUT","DELETE" ]
-//},
-#endregion
+//#region AppSettingCors
+////"Cors": {
+////"Origin": [ "Https://localhost:3000", "Https://localhost:3001" ],
+////"Method": [ "OPTIONS","GET","HEAD","POST","PUT","DELETE" ]
+////},
+//#endregion
 
-#region ServiceConfig
-//var corsOrigin = Configuration.GetSection("Cors:Origin").Get<string[]>();
-//var corsMethod = Configuration.GetSection("Cors:Method").Get<string[]>();
-//services.AddOurCors(corsOrigin, corsMethod);
-#endregion
+//#region ServiceConfig
+////var corsOrigin = Configuration.GetSection("Cors:Origin").Get<string[]>();
+////var corsMethod = Configuration.GetSection("Cors:Method").Get<string[]>();
+////services.AddOurCors(corsOrigin, corsMethod);
+//#endregion
 
