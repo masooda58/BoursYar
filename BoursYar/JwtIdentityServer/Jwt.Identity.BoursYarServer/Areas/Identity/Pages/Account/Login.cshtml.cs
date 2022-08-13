@@ -45,20 +45,26 @@ namespace Jwt.Identity.BoursYarServer.Areas.Identity.Pages.Account
 
         public class InputModel
         {
-            [Required]
-            [EmailAddress]
+            [Required(ErrorMessage = "لطفا {0} را وارد نمایید")]
+            [EmailAddress(ErrorMessage = "{0} وارد شده صحیح نمی باشد")]
+            [Display(Name = "ایمیل")]
             public string Email { get; set; }
 
-            [Required]
+            [Required(ErrorMessage = "لطفا {0} را وارد نمایید")]
             [DataType(DataType.Password)]
+            [Display(Name = "رمز عبور")]
             public string Password { get; set; }
 
-            [Display(Name = "Remember me?")]
+            [Display(Name = "مرا بخاطر بسپار")]
             public bool RememberMe { get; set; }
         }
 
         public async Task OnGetAsync(string returnUrl = null)
         {
+            if (_signInManager.IsSignedIn(User))
+            {
+                RedirectToPage("/");
+            }
             if (!string.IsNullOrEmpty(ErrorMessage))
             {
                 ModelState.AddModelError(string.Empty, ErrorMessage);
@@ -82,7 +88,8 @@ namespace Jwt.Identity.BoursYarServer.Areas.Identity.Pages.Account
             {
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: true);
+                var user = await _userManager.FindByEmailAsync(Input.Email);
+                var result = await _signInManager.PasswordSignInAsync(user, Input.Password, Input.RememberMe, lockoutOnFailure: true);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
@@ -99,7 +106,7 @@ namespace Jwt.Identity.BoursYarServer.Areas.Identity.Pages.Account
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    ModelState.AddModelError(string.Empty, "نام کاربری یا رمز عبور اشتباه است");
                     return Page();
                 }
             }
