@@ -48,6 +48,7 @@ namespace Jwt.Identity.BoursYarServer.Areas.Identity.Pages.Account
             [Required(ErrorMessage = "لطفا {0} را وارد نمایید")]
             [EmailAddress(ErrorMessage = "{0} وارد شده صحیح نمی باشد")]
             [Display(Name = "ایمیل")]
+            
             public string Email { get; set; }
 
             [Required(ErrorMessage = "لطفا {0} را وارد نمایید")]
@@ -83,7 +84,11 @@ namespace Jwt.Identity.BoursYarServer.Areas.Identity.Pages.Account
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl = returnUrl ?? Url.Content("~/");
-
+            //if(String.IsNullOrEmpty(model.EmailOrPhoneNumber)) 
+            //    return error message;
+            //if(model.EmailOrPhoneNumber.Contains("@"))
+            //    return SignInWithEmail(model);
+            //else return SignInWithPhone(model);
             if (ModelState.IsValid)
             {
                 // This doesn't count login failures towards account lockout
@@ -143,5 +148,7 @@ namespace Jwt.Identity.BoursYarServer.Areas.Identity.Pages.Account
             ModelState.AddModelError(string.Empty, "Verification email sent. Please check your email.");
             return Page();
         }
+
+
     }
 }

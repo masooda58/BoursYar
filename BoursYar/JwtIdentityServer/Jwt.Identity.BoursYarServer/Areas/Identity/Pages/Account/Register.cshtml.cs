@@ -38,6 +38,7 @@ namespace Jwt.Identity.BoursYarServer.Areas.Identity.Pages.Account
         }
 
         [BindProperty]
+
         public InputModel Input { get; set; }
 
         public string ReturnUrl { get; set; }
@@ -49,6 +50,21 @@ namespace Jwt.Identity.BoursYarServer.Areas.Identity.Pages.Account
             [Required(ErrorMessage = "لطفا {0} را وارد نمایید")]
             [EmailAddress(ErrorMessage = "{0} وارد شده صحیح نمی باشد")]
             [Display(Name = "ایمیل")]
+
+            //[PageRemote(
+            //    ErrorMessage = "این ایمیل قبلا استفاده شده است",
+            //    HttpMethod = "post",
+            //    PageHandler = "CheckEmail",
+            //    AdditionalFields = "__RequestVerificationToken"
+            //)]
+            [Remote(
+                "checkemail",
+                "WeatherForecast",
+                ErrorMessage = "Email Address already exists",
+                AdditionalFields = "__RequestVerificationToken",
+                HttpMethod = "post"
+            )]
+
             public string Email { get; set; }
 
             [Required(ErrorMessage = "لطفا {0} را وارد نمایید")]
@@ -128,5 +144,12 @@ namespace Jwt.Identity.BoursYarServer.Areas.Identity.Pages.Account
             // If we got this far, something failed, redisplay form
             return Page();
         }
+        public JsonResult OnPostCheckEmail()
+        {
+            var user = _userManager.FindByEmailAsync(Input.Email).Result;
+            var valid = user == null;
+            return new JsonResult(valid);
+        }
+ 
     }
 }

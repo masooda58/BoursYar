@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-
+using Jwt.Identity.BoursYarServer.Areas.Identity.Pages.Account;
 using Jwt.Identity.Domain.Interfaces.ITokenServices;
 using Jwt.Identity.Domain.Interfaces.IUserRepositories;
 using Jwt.Identity.Domain.Models;
@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+
 
 namespace Jwt.Identity.BoursYarServer.Controllers
 {
@@ -45,6 +46,15 @@ namespace Jwt.Identity.BoursYarServer.Controllers
             _signInManager = signInManager;
 
             //_userManager = userManager;
+        }
+        [HttpPost]
+       [ValidateAntiForgeryToken]
+        public JsonResult CheckEmail(string email)
+        { 
+            var user = _userManager.FindByEmailAsync("email").Result;
+            var valid = user == null;
+            return new JsonResult(valid);
+
         }
 
         [HttpGet]
@@ -97,32 +107,32 @@ namespace Jwt.Identity.BoursYarServer.Controllers
             }
             return Unauthorized();
         }
-        [HttpPost]
-        [Route("register")]
+        //[HttpPost]
+        //[Route("register")]
 
-        public async Task<IActionResult> Register([FromBody] RegisterModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                var errorList = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage));
-                return BadRequest(new{errorList});
-            }
-            {
+       // public async Task<IActionResult> Register([FromBody] RegisterModel model)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        var errorList = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage));
+        //        return BadRequest(new{errorList});
+        //    }
+        //    {
             
               
-                var user = new ApplicationUser()
-                {
-                    Email = model.Email,
-                    SecurityStamp = Guid.NewGuid().ToString(),
-                    UserName = model.Username
-                };
-                var result = await _userManager.CreateAsync(user, model.Password);
-                if (!result.Succeeded)
-                    return Ok("error");
+        //        var user = new ApplicationUser()
+        //        {
+        //            Email = model.Email,
+        //            SecurityStamp = Guid.NewGuid().ToString(),
+        //            UserName = model.Username
+        //        };
+        //        var result = await _userManager.CreateAsync(user, model.Password);
+        //        if (!result.Succeeded)
+        //            return Ok("error");
 
-                return Ok("user creat");
-            }
-        }
+        //        return Ok("user creat");
+        //    }
+        //}
     }
     
 
@@ -132,17 +142,17 @@ namespace Jwt.Identity.BoursYarServer.Controllers
         public string password { get; set; }
     }
   
-        public class RegisterModel
-        {
-            [Required(ErrorMessage = "نام کاربری را وراد کنید")]
-            public string? Username { get; set; }
+        //public class RegisterModel
+        //{
+        //    [Required(ErrorMessage = "نام کاربری را وراد کنید")]
+        //    public string? Username { get; set; }
 
-            [EmailAddress(ErrorMessage = "ایمیل معتبر نیست")]
-            [Required(ErrorMessage = "ایمیل را وارد کنید")]
-            public string? Email { get; set; }
+        //    [EmailAddress(ErrorMessage = "ایمیل معتبر نیست")]
+        //    [Required(ErrorMessage = "ایمیل را وارد کنید")]
+        //    public string? Email { get; set; }
 
-            [Required(ErrorMessage = "Password is required")]
-            public string? Password { get; set; }
-        }
+        //    [Required(ErrorMessage = "Password is required")]
+        //    public string? Password { get; set; }
+        //}
  
 }

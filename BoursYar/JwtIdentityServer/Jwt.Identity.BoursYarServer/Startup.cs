@@ -32,11 +32,14 @@ namespace Jwt.Identity.BoursYarServer
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            #region DbContext
             services.AddDbContext<IdentityContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("IdetityDb")), ServiceLifetime.Transient);
 
+            #endregion
 
+            #region Identity
             services.AddIdentity<ApplicationUser,IdentityRole>(options =>
                 {
                     // Password settings
@@ -65,6 +68,10 @@ namespace Jwt.Identity.BoursYarServer
                 .AddDefaultUI()
                 .AddDefaultTokenProviders()
                 .AddErrorDescriber<PersianIdentityErrorDescriber>();
+
+            #endregion
+
+            #region Authentication
             services.AddAuthentication()
                 .AddCookie(options =>
                 {
@@ -72,15 +79,17 @@ namespace Jwt.Identity.BoursYarServer
                     options.AccessDeniedPath = "Identity/Account/AccessDenied/";
                     options.LogoutPath = "Identity/Account/Logout/";
                 });
-            #region Authentication
-            ////Nuget.Project:Common.Jwt.Authentication
+
+            #endregion
+
+            #region JwtTokenSetting
             JwtSettingModel jwtSetting = new JwtSettingModel();
             Configuration.Bind("JWT", jwtSetting);
-            //services.AddOurAuthentication(jwtSetting);
+           
             services.AddSingleton(jwtSetting);
+            
+
             #endregion
-            services.AddControllersWithViews();
-            services.AddRazorPages();
 
             #region Swaager&Cors
             //Nuget.Project:Common.Api.Dependency
@@ -91,12 +100,8 @@ namespace Jwt.Identity.BoursYarServer
 
             #endregion
 
-            #region Authorization
-
-            //Nuget.Project:BoursYar.Authorization
-            //services.AddBoursYarAuthorize();
-
-            #endregion
+            services.AddControllersWithViews();
+            services.AddRazorPages();
             services.AddHttpContextAccessor();
 
             #region dependancy
