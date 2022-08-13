@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
-using Common.Jwt.Authentication;
+
 using Jwt.Identity.Domain.Interfaces.ITokenServices;
 using Microsoft.IdentityModel.Tokens;
 

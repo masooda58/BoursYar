@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using BoursYar.Authorization.repositories;
+
 using Jwt.Identity.Domain.Interfaces.ITokenServices;
 using Jwt.Identity.Domain.Models;
 
@@ -16,8 +16,8 @@ namespace Jwt.Identity.BoursYarServer.Services.TokenServices
             var authClaims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, "user.UserName"),
-                new Claim(ClaimStore.BoursYarAccess,"x"),
-                new Claim(ClaimStore.BoursYarAccess,"y"),
+                new Claim("BoursYarAccess","x"),
+                new Claim("BoursYarAccess","y"),
                 new Claim("id","user.Id"),
 
             };

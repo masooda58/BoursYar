@@ -1,8 +1,8 @@
 using System;
-using BoursYar.Authorization.IOC;
+
 using Common.Api.Dependency.Cors;
 using Common.Api.Dependency.Swagger;
-using Common.Jwt.Authentication;
+
 using Jwt.Identity.BoursYarServer.Services.TokenServices;
 using Jwt.Identity.Data.Context;
 using Jwt.Identity.Data.Repositories.UserRepositories;
@@ -37,7 +37,7 @@ namespace Jwt.Identity.BoursYarServer
                     Configuration.GetConnectionString("IdetityDb")), ServiceLifetime.Transient);
 
 
-            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            services.AddIdentity<ApplicationUser,IdentityRole>(options =>
                 {
                     // Password settings
                     options.Password.RequireDigit = false;
@@ -54,17 +54,30 @@ namespace Jwt.Identity.BoursYarServer
 
                     // User settings
                     options.User.RequireUniqueEmail = true;
+                    
+                    // SignIn settings
+                    options.SignIn.RequireConfirmedEmail = false;
+                    options.SignIn.RequireConfirmedPhoneNumber = false;
+
+
                 })
                 .AddEntityFrameworkStores<IdentityContext>()
                 .AddDefaultUI()
                 .AddDefaultTokenProviders()
                 .AddErrorDescriber<PersianIdentityErrorDescriber>();
-
+            services.AddAuthentication()
+                .AddCookie(options =>
+                {
+                    options.LoginPath = "Identity/Account/Login/";
+                    options.AccessDeniedPath = "Identity/Account/AccessDenied/";
+                    options.LogoutPath = "Identity/Account/Logout/";
+                });
             #region Authentication
-            //Nuget.Project:Common.Jwt.Authentication
+            ////Nuget.Project:Common.Jwt.Authentication
             JwtSettingModel jwtSetting = new JwtSettingModel();
             Configuration.Bind("JWT", jwtSetting);
-            services.AddOurAuthentication(jwtSetting);
+            //services.AddOurAuthentication(jwtSetting);
+            services.AddSingleton(jwtSetting);
             #endregion
             services.AddControllersWithViews();
             services.AddRazorPages();
@@ -81,7 +94,7 @@ namespace Jwt.Identity.BoursYarServer
             #region Authorization
 
             //Nuget.Project:BoursYar.Authorization
-            services.AddBoursYarAuthorize();
+            //services.AddBoursYarAuthorize();
 
             #endregion
             services.AddHttpContextAccessor();
@@ -111,7 +124,7 @@ namespace Jwt.Identity.BoursYarServer
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
