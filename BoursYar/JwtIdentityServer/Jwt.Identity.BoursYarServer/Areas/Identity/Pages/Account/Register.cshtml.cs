@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using PersianTranslation.DataAnnotations;
 
 namespace Jwt.Identity.BoursYarServer.Areas.Identity.Pages.Account
 {
@@ -64,7 +65,7 @@ namespace Jwt.Identity.BoursYarServer.Areas.Identity.Pages.Account
                 AdditionalFields = "__RequestVerificationToken",
                 HttpMethod = "post"
             )]
-
+            [PhoneOrEmail]
             public string Email { get; set; }
 
             [Required(ErrorMessage = "لطفا {0} را وارد نمایید")]
@@ -147,6 +148,7 @@ namespace Jwt.Identity.BoursYarServer.Areas.Identity.Pages.Account
         public JsonResult OnPostCheckEmail()
         {
             var user = _userManager.FindByEmailAsync(Input.Email).Result;
+          
             var valid = user == null;
             return new JsonResult(valid);
         }

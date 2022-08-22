@@ -49,9 +49,10 @@ namespace Jwt.Identity.BoursYarServer.Controllers
         }
         [HttpPost]
        [ValidateAntiForgeryToken]
-        public JsonResult CheckEmail(string email)
-        { 
-            var user = _userManager.FindByEmailAsync("email").Result;
+        public JsonResult CheckEmail([FromForm][Bind( Prefix = "Input.Email")] string email)
+        {
+            
+            var user = _userManager.FindByEmailAsync(email).Result;
             var valid = user == null;
             return new JsonResult(valid);
 

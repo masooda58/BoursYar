@@ -14,6 +14,7 @@ namespace Jwt.Identity.BoursYarServer.Areas.Identity
                 {
                     // Remote Validation جهت استفاده از
                     options.FormFieldName = "Input.__RequestVerificationToken";
+                    
                 });
             });
         }
