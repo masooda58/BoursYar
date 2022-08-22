@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace PersianTranslation.DataAnnotations
 {
-    class PhoneOrEmailAttribute:ValidationAttribute
+  public  class PhoneOrEmailAttribute:ValidationAttribute
     {
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
