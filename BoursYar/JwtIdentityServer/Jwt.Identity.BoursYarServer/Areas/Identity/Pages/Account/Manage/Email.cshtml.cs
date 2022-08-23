@@ -41,9 +41,9 @@ namespace Jwt.Identity.BoursYarServer.Areas.Identity.Pages.Account.Manage
 
         public class InputModel
         {
-            [Required]
+            [Required(ErrorMessage = "لطفا {0} را وارد نمایید")]
             [EmailAddress]
-            [Display(Name = "New email")]
+            [Display(Name = "ایمیل جدید")]
             public string NewEmail { get; set; }
         }
 
@@ -65,6 +65,7 @@ namespace Jwt.Identity.BoursYarServer.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
+               
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
@@ -98,14 +99,14 @@ namespace Jwt.Identity.BoursYarServer.Areas.Identity.Pages.Account.Manage
                     protocol: Request.Scheme);
                 await _emailSender.SendEmailAsync(
                     Input.NewEmail,
-                    "Confirm your email",
-                    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    "تاییده تغییر ایمیل",
+                    $"جهت تاید اینجا <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>کلیک نمایید</a>.");
 
-                StatusMessage = "Confirmation link to change email sent. Please check your email.";
+                StatusMessage = "لینک تایید ایمیل ارسال شد. لطفا ایمیل خود را چک بفرمایید";
                 return RedirectToPage();
             }
 
-            StatusMessage = "Your email is unchanged.";
+            StatusMessage = "ایمیل شما تغییر نکرد";
             return RedirectToPage();
         }
 
@@ -134,10 +135,10 @@ namespace Jwt.Identity.BoursYarServer.Areas.Identity.Pages.Account.Manage
                 protocol: Request.Scheme);
             await _emailSender.SendEmailAsync(
                 email,
-                "Confirm your email",
-                $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                "تایید ایمیل",
+                $"جهت تایید ایمیل اینجا <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>کلیک فرمایید</a>.");
 
-            StatusMessage = "Verification email sent. Please check your email.";
+            StatusMessage = "ایمیل تایید ارسال گردید . لطفا ایمیل خود را چک بفرمایید";
             return RedirectToPage();
         }
     }

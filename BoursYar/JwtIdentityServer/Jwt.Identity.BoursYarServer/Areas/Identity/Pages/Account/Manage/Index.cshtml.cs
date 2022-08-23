@@ -5,6 +5,8 @@ using Jwt.Identity.Domain.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using PersianTranslation.DataAnnotations;
+
 
 namespace Jwt.Identity.BoursYarServer.Areas.Identity.Pages.Account.Manage
 {
@@ -20,7 +22,7 @@ namespace Jwt.Identity.BoursYarServer.Areas.Identity.Pages.Account.Manage
             _userManager = userManager;
             _signInManager = signInManager;
         }
-
+        [Display(Name = "نام کاربری")]
         public string Username { get; set; }
 
         [TempData]
@@ -31,8 +33,9 @@ namespace Jwt.Identity.BoursYarServer.Areas.Identity.Pages.Account.Manage
 
         public class InputModel
         {
-            [Phone]
-            [Display(Name = "Phone number")]
+            
+            [Display(Name = "شماره موبایل")]
+            [MobileNo]
             public string PhoneNumber { get; set; }
         }
 

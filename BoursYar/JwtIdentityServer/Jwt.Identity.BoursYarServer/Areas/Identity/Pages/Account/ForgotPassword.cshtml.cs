@@ -29,8 +29,9 @@ namespace Jwt.Identity.BoursYarServer.Areas.Identity.Pages.Account
 
         public class InputModel
         {
-            [Required]
-            [EmailAddress]
+            [Required(ErrorMessage = "لطفا {0} را وارد نمایید")]
+            [EmailAddress(ErrorMessage = "{0} وارد شده صحیح نمی باشد")]
+            [Display(Name = "ایمیل")]
             public string Email { get; set; }
         }
 
@@ -58,7 +59,7 @@ namespace Jwt.Identity.BoursYarServer.Areas.Identity.Pages.Account
                 await _emailSender.SendEmailAsync(
                     Input.Email,
                     "Reset Password",
-                    $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    $"جهت ریست پسورد خود اینجا<a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>کلیک نمایید</a>.");
 
                 return RedirectToPage("./ForgotPasswordConfirmation");
             }

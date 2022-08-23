@@ -30,8 +30,9 @@ namespace Jwt.Identity.BoursYarServer.Areas.Identity.Pages.Account.Manage
 
         public class InputModel
         {
-            [Required]
-            [DataType(DataType.Password)]
+            [Required(ErrorMessage = "لطفا {0} را وارد نمایید")]
+            
+            [Display(Name = "رمز عبور")]
             public string Password { get; set; }
         }
 
@@ -42,7 +43,8 @@ namespace Jwt.Identity.BoursYarServer.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return NotFound();
+               // return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
             RequirePassword = await _userManager.HasPasswordAsync(user);
@@ -54,7 +56,8 @@ namespace Jwt.Identity.BoursYarServer.Areas.Identity.Pages.Account.Manage
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                return NotFound();
+                // return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
             RequirePassword = await _userManager.HasPasswordAsync(user);
@@ -62,7 +65,7 @@ namespace Jwt.Identity.BoursYarServer.Areas.Identity.Pages.Account.Manage
             {
                 if (!await _userManager.CheckPasswordAsync(user, Input.Password))
                 {
-                    ModelState.AddModelError(string.Empty, "Incorrect password.");
+                    ModelState.AddModelError(string.Empty, "رمز صحیح نمی باشد");
                     return Page();
                 }
             }

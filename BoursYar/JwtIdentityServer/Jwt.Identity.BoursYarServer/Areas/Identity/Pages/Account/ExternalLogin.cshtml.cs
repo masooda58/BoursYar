@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -46,8 +47,9 @@ namespace Jwt.Identity.BoursYarServer.Areas.Identity.Pages.Account
 
         public class InputModel
         {
-            [Required]
-            [EmailAddress]
+                  [Required(ErrorMessage = "لطفا {0} را وارد نمایید")]
+            [EmailAddress(ErrorMessage = "{0} وارد شده صحیح نمی باشد")]
+            [Display(Name = "ایمیل")]
             public string Email { get; set; }
         }
 
@@ -75,7 +77,8 @@ namespace Jwt.Identity.BoursYarServer.Areas.Identity.Pages.Account
             var info = await _signInManager.GetExternalLoginInfoAsync();
             if (info == null)
             {
-                ErrorMessage = "Error loading external login information.";
+                //ErrorMessage = "Error loading external login information.";
+                ErrorMessage = "خطا در دریافت اطلاعات ";
                 return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
 
@@ -113,7 +116,8 @@ namespace Jwt.Identity.BoursYarServer.Areas.Identity.Pages.Account
             var info = await _signInManager.GetExternalLoginInfoAsync();
             if (info == null)
             {
-                ErrorMessage = "Error loading external login information during confirmation.";
+                //ErrorMessage = "Error loading external login information during confirmation.";
+                ErrorMessage = "خطای دریافت اطلاعات در زمان تایید";
                 return RedirectToPage("./Login", new { ReturnUrl = returnUrl });
             }
 
@@ -138,8 +142,8 @@ namespace Jwt.Identity.BoursYarServer.Areas.Identity.Pages.Account
                             values: new { area = "Identity", userId = userId, code = code },
                             protocol: Request.Scheme);
 
-                        await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                            $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                        await _emailSender.SendEmailAsync(Input.Email, "تاییدیه ایمیل",
+                            $"جهت تایید ایمیل اینجا <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>کلیک نمایید</a>.");
 
                         return LocalRedirect(returnUrl);
                     }
