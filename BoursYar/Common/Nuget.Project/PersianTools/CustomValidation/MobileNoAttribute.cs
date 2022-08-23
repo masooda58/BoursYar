@@ -2,11 +2,9 @@
 
 namespace PersianTools.Core.CustomValidation
 {
-    class MobileNoAttribute : ValidationAttribute
+   public class MobileNoAttribute : ValidationAttribute
     {
-        protected MobileNoAttribute()
-        {
-        }
+      
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
             if (value.ToString().IsMobileNoValid())
