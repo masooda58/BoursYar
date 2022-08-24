@@ -2,10 +2,11 @@ using System;
 
 using Common.Api.Dependency.Cors;
 using Common.Api.Dependency.Swagger;
-
+using Jwt.Identity.BoursYarServer.Services.Emailservices;
 using Jwt.Identity.BoursYarServer.Services.TokenServices;
 using Jwt.Identity.Data.Context;
 using Jwt.Identity.Data.Repositories.UserRepositories;
+using Jwt.Identity.Domain.Interfaces.IEmailSender;
 using Jwt.Identity.Domain.Interfaces.ITokenServices;
 using Jwt.Identity.Domain.Interfaces.IUserRepositories;
 using Jwt.Identity.Domain.Models;
@@ -65,20 +66,28 @@ namespace Jwt.Identity.BoursYarServer
 
                 })
                 .AddEntityFrameworkStores<IdentityContext>()
-                .AddDefaultUI()
+               
                 .AddDefaultTokenProviders()
                 .AddErrorDescriber<PersianIdentityErrorDescriber>();
 
             #endregion
 
             #region Authentication
+
             services.AddAuthentication()
                 .AddCookie(options =>
                 {
-                    options.LoginPath = "Identity/Account/Login/";
-                    options.AccessDeniedPath = "Identity/Account/AccessDenied/";
-                    options.LogoutPath = "Identity/Account/Logout/";
+                    options.LoginPath = "Account/Login/";
+                    options.AccessDeniedPath = "Account/AccessDenied/";
+                    options.LogoutPath = "Account/Logout/";
+
+                })
+                .AddGoogle(option =>
+                {
+                    option.ClientId = "346095678950-dhuqj3ko64i5i1becqteg2v3rv9l8j6a.apps.googleusercontent.com";
+                    option.ClientSecret = "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";
                 });
+                
 
             #endregion
 
@@ -111,6 +120,8 @@ namespace Jwt.Identity.BoursYarServer
             services.AddSingleton<IAuthClaimsGenrators, AuthClaimsGenrators>();
             services.AddTransient<IRoleManagementService, RoleManagementService>();
             services.AddTransient<IUserManagementService, UserManagementService>();
+            services.AddScoped<IEmailSender, EmailService>();
+
             #endregion
 
         }

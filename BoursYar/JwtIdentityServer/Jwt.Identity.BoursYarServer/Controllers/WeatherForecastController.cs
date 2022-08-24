@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using Jwt.Identity.BoursYarServer.Areas.Identity.Pages.Account;
 using Jwt.Identity.Domain.Interfaces.ITokenServices;
 using Jwt.Identity.Domain.Interfaces.IUserRepositories;
 using Jwt.Identity.Domain.Models;
