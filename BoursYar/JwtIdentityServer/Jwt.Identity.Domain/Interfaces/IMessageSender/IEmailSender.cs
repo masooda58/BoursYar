@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Jwt.Identity.Domain.Interfaces.IEmailSender
+namespace Jwt.Identity.Domain.Interfaces.IMessageSender
 {
     public interface IEmailSender
     {
