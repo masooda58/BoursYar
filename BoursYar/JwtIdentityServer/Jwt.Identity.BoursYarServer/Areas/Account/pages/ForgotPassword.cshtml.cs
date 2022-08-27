@@ -2,8 +2,7 @@
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using Jwt.Identity.BoursYarServer.Services.Emailservices;
-using Jwt.Identity.Domain.Interfaces.IEmailSender;
+using Jwt.Identity.Domain.Interfaces.IMessageSender;
 using Jwt.Identity.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -55,13 +54,13 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
                 var callbackUrl = Url.Page(
                     "/ResetPassword",
                     pageHandler: null,
-                    values: new { area = "Account", code },
+                    values: new { area = "Account",  userEmail = Input.Email, code = code  },
                     protocol: Request.Scheme);
 
                 await _emailSender.SendEmailAsync(
                     Input.Email,
                     "Reset Password",
-                    $"جهت ریست پسورد خود اینجا<a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>کلیک نمایید</a>.");
+                    $"جهت ریست پسورد خود اینجا<a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>کلیک نمایید</a>.",true);
 
                 return RedirectToPage("./ForgotPasswordConfirmation");
             }

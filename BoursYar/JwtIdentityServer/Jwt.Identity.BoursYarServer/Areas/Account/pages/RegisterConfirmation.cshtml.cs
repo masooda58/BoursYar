@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Jwt.Identity.BoursYarServer.Services.Emailservices;
-using Jwt.Identity.Domain.Interfaces.IEmailSender;
+using Jwt.Identity.Domain.Interfaces.IMessageSender;
 using Jwt.Identity.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
