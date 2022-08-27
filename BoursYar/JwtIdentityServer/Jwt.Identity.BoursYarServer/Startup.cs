@@ -1,7 +1,6 @@
 ﻿using Common.Api.Dependency.Cors;
 using Common.Api.Dependency.Swagger;
 using Jwt.Identity.BoursYarServer.Helpers.CustomSignIn;
-using Jwt.Identity.BoursYarServer.OptionsModels;
 using Jwt.Identity.BoursYarServer.Security;
 using Jwt.Identity.BoursYarServer.Services.MessageServices;
 using Jwt.Identity.BoursYarServer.Services.PhoneTotpProvider;
@@ -22,6 +21,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PersianTranslation.Identity;
 using System;
+using Jwt.Identity.BoursYarServer.SettingModels;
 
 namespace Jwt.Identity.BoursYarServer
 {
@@ -131,7 +131,7 @@ namespace Jwt.Identity.BoursYarServer
 
             #region Totp
 
-            services.Configure<TotpOptions>(Configuration.GetSection("Totp"));
+            services.Configure<TotpSettings>(Configuration.GetSection("Totp"));
 
             #endregion
             #region JwtTokenSetting

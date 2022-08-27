@@ -1,5 +1,4 @@
 ﻿using Jwt.Identity.BoursYarServer.Helpers.Extensions;
-using Jwt.Identity.BoursYarServer.OptionsModels;
 using Jwt.Identity.Domain.Interfaces.IMessageSender;
 using Jwt.Identity.Domain.Interfaces.IPhoneTotpProvider;
 using Jwt.Identity.Domain.Models;
@@ -15,6 +14,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Jwt.Identity.BoursYarServer.SettingModels;
 using Microsoft.Extensions.Options;
 
 namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
@@ -26,17 +26,17 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
         private readonly IEmailSender _emailSender;
         private readonly IPhoneTotpProvider _totp;
         private readonly ISmsSender _smsSender;
-        private readonly TotpOptions _options;
+        private readonly TotpSettings _options;
 
         public SendConfirmationCodeModel(UserManager<ApplicationUser> userManager, ILogger<RegisterModel> logger, 
-            IEmailSender emailSender, IPhoneTotpProvider totp, ISmsSender smsSender,IOptions<TotpOptions>options)
+            IEmailSender emailSender, IPhoneTotpProvider totp, ISmsSender smsSender,IOptions<TotpSettings>options)
         {
             _userManager = userManager;
             _logger = logger;
             _emailSender = emailSender;
             _totp = totp;
             _smsSender = smsSender;
-            _options = options?.Value??new TotpOptions();
+            _options = options?.Value??new TotpSettings();
         }
 
         [BindProperty]

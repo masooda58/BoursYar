@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Jwt.Identity.BoursYarServer.OptionsModels;
+using Jwt.Identity.BoursYarServer.SettingModels;
 using Jwt.Identity.Domain.Interfaces.IPhoneTotpProvider;
 using Jwt.Identity.Domain.Models;
 using Microsoft.Extensions.Options;
@@ -12,12 +12,12 @@ namespace Jwt.Identity.BoursYarServer.Services.PhoneTotpProvider
 {
     public class PhoneTotpProvider:IPhoneTotpProvider
     {
-        private readonly TotpOptions _options;
+        private readonly TotpSettings _options;
         private Totp _totp;
 
-        public PhoneTotpProvider(IOptions<TotpOptions> options)
+        public PhoneTotpProvider(IOptions<TotpSettings> options)
         {
-            _options = options?.Value??new TotpOptions();
+            _options = options?.Value??new TotpSettings();
         }
  ///  <inheritdoc />
         public string GenerateTotp(byte[] secretKey)
