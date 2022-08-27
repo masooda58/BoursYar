@@ -19,6 +19,8 @@
     <Content Include="..\..\Common\SharedSettings\JwtIdentitySharedSettings.json" Link="JwtIdentitySharedSettings.json" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="BoursYar.Authorization" Version="1.0.0" />
+    <PackageReference Include="Common.Jwt.Authentication" Version="1.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="5.0.8" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
