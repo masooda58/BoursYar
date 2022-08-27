@@ -1,9 +1,9 @@
 ﻿using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
-using Jwt.Identity.Domain.Interfaces.IEmailSender;
+using Jwt.Identity.Domain.Interfaces.IMessageSender;
 
-namespace Jwt.Identity.BoursYarServer.Services.Emailservices
+namespace Jwt.Identity.BoursYarServer.Services.MessageServices
 {
     public class EmailService:IEmailSender
     {
@@ -15,13 +15,14 @@ namespace Jwt.Identity.BoursYarServer.Services.Emailservices
                 var credentials = new NetworkCredential()
                 {
                     UserName = "masoud.emulator.test", // without @gmail.com
-                    Password = "Ma1234567890"
+                    Password = "felaaktgsrrfjnfp"
                 };
 
                 client.Credentials = credentials;
-                client.Host = "smtp.gmail.com";
+                client.Host ="127.0.0.1";
                 client.Port =25;
-                client.EnableSsl = true;
+                client.EnableSsl = false;
+             client.UseDefaultCredentials = false;
 
                 using var emailMessage = new MailMessage()
                 {
