@@ -19,9 +19,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using PersianTranslation.Identity;
 using System;
+using IdentityPersianHelper.Identity;
 using Jwt.Identity.BoursYarServer.SettingModels;
+using Microsoft.AspNetCore.Routing;
 
 namespace Jwt.Identity.BoursYarServer
 {
@@ -57,7 +58,7 @@ namespace Jwt.Identity.BoursYarServer
 
                      // Lockout settings
                      options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
-                     options.Lockout.MaxFailedAccessAttempts = 5;
+                     options.Lockout.MaxFailedAccessAttempts = 3;
                      options.Lockout.AllowedForNewUsers = true;
 
                      // User settings
@@ -147,6 +148,15 @@ namespace Jwt.Identity.BoursYarServer
             services.AddOurCors(corsOrigin, corsMethod);
 
             #endregion
+
+            #endregion
+
+            #region Razor Page rout options
+
+            services.Configure<RouteOptions>(options =>
+            {
+                options.AppendTrailingSlash = true;
+            });
 
             #endregion
 

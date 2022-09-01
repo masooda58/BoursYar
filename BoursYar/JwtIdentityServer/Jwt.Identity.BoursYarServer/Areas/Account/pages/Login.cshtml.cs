@@ -1,17 +1,17 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
-using Jwt.Identity.Domain.Interfaces.IMessageSender;
+﻿using Jwt.Identity.Domain.Interfaces.IMessageSender;
 using Jwt.Identity.Domain.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
+using IdentityPersianHelper.DataAnnotations;
+using Jwt.Identity.BoursYarServer.Helpers.Extensions;
 
 namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
 {
@@ -23,7 +23,7 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
         private readonly ILogger<LoginModel> _logger;
         private readonly IEmailSender _emailSender;
 
-        public LoginModel(SignInManager<ApplicationUser> signInManager, 
+        public LoginModel(SignInManager<ApplicationUser> signInManager,
             ILogger<LoginModel> logger,
             UserManager<ApplicationUser> userManager,
             IEmailSender emailSender)
@@ -41,17 +41,26 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
 
         public string ReturnUrl { get; set; }
 
+  
+
         [TempData]
         public string ErrorMessage { get; set; }
 
         public class InputModel
         {
             [Required(ErrorMessage = "لطفا {0} را وارد نمایید")]
-            [EmailAddress(ErrorMessage = "{0} وارد شده صحیح نمی باشد")]
-            [Display(Name = "ایمیل")]
-            
-            public string Email { get; set; }
+            // [EmailAddress(ErrorMessage = "{0} وارد شده صحیح نمی باشد")]
+            [PhoneOrEmail]
+            [Display(Name = "ایمیل یا شماره موبایل")]
+            // ErrorMessage = "ایمیل یا شماره موبایل  قبلا  در سایت ثبت نام کرده است",
+            public string EmailOrPhone
+            {
+                get=>_normalEmailOrPhone.ToNormalPhoneNo();
+                set=>_normalEmailOrPhone=value;
+            }
 
+            private string _normalEmailOrPhone;
+          
             [Required(ErrorMessage = "لطفا {0} را وارد نمایید")]
             [DataType(DataType.Password)]
             [Display(Name = "رمز عبور")]
@@ -61,11 +70,11 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
             public bool RememberMe { get; set; }
         }
 
-        public async Task OnGetAsync(string returnUrl = null)
+        public async Task<ActionResult> OnGetAsync(string returnUrl = null)
         {
             if (_signInManager.IsSignedIn(User))
             {
-                RedirectToPage("/");
+             return   RedirectToPage("/");
             }
             if (!string.IsNullOrEmpty(ErrorMessage))
             {
@@ -80,21 +89,22 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
             ReturnUrl = returnUrl;
+            return Page();
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl = returnUrl ?? Url.Content("~/");
-            //if(String.IsNullOrEmpty(model.EmailOrPhoneNumber)) 
-            //    return error message;
-            //if(model.EmailOrPhoneNumber.Contains("@"))
-            //    return SignInWithEmail(model);
-            //else return SignInWithPhone(model);
+
             if (ModelState.IsValid)
             {
+
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var user = await _userManager.FindByEmailAsync(Input.Email);
+               
+                var user = await _userManager.FindByNameAsync(Input.EmailOrPhone);
+
+
                 var result = await _signInManager.PasswordSignInAsync(user, Input.Password, Input.RememberMe, lockoutOnFailure: true);
                 if (result.Succeeded)
                 {
@@ -112,43 +122,29 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "نام کاربری یا رمز عبور اشتباه است");
+                    if (user.PhoneNumberConfirmed || user.EmailConfirmed)
+                    {
+                        ModelState.AddModelError(string.Empty, " نام کاربری یا رمز عبور اشتباه است. ");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "اکانت کاربر تایید نشده است لطفا نسبت به تایید اکانت اقدام فرمایید");
+                    }
+
+
                     return Page();
                 }
+
+
+
+
             }
 
             // If we got this far, something failed, redisplay form
             return Page();
         }
 
-        public async Task<IActionResult> OnPostSendVerificationEmailAsync()
-        {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
 
-            var user = await _userManager.FindByEmailAsync(Input.Email);
-            if (user == null)
-            {
-                ModelState.AddModelError(string.Empty, "Verification email sent. Please check your email.");
-            }
-
-            var userId = await _userManager.GetUserIdAsync(user);
-            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            var callbackUrl = Url.Page(
-                "/Account/ConfirmEmail",
-                pageHandler: null,
-                values: new { userId = userId, code = code },
-                protocol: Request.Scheme);
-            await _emailSender.SendEmailAsync(
-                Input.Email,
-                "Confirm your email",
-                $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-
-            ModelState.AddModelError(string.Empty, "Verification email sent. Please check your email.");
-            return Page();
-        }
 
 
     }

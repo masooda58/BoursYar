@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Jwt.Identity.BoursYarServer.SettingModels;
 using Jwt.Identity.Domain.Interfaces.IPhoneTotpProvider;
@@ -29,7 +30,7 @@ namespace Jwt.Identity.BoursYarServer.Services.PhoneTotpProvider
         public PhoneTotpResult VerifyTotp(byte[] secretKey, string code)
         {
             CreateTotp(secretKey);
-            var isTotpValid = _totp.VerifyTotp(code, out _);
+            var isTotpValid = _totp.VerifyTotp(code, out _,VerificationWindow.RfcSpecifiedNetworkDelay);
            return isTotpValid ? 
                new PhoneTotpResult(true, null)
                : new PhoneTotpResult(false, "کد وراد شده معتبر نیست لطفا کد جدید دریافت نمایید");
@@ -39,6 +40,14 @@ namespace Jwt.Identity.BoursYarServer.Services.PhoneTotpProvider
         {
 
             _totp = new Totp(secretKey,step:_options.Step);
+        }
+        ///  <inheritdoc />
+        public byte[] CreateSecretKey()
+        {
+            using var rng =new RNGCryptoServiceProvider();
+            var secretKey = new byte[32];
+            rng.GetBytes(secretKey);
+            return secretKey;
         }
     }
 }

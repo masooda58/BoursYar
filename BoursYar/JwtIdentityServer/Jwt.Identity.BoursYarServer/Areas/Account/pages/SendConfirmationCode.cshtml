@@ -1,19 +1,47 @@
 ﻿@page
+@using Jwt.Identity.BoursYarServer.Resources
 @model Jwt.Identity.BoursYarServer.Areas.Account.pages.SendConfirmationCodeModel
 @{
+    bool showSendCofirmationCode =(bool)(TempData[TempDataDict.ShowSendCofirmationCode] ?? false);
+    bool showEmailConfirmationMessage = (bool)(TempData[TempDataDict.ShowEmailConfirmationMessage] ?? false);
+    bool showTotpConfirmationCode = (bool)(TempData[TempDataDict.ShowTotpConfirmationCode] ?? false);
 }
-<form method="post">
-    <div asp-validation-summary="ModelOnly"></div>
-    <label asp-for="EmailOrPhone"></label>
-    <input asp-for="EmailOrPhone" />
-    <span asp-validation-for="EmailOrPhone"></span>
-    @if (TempData["TotpExpire"] != null)
-    {
-        <div>@TempData["TotpExpire"].ToString()</div>
-    }
-    <button type="submit">تایید</button>
-</form>
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+@if (showSendCofirmationCode)
+{
+    <form method="post" asp-route-returnUrl="@Model.ReturnUrl">
+        <div asp-validation-summary="ModelOnly"></div>
+        <label asp-for="EmailOrPhone"></label>
+        <input asp-for="EmailOrPhone" />
+        <span asp-validation-for="EmailOrPhone"></span>
+        @if (TempData[TempDataDict.Error_TotpCode] != null)
+        {
+            <div>@TempData[TempDataDict.Error_TotpCode].ToString()</div>
+        }
+        <button type="submit" asp-page-handler="ConfirmationEmailOrPhone">تایید</button>
+    </form>
 }
+@if (showEmailConfirmationMessage )
+{
+    <p>ایمیل تایید ارسال گردید</p>
+}
+@if (showTotpConfirmationCode)
+{
+   
+    <form method="post">
+        <input type="hidden" name="returnUrl" value="@Model.ReturnUrl"/>
+        <div asp-validation-summary="ModelOnly"></div>
+        <input type="text" asp-for="VerifySmsCode"/>
+        @if  (@TempData[TempDataDict.Error_TotpCode] != null)
+        {
+            <span dir="rtl" class="text-danger">@TempData[TempDataDict.Error_TotpCode].ToString()</span>
+        }
+        <button type="submit" class="btn btn-danger" asp-page-handler="ConfirmationSmsCode">تایید کد</button>
+    </form>
+}
+
+
+
+    @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+    }

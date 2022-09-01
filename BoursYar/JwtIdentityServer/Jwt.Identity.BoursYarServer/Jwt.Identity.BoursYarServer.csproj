@@ -35,9 +35,28 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\IdentityPersianHelper\IdentityPersianHelper.csproj" />
     <ProjectReference Include="..\Jwt.Identity.Data\Jwt.Identity.Data.csproj" />
     <ProjectReference Include="..\Jwt.Identity.Domain\Jwt.Identity.Domain.csproj" />
-    <ProjectReference Include="..\PersianTranslation\PersianTranslation.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Resources\TempDataDict.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TempDataDict.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\TempDataDict.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>TempDataDict.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Controllers\" />
   </ItemGroup>
 
 </Project>
