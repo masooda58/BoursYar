@@ -22,14 +22,14 @@ namespace Jwt.Identity.BoursYarServer.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class TempDataDict {
+    public class TotpTypeDict {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal TempDataDict() {
+        internal TotpTypeDict() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace Jwt.Identity.BoursYarServer.Resources {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Jwt.Identity.BoursYarServer.Resources.TempDataDict", typeof(TempDataDict).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Jwt.Identity.BoursYarServer.Resources.TotpTypeDict", typeof(TotpTypeDict).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,65 +61,20 @@ namespace Jwt.Identity.BoursYarServer.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Error_TotpCode.
+        ///   Looks up a localized string similar to TotpAccountConfirmationCode.
         /// </summary>
-        public static string Error_TotpCode {
+        public static string TotpAccountConfirmationCode {
             get {
-                return ResourceManager.GetString("Error_TotpCode", resourceCulture);
+                return ResourceManager.GetString("TotpAccountConfirmationCode", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to FromRegisterConfirmation.
+        ///   Looks up a localized string similar to TotpAccountPasswordResetCode.
         /// </summary>
-        public static string FromRegisterConfirmation {
+        public static string TotpAccountPasswordResetCode {
             get {
-                return ResourceManager.GetString("FromRegisterConfirmation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ShowEmailConfirmationMessage.
-        /// </summary>
-        public static string ShowEmailConfirmationMessage {
-            get {
-                return ResourceManager.GetString("ShowEmailConfirmationMessage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ShowResetEmailMessage.
-        /// </summary>
-        public static string ShowResetEmailMessage {
-            get {
-                return ResourceManager.GetString("ShowResetEmailMessage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ShowSendCofirmationCode.
-        /// </summary>
-        public static string ShowSendCofirmationCode {
-            get {
-                return ResourceManager.GetString("ShowSendCofirmationCode", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ShowTotpConfirmationCode.
-        /// </summary>
-        public static string ShowTotpConfirmationCode {
-            get {
-                return ResourceManager.GetString("ShowTotpConfirmationCode", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ShowTotpResetCode.
-        /// </summary>
-        public static string ShowTotpResetCode {
-            get {
-                return ResourceManager.GetString("ShowTotpResetCode", resourceCulture);
+                return ResourceManager.GetString("TotpAccountPasswordResetCode", resourceCulture);
             }
         }
     }

@@ -117,30 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Error_TotpCode" xml:space="preserve">
-    <value>Error_TotpCode</value>
-    <comment>خطای  Totp</comment>
+  <data name="TotpAccountConfirmationCode" xml:space="preserve">
+    <value>TotpAccountConfirmationCode</value>
   </data>
-  <data name="FromRegisterConfirmation" xml:space="preserve">
-    <value>FromRegisterConfirmation</value>
-    <comment>اطمینان از  دریافت اطلاعات از صفحه ثبت نام آمده است </comment>
-  </data>
-  <data name="ShowEmailConfirmationMessage" xml:space="preserve">
-    <value>ShowEmailConfirmationMessage</value>
-    <comment>Show Html Tag In SendConfirmationCode Conditionaly</comment>
-  </data>
-  <data name="ShowResetEmailMessage" xml:space="preserve">
-    <value>ShowResetEmailMessage</value>
-  </data>
-  <data name="ShowSendCofirmationCode" xml:space="preserve">
-    <value>ShowSendCofirmationCode</value>
-    <comment>Show Html Tag In SendConfirmationCode Conditionaly</comment>
-  </data>
-  <data name="ShowTotpConfirmationCode" xml:space="preserve">
-    <value>ShowTotpConfirmationCode</value>
-    <comment>Show Html Tag In SendConfirmationCode Conditionaly</comment>
-  </data>
-  <data name="ShowTotpResetCode" xml:space="preserve">
-    <value>ShowTotpResetCode</value>
+  <data name="TotpAccountPasswordResetCode" xml:space="preserve">
+    <value>TotpAccountPasswordResetCode</value>
   </data>
 </root>

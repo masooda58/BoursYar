@@ -22,14 +22,14 @@ namespace Jwt.Identity.BoursYarServer.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class TempDataDict {
+    public class ErrorMessageRes {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal TempDataDict() {
+        internal ErrorMessageRes() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace Jwt.Identity.BoursYarServer.Resources {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Jwt.Identity.BoursYarServer.Resources.TempDataDict", typeof(TempDataDict).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Jwt.Identity.BoursYarServer.Resources.ErrorMessageRes", typeof(ErrorMessageRes).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,65 +61,38 @@ namespace Jwt.Identity.BoursYarServer.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Error_TotpCode.
+        ///   Looks up a localized string similar to کد ارسالی منقضی شده است لطفا کد جدید دریافت کنید.
         /// </summary>
-        public static string Error_TotpCode {
+        public static string TotpCodeExpire {
             get {
-                return ResourceManager.GetString("Error_TotpCode", resourceCulture);
+                return ResourceManager.GetString("TotpCodeExpire", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to FromRegisterConfirmation.
+        ///   Looks up a localized string similar to مشکلی پیش آمده مجدد درخواست کد نمایید.
         /// </summary>
-        public static string FromRegisterConfirmation {
+        public static string UnknownTotpError {
             get {
-                return ResourceManager.GetString("FromRegisterConfirmation", resourceCulture);
+                return ResourceManager.GetString("UnknownTotpError", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ShowEmailConfirmationMessage.
+        ///   Looks up a localized string similar to مشکلی پیش آمده لطفا مجدد ثبت نام نمایید.
         /// </summary>
-        public static string ShowEmailConfirmationMessage {
+        public static string UnkonwnError {
             get {
-                return ResourceManager.GetString("ShowEmailConfirmationMessage", resourceCulture);
+                return ResourceManager.GetString("UnkonwnError", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ShowResetEmailMessage.
+        ///   Looks up a localized string similar to کد وارد شده صحیح نمی باشد.
         /// </summary>
-        public static string ShowResetEmailMessage {
+        public static string WrongTotpInput {
             get {
-                return ResourceManager.GetString("ShowResetEmailMessage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ShowSendCofirmationCode.
-        /// </summary>
-        public static string ShowSendCofirmationCode {
-            get {
-                return ResourceManager.GetString("ShowSendCofirmationCode", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ShowTotpConfirmationCode.
-        /// </summary>
-        public static string ShowTotpConfirmationCode {
-            get {
-                return ResourceManager.GetString("ShowTotpConfirmationCode", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ShowTotpResetCode.
-        /// </summary>
-        public static string ShowTotpResetCode {
-            get {
-                return ResourceManager.GetString("ShowTotpResetCode", resourceCulture);
+                return ResourceManager.GetString("WrongTotpInput", resourceCulture);
             }
         }
     }
