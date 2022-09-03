@@ -11,6 +11,12 @@ namespace IdentityPersianHelper.Identity
                 Description = $"ایمیل '{email}' قبلا توسط شخص دیگری انتخاب شده است"
             };
 
+        public override IdentityError InvalidToken()
+            => new IdentityError()
+            {
+                Code = nameof(InvalidToken),
+                Description = $"توکن معتبر نیست"
+            };
         public override IdentityError DuplicateUserName(string userName)
             => new IdentityError()
             {
