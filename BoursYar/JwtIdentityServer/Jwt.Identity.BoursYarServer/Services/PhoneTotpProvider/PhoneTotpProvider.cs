@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
-using Jwt.Identity.BoursYarServer.SettingModels;
+using Jwt.Identity.BoursYarServer.Models.SettingModels;
 using Jwt.Identity.Domain.Interfaces.IPhoneTotpProvider;
 using Jwt.Identity.Domain.Models;
+using Jwt.Identity.Domain.Models.ResultModels;
 using Microsoft.Extensions.Options;
 using OtpNet;
 

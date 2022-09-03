@@ -1,4 +1,5 @@
 ﻿using Jwt.Identity.Domain.Models;
+using Jwt.Identity.Domain.Models.ResultModels;
 
 namespace Jwt.Identity.Domain.Interfaces.IPhoneTotpProvider
 {

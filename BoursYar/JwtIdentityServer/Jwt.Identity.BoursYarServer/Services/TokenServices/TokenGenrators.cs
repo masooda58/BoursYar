@@ -4,7 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Jwt.Identity.Domain.Interfaces.ITokenServices;
-using Jwt.Identity.Domain.Models.TokenModels;
+using Jwt.Identity.Domain.Models.ResultModels.TokenModels;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Jwt.Identity.BoursYarServer.Services.TokenServices

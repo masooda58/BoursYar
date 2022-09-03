@@ -1,23 +1,25 @@
 ﻿using IdentityPersianHelper.DataAnnotations;
 using Jwt.Identity.BoursYarServer.Helpers.Extensions;
-using Jwt.Identity.BoursYarServer.SettingModels;
+using Jwt.Identity.BoursYarServer.Resources;
 using Jwt.Identity.Domain.Interfaces.IMessageSender;
-using Jwt.Identity.Domain.Interfaces.IPhoneTotpProvider;
+using Jwt.Identity.Domain.Interfaces.ISendPhoneCode;
 using Jwt.Identity.Domain.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Text;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using Jwt.Identity.BoursYarServer.Resources;
 
 namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
 {
@@ -27,24 +29,23 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<RegisterModel> _logger;
+        private readonly IMemoryCache _memoryCache;
         private readonly IEmailSender _emailSender;
-        private readonly IPhoneTotpProvider _totp;
-        private readonly ISmsSender _smsSender;
-        private readonly TotpSettings _options;
+
+
+        private readonly ITotpCode _totpCode;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            ILogger<RegisterModel> logger,
-            IEmailSender emailSender, IPhoneTotpProvider totp, ISmsSender smsSender, IOptions<TotpSettings> options)
+            ILogger<RegisterModel> logger, IMemoryCache memoryCache, ITotpCode totpCode, IEmailSender emailSender)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
+            _memoryCache = memoryCache;
+            _totpCode = totpCode;
             _emailSender = emailSender;
-            _totp = totp;
-            _smsSender = smsSender;
-            _options = options?.Value ?? new TotpSettings();
         }
 
         [BindProperty]
@@ -116,7 +117,7 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
             else
             {
                 ReturnUrl = returnUrl ?? Url.Content("~/");
-               
+
                 ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
             }
@@ -129,8 +130,8 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
 
             returnUrl = returnUrl ?? Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-            
-           
+
+
 
             #region Register email And mobileNo base on Visio flow
 
@@ -159,24 +160,62 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
                 var user = Input.EmailOrPhone.Contains("@") ?
                     new ApplicationUser { UserName = Input.EmailOrPhone, Email = Input.EmailOrPhone } :
                     new ApplicationUser { UserName = Input.EmailOrPhone, PhoneNumber = Input.EmailOrPhone };
-                    var result = await _userManager.CreateAsync(user, Input.Password);
-                    if (!result.Succeeded)
-                    {
-                        ModelState.AddModelError(string.Empty, "در ساختن کاربر مشکلی رخداده است.");
-                        return Page();
-                    }
+                var result = await _userManager.CreateAsync(user, Input.Password);
+                if (!result.Succeeded)
+                {
+                    ModelState.AddModelError(string.Empty, "در ساختن کاربر مشکلی رخداده است.");
+                    return Page();
+                }
+
+                if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                {
+                    //var newUser =await _userManager.FindByNameAsync(Input.EmailOrPhone);
+                    #region Send Email Confirm
                     
-                    if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                    if (Input.EmailOrPhone.Contains("@"))
                     {
-                        TempData[TempDataDict.FromRegisterConfirmation] = Input.EmailOrPhone;
-                        return RedirectToPage("/SendConfirmationCode",new {returnUrl});
+
+                        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+
+                        var callbackUrl = Url.Page(
+                            "/ConfirmEmail",
+                            pageHandler: null,
+                            values: new { area = "Account", email = Input.EmailOrPhone, code = code },
+                            protocol: Request.Scheme);
+
+                        await _emailSender.SendEmailAsync(Input.EmailOrPhone, "تاییدیه ایمیل",
+                            $"جهت تایید ایمیل اینجا <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>کلیک نمایید</a>.", true);
+                        TempData[TempDataDict.ShowEmailConfirmationMessage] = true;
+                        return RedirectToPage("/SendConfirmationCode", new { returnUrl, emailOrPhone = Input.EmailOrPhone });
                     }
-                    else
+
+                    #endregion
+
+                    #region send sms confirm
+                    _memoryCache.Remove(TotpTypeDict.TotpAccountConfirmationCode);
+                    var resualtSendTotpCodeAsync =
+                        await _totpCode.SendTotpCodeAsync(Input.EmailOrPhone, TotpTypeDict.TotpAccountConfirmationCode);
+                    if (resualtSendTotpCodeAsync.Successed)
                     {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
+                        TempData[TempDataDict.ShowTotpConfirmationCode] = true;
+                        return RedirectToPage("/SendConfirmationCode", new { returnUrl, emailOrPhone = Input.EmailOrPhone });
+
                     }
-               
+                    ModelState.AddModelError(string.Empty, ErrorMessageRes.UnkonwnError);
+                    return Page();
+
+
+                    #endregion
+                    
+
+                }
+                else
+                {
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    return LocalRedirect(returnUrl);
+                }
+
 
 
                 #endregion
@@ -189,6 +228,7 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
             // If we got this far, something failed, redisplay form
             return Page();
         }
+        //remot page validation
         public async Task<JsonResult> OnPostCheckEmail()
         {
 

@@ -21,7 +21,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using IdentityPersianHelper.Identity;
-using Jwt.Identity.BoursYarServer.SettingModels;
+using Jwt.Identity.BoursYarServer.Models.SettingModels;
+using Jwt.Identity.BoursYarServer.Services;
+using Jwt.Identity.BoursYarServer.Services.TotpCode;
+using Jwt.Identity.Domain.Interfaces.ISendPhoneCode;
 using Microsoft.AspNetCore.Routing;
 
 namespace Jwt.Identity.BoursYarServer
@@ -92,6 +95,13 @@ namespace Jwt.Identity.BoursYarServer
                 });
             #endregion
 
+            #region MemoryCache
+
+            services.AddMemoryCache();
+          
+
+            #endregion
+
             #region Authentication
 
             services.AddAuthentication()
@@ -125,6 +135,7 @@ namespace Jwt.Identity.BoursYarServer
             services.AddScoped<IEmailSender, EmailService>();
             services.AddScoped<ISmsSender, SmsServices>();
             services.AddTransient<IPhoneTotpProvider, PhoneTotpProvider>();
+            services.AddScoped<ITotpCode, TotpCode>();
 
             #endregion
 

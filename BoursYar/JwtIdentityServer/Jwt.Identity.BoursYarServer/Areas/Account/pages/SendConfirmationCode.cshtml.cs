@@ -1,9 +1,11 @@
-﻿using IdentityPersianHelper.DataAnnotations;
+﻿using System.Collections.Specialized;
+using IdentityPersianHelper.DataAnnotations;
 using Jwt.Identity.BoursYarServer.Helpers.Extensions;
+using Jwt.Identity.BoursYarServer.Models.SettingModels;
 using Jwt.Identity.BoursYarServer.Resources;
-using Jwt.Identity.BoursYarServer.SettingModels;
 using Jwt.Identity.Domain.Interfaces.IMessageSender;
 using Jwt.Identity.Domain.Interfaces.IPhoneTotpProvider;
+using Jwt.Identity.Domain.Interfaces.ISendPhoneCode;
 using Jwt.Identity.Domain.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +14,6 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -22,6 +23,8 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
 {
     public class SendConfirmationCodeModel : PageModel
     {
+        #region CTOR
+
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
@@ -29,9 +32,10 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
         private readonly ISmsSender _smsSender;
         private readonly TotpSettings _options;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly ITotpCode _totpCode;
 
         public SendConfirmationCodeModel(UserManager<ApplicationUser> userManager, ILogger<RegisterModel> logger,
-            IEmailSender emailSender, IPhoneTotpProvider totp, ISmsSender smsSender, IOptions<TotpSettings> options, SignInManager<ApplicationUser> signInManager)
+            IEmailSender emailSender, IPhoneTotpProvider totp, ISmsSender smsSender, IOptions<TotpSettings> options, SignInManager<ApplicationUser> signInManager, ITotpCode totpCode)
         {
             _userManager = userManager;
             _logger = logger;
@@ -39,9 +43,12 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
             _totp = totp;
             _smsSender = smsSender;
             _signInManager = signInManager;
+            _totpCode = totpCode;
             _options = options?.Value ?? new TotpSettings();
         }
 
+
+        #endregion
         [BindProperty]
         [Required(ErrorMessage = "لطفا {0} را وارد نمایید")]
         // [EmailAddress(ErrorMessage = "{0} وارد شده صحیح نمی باشد")]
@@ -55,88 +62,24 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
         private string _normalEmailOrPhone;
 
         [BindProperty]
+        [Display(Name = "کد تایید")]
+        
         public string VerifySmsCode { get; set; }
 
         public string ReturnUrl { get; set; }
 
-        public class TotpTempData
 
-        {
-            public byte[] SecretKey { get; set; }
-            public string UserMobileNo { get; set; }
-            public DateTime ExpirationTime { get; set; }
-        }
 
-        public async Task OnGet(string returnUrl)
+        public void OnGet(string returnUrl, string emailOrPhone = null)
         {
             ReturnUrl = returnUrl ?? Url.Content("~/");
+            EmailOrPhone = emailOrPhone;
 
-            if (TempData.ContainsKey(TempDataDict.FromRegisterConfirmation))
-            {
-                var emailOrPhone = (string)TempData[TempDataDict.FromRegisterConfirmation];
-                if (emailOrPhone.Contains("@"))
-                {
-                    await SendEmailConfirmationAsync(emailOrPhone);
-                  
-
-                }
-                else
-                {
-
-                    await SendPhoneConfirmationAsync(emailOrPhone);
-                    
-                }
-            }
-            else
-            {
-                if (!TempData.ContainsKey(TempDataDict.ShowEmailConfirmationMessage)
-                    &&!TempData.ContainsKey(TempDataDict.ShowTotpConfirmationCode))
-                {
-                    TempData[TempDataDict.ShowSendCofirmationCode] = true;
-                }
-            }
-
-
+            if (!TempData.ContainsKey(TempDataDict.ShowEmailConfirmationMessage) &&
+                !TempData.ContainsKey(TempDataDict.ShowTotpConfirmationCode))
+                TempData[TempDataDict.ShowSendCofirmationCode] = true;
         }
 
-        private async Task SendPhoneConfirmationAsync(string phoneNo)
-        {
-            if (TempData.ContainsKey(TempDataDict.TotpConfirmationCode))
-            {
-                var totpConfirm = TempData.Get<TotpTempData>(TempDataDict.TotpConfirmationCode);
-            }
-            var secretKey = _totp.CreateSecretKey();
-            var totpCode = _totp.GenerateTotp(secretKey);
-
-            var totpTemp = new TotpTempData()
-            {
-                SecretKey = secretKey,
-                UserMobileNo = phoneNo,
-                ExpirationTime = DateTime.Now.AddSeconds(_options.Step)
-            };
-            TempData.Set(TempDataDict.TotpConfirmationCode, totpTemp);
-            await _smsSender.SendSmsAsync(phoneNo, totpCode, "شرکت فلان");
-            //just for check
-            await _emailSender.SendEmailAsync(phoneNo, "sms to " + phoneNo, totpCode, false);
-            TempData[TempDataDict.ShowTotpConfirmationCode]=true;
-        }
-
-        private async Task SendEmailConfirmationAsync(string email)
-        {
-            var userExist = await _userManager.FindByEmailAsync(email);
-            var code = await _userManager.GenerateEmailConfirmationTokenAsync(userExist);
-            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-
-            var callbackUrl = Url.Page(
-                "/ConfirmEmail",
-                pageHandler: null,
-                values: new { area = "Account", email = email, code = code },
-                protocol: Request.Scheme);
-
-            await _emailSender.SendEmailAsync(email, "تاییدیه ایمیل",
-                $"جهت تایید ایمیل اینجا <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>کلیک نمایید</a>.", true);
-            TempData[TempDataDict.ShowEmailConfirmationMessage] = true;
-        }
         public async Task<ActionResult> OnPostConfirmationEmailOrPhoneAsync(string returnUrl)
         {
 
@@ -151,15 +94,28 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
                     if (userExist == null)
                     {
                         TempData[TempDataDict.ShowEmailConfirmationMessage] = true;
-                        ModelState.AddModelError(string.Empty, $"ایمیل {EmailOrPhone} قبلا در سایت ثبت نام نموده است");
-                     //   return RedirectToPage("RegisterConfirmation", new { email = EmailOrPhone });
-                     return Page();
+                        ModelState.AddModelError(string.Empty, $"ایمیل {EmailOrPhone} قبلا در سایت ثبت نام ننموده است");
+                        //   return RedirectToPage("RegisterConfirmation", new { email = EmailOrPhone });
+                        return Page();
                     }
 
-                    await SendEmailConfirmationAsync(EmailOrPhone);
-                    return Page();
+                    //await SendEmailConfirmationAsync(EmailOrPhone);
+                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(userExist);
+                    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
 
-                  //  return RedirectToPage("RegisterConfirmation", new { EmailOrPhone });
+                    var callbackUrl = Url.Page(
+                        "/ConfirmEmail",
+                        pageHandler: null,
+                        values: new { area = "Account", email = EmailOrPhone, code = code },
+                        protocol: Request.Scheme);
+
+                    await _emailSender.SendEmailAsync(EmailOrPhone, "تاییدیه ایمیل",
+                        $"جهت تایید ایمیل اینجا <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>کلیک نمایید</a>.", true);
+                    TempData[TempDataDict.ShowEmailConfirmationMessage] = true;
+                    return RedirectToPage("/SendConfirmationCode", new { returnUrl, emailOrPhone = EmailOrPhone });
+                   
+
+                    //  return RedirectToPage("RegisterConfirmation", new { EmailOrPhone });
 
                 }
 
@@ -169,47 +125,31 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
 
                 else
                 {
-                    if (TempData.ContainsKey(TempDataDict.TotpConfirmationCode))
-                    {
-                        var totpConfirm = TempData.Get<TotpTempData>(TempDataDict.TotpConfirmationCode);
-                    }
-                    //// بود 9رقم سمت راست جدا می شود Valid با توجه به
-                    //string normalMobileNo = "989" + EmailOrPhone.Substring(EmailOrPhone.Length - 9);
+                 
                     var userExist = await _userManager.Users
                         .AnyAsync(user => user.PhoneNumber == EmailOrPhone);
 
                     if (!userExist)
                     {
                         TempData[TempDataDict.ShowTotpConfirmationCode] = true;
-                         ModelState.AddModelError(string.Empty, $"شماره تلفن {EmailOrPhone} قبلا در سایت ثبت نام ننموده است");
-                         return Page();
+                        ModelState.AddModelError(string.Empty, $"شماره تلفن {EmailOrPhone} قبلا در سایت ثبت نام ننموده است");
+                        return Page();
                     }
 
-                    //byte[] secretKey;
-                    //using (var rng =new RNGCryptoServiceProvider())
-                    //{
-                    //    secretKey = new byte[32];
-                    //    rng.GetBytes(secretKey);
-                    //}
-                    //var secretKey = _totp.CreateSecretKey();
-                    //var totpCode = _totp.GenerateTotp(secretKey);
+                    var resualtSendTotpCode =
+                        await _totpCode.SendTotpCodeAsync(EmailOrPhone, TotpTypeDict.TotpAccountConfirmationCode);
+                    if (resualtSendTotpCode.Successed)
+                    {
+                        TempData[TempDataDict.ShowTotpConfirmationCode] = true;
+                        ReturnUrl = returnUrl;
+                       return Page();
+               
+                    }
+                  
 
-                    //var totpTemp = new SendConfirmationCodeModel.TotpTempData()
-                    //{
-                    //    SecretKey = secretKey,
-                    //    UserMobileNo = EmailOrPhone,
-                    //    ExpirationTime = DateTime.Now.AddSeconds(_options.Step)
-                    //};
-                    //TempData.Set(TempDataDict.TotpConfirmationCode, totpTemp);
-                    ////var user = new ApplicationUser()
-                    ////{
-                    ////    UserName = EmailOrPhone,
-                    ////    PhoneNumber = EmailOrPhone
-                    ////};
-
-                    //await _smsSender.SendSmsAsync(EmailOrPhone, totpCode, "شرکت فلان");
-                    // return RedirectToPage("./ConfirmMobile",new{totpCode});
-                    await SendPhoneConfirmationAsync(EmailOrPhone);
+                    TempData[TempDataDict.Error_TotpCode] = resualtSendTotpCode.ErrorMessage;
+                    TempData[TempDataDict.ShowSendCofirmationCode] = true;
+                    TempData[TempDataDict.ShowTotpConfirmationCode] = false;
                     ReturnUrl = returnUrl;
                     return Page();
                 }
@@ -218,7 +158,7 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
 
 
             }
-            ModelState.AddModelError(nameof(VerifySmsCode), "اطلاعات وراد شده صحیح نمی باشد");
+            
             return Page();
         }
 
@@ -226,51 +166,50 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
         {
             returnUrl = returnUrl ?? Url.Content("~/");
             ReturnUrl = returnUrl;
-            if (!TempData.ContainsKey(TempDataDict.TotpConfirmationCode))
+            if (string.IsNullOrEmpty(VerifySmsCode))
             {
-                TempData[TempDataDict.Error_TotpCode] = "کد ارسالی منقضی شده است لطفا کد جدید دریافت کنید";
-               
-                return RedirectToPage("/SendConfirmationCode",new{returnUrl});
-              
+                ModelState.AddModelError(string.Empty,"کد را وارد نمایید");
+                TempData[TempDataDict.ShowTotpConfirmationCode] = true;
+                return RedirectToPage("/SendConfirmationCode", new { returnUrl, emailorPhone = EmailOrPhone });
+
             }
-            var ptc = TempData.Get<SendConfirmationCodeModel.TotpTempData>(TempDataDict.TotpConfirmationCode);
-            if (ptc.ExpirationTime <= DateTime.Now)
+            var resualtConfirmTotpCodeAsync = await _totpCode
+                .ConfirmTotpCodeAsync(EmailOrPhone, VerifySmsCode, TotpTypeDict.TotpAccountConfirmationCode);
+            if (!resualtConfirmTotpCodeAsync.Successed &&
+                resualtConfirmTotpCodeAsync.ErrorMessage != ErrorMessageRes.WrongTotpInput)
             {
-                TempData[TempDataDict.Error_TotpCode] ="کد ارسالی منقضی شده است لطفا کد جدید دریافت کنید";
-               // TempData.Remove(TempDataDict.TotpConfirmationCode);
-                return RedirectToPage("./SendConfirmationCode",new{returnUrl});//send again
+                TempData[TempDataDict.Error_TotpCode] = ErrorMessageRes.TotpCodeExpire;
+
+                return RedirectToPage("/SendConfirmationCode", new { returnUrl, emailorPhone = EmailOrPhone });
+
             }
 
-            var mathResult = _totp.VerifyTotp(ptc.SecretKey, VerifySmsCode);
 
-            if (mathResult.Successed)
+            if (resualtConfirmTotpCodeAsync.Successed)
             {
                 //phone number confirmation
-                var user = await _userManager.FindByNameAsync(ptc.UserMobileNo);
-                if (user==null)
+                var user = await _userManager.FindByNameAsync(EmailOrPhone);
+                if (user == null)
                 {
-                    TempData["TotpExpire"]="مشکلی پیش آمده مجدد درخواست کد نمایید";
-                    return RedirectToPage("/SendConfirmationCode",new{returnUrl});
+                    TempData[TempDataDict.Error_TotpCode] = ErrorMessageRes.UnknownTotpError;
+                    return RedirectToPage("/SendConfirmationCode", new { returnUrl, emailOrPhone = EmailOrPhone });
                 }
-                var tokenPhone = await _userManager.GenerateChangePhoneNumberTokenAsync(user, ptc.UserMobileNo);
-                var confirmMoleNumber = await _userManager.ChangePhoneNumberAsync(user, ptc.UserMobileNo, tokenPhone);
+                var tokenPhone = await _userManager.GenerateChangePhoneNumberTokenAsync(user, EmailOrPhone);
+                var confirmMoleNumber = await _userManager.ChangePhoneNumberAsync(user, EmailOrPhone, tokenPhone);
                 //signin user    
                 await _signInManager.SignInAsync(user, false);
                 return LocalRedirect(ReturnUrl);
-                //SignInWithClaimsAsync(user,false,new List<Claim>()
-                //{ 
-                //    new Claim("MobileNo",ptc.UserMobileNo)
-                //});
-               
+            
+
             }
 
-           
-            TempData.Keep(TempDataDict.TotpConfirmationCode);
+
+            // کد وارد شده صحیح نیست
             TempData[TempDataDict.ShowTotpConfirmationCode] = true;
-            TempData[TempDataDict.Error_TotpCode] = "کد وارد شده صحیح نمی باشد";
-           
-            
-            return RedirectToPage("./SendConfirmationCode",new{returnUrl});
+            TempData[TempDataDict.Error_TotpCode] = resualtConfirmTotpCodeAsync.ErrorMessage;
+
+
+            return RedirectToPage("./SendConfirmationCode", new { returnUrl, emailOrPhone = EmailOrPhone });
         }
     }
 }

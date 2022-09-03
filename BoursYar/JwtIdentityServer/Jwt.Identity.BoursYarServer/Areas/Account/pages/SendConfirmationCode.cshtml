@@ -5,6 +5,10 @@
     bool showSendCofirmationCode =(bool)(TempData[TempDataDict.ShowSendCofirmationCode] ?? false);
     bool showEmailConfirmationMessage = (bool)(TempData[TempDataDict.ShowEmailConfirmationMessage] ?? false);
     bool showTotpConfirmationCode = (bool)(TempData[TempDataDict.ShowTotpConfirmationCode] ?? false);
+    if (showTotpConfirmationCode)
+    {
+        showSendCofirmationCode = false;
+    }
 }
 
 @if (showSendCofirmationCode)
@@ -31,6 +35,7 @@
     <form method="post">
         <input type="hidden" name="returnUrl" value="@Model.ReturnUrl"/>
         <div asp-validation-summary="ModelOnly"></div>
+        <input Type="hidden" asp-for="EmailOrPhone"/>
         <input type="text" asp-for="VerifySmsCode"/>
         @if  (@TempData[TempDataDict.Error_TotpCode] != null)
         {

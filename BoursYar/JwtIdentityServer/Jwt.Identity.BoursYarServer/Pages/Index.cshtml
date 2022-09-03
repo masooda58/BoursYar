@@ -1,5 +1,6 @@
 ﻿@page
-@model Jwt.Identity.BoursYarServer.Areas.Account.pages.SendConfirmationCodeModel
+@using Microsoft.AspNetCore.Identity
+
 @{
 }
 @*<form asp-page="/Acount/SendConfirmationCode" method="Post">
@@ -7,3 +8,8 @@
     <button type="submit" asp-page-handler="ConfirmationSmsCode"></button>
 </form>*@
 <p> public</p>
+
+@if (User.Identity.IsAuthenticated)
+{
+    <p> private data</p>
+}

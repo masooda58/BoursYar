@@ -1,7 +1,10 @@
 ﻿using Jwt.Identity.BoursYarServer.Helpers.Extensions;
 using Jwt.Identity.BoursYarServer.Resources;
 using Jwt.Identity.Domain.Interfaces.IPhoneTotpProvider;
+using Jwt.Identity.Domain.Interfaces.ISendPhoneCode;
 using Jwt.Identity.Domain.Models;
+using Jwt.Identity.Domain.Models.ResultModels;
+using Jwt.Identity.Domain.Models.TransferData;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -19,23 +22,19 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IPhoneTotpProvider _totp;
+        private readonly ITotpCode _totpCode;
 
 
-        public ResetPasswordModel(UserManager<ApplicationUser> userManager, IPhoneTotpProvider totp)
+        public ResetPasswordModel(UserManager<ApplicationUser> userManager, IPhoneTotpProvider totp, ITotpCode totpCode)
         {
             _userManager = userManager;
             _totp = totp;
+            _totpCode = totpCode;
         }
 
         [BindProperty]
         public InputModel Input { get; set; }
-        public class TotpTempData
 
-        {
-            public byte[] SecretKey { get; set; }
-            public string UserMobileNo { get; set; }
-            public DateTime ExpirationTime { get; set; }
-        }
         public class InputModel
         {
 
@@ -63,7 +62,7 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
             {
                 if (code == null || userEmailOrPhone == null)
                 {
-                    return BadRequest("کد تایید ایمیل اشتباه است");
+                    return BadRequest("کد تایید  اشتباه است");
                 }
                 else
                 {
@@ -78,7 +77,7 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
 
             if (userEmailOrPhone == null)
             {
-                return BadRequest("کد تایید ایمیل اشتباه است");
+                return BadRequest("کد تایید  اشتباه است");
             }
 
             //اگر پارمتر ورودی وجود داشته باشد و کاربر آن را دستی نزده باشد
@@ -101,9 +100,11 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
 
             #region reset password by Email
             var user = await _userManager.FindByNameAsync(Input.EmailOrPhone);
-            if (user == null)
+            if (user == null && Input.EmailOrPhone.Contains("@"))
             {
+
                 // Don't reveal that the user does not exist
+
                 return RedirectToPage("./Login");
             }
 
@@ -129,8 +130,18 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
 
 
             #region reset password by Totp
-            var resultConfirmRestTotpCode = await ConfirmResetTotpCod();
-            if (resultConfirmRestTotpCode.Successed)
+            var resulConfirmationResetTotpCode =
+                await _totpCode.ConfirmTotpCodeAsync(Input.EmailOrPhone, Input.Code,TotpTypeDict.TotpAccountPasswordResetCode);
+            // اگر کد ارسالی منقضی شده باشد
+            if (!resulConfirmationResetTotpCode.Successed
+                && resulConfirmationResetTotpCode.ErrorMessage == ErrorMessageRes.TotpCodeExpire)
+            {
+                TempData[TempDataDict.Error_TotpCode] = ErrorMessageRes.TotpCodeExpire;
+                return RedirectToPage("./ForgotPassword");
+
+            }
+            // کد تایید شود
+            if (resulConfirmationResetTotpCode.Successed)
             {
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
                 var result = await _userManager.ResetPasswordAsync(user, code, Input.Password);
@@ -148,12 +159,10 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
 
             }
 
-            if (TempData.ContainsKey(TempDataDict.Error_TotpCode))
-            {
-                return RedirectToPage("./ForgotPassword");
-            }
+            // کد اشتباه وارد شود
 
-            ModelState.AddModelError(String.Empty, resultConfirmRestTotpCode.ErrorMessage);
+            ModelState.AddModelError(String.Empty, resulConfirmationResetTotpCode.ErrorMessage);
+            TempData[TempDataDict.ShowTotpResetCode] = true;
             return Page();
 
 
@@ -162,50 +171,57 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
 
         }
 
-        private async Task<PhoneTotpResult> ConfirmResetTotpCod()
-        {
-            // اگر سیستم کدی را ارسال نکرده باشد
-            if (!TempData.ContainsKey(TempDataDict.TotpResetCode))
-            {
-                TempData[TempDataDict.Error_TotpCode] = "کد ارسالی منقضی شده است لطفا کد جدید دریافت کنید";
-                return new PhoneTotpResult(false, "کد ارسالی منقضی شده است لطفا کد جدید دریافت کنید");
+        ////private async Task<PhoneTotpResult> ConfirmResetTotpCod()
+        ////{
+        ////    // اگر سیستم کدی را ارسال نکرده باشد
 
-            }
-            // اگر کئ ارسالی منقضی شده باشد
-            var resetCodeTemp = TempData.Get<TotpTempData>(TempDataDict.TotpResetCode);
-            if (resetCodeTemp.ExpirationTime <= DateTime.Now)
-            {
-                TempData[TempDataDict.Error_TotpCode] = "کد ارسالی منقضی شده است لطفا کد جدید دریافت کنید";
-                return new PhoneTotpResult(false, "کد ارسالی منقضی شده است لطفا کد جدید دریافت کنید");
+        ////    #region absoulte Way
 
-            }
+        ////    if (!TempData.ContainsKey(TempDataDict.TotpResetCode))
+        ////    {
+        ////        TempData[TempDataDict.Error_TotpCode] = "کد ارسالی منقضی شده است لطفا کد جدید دریافت کنید";
+        ////        return new PhoneTotpResult(false, "کد ارسالی منقضی شده است لطفا کد جدید دریافت کنید");
 
+        ////    }
+        ////    // اگر کئ ارسالی منقضی شده باشد
+        ////    var resetCodeTemp = TempData.Get<TotpTempData>(TempDataDict.TotpResetCode);
+        ////    if (resetCodeTemp.ExpirationTime <= DateTime.Now)
+        ////    {
+        ////        TempData[TempDataDict.Error_TotpCode] = "کد ارسالی منقضی شده است لطفا کد جدید دریافت کنید";
+        ////        return new PhoneTotpResult(false, "کد ارسالی منقضی شده است لطفا کد جدید دریافت کنید");
 
-            var mathResult = _totp.VerifyTotp(resetCodeTemp.SecretKey, Input.Code);
-            //اگر کد درست باشد
-            if (mathResult.Successed)
-            {
-                //phone number confirmation
-                var user = await _userManager.FindByNameAsync(resetCodeTemp.UserMobileNo);
-                if (user == null)
-                {
-                    TempData[TempDataDict.Error_TotpCode] = "مشکلی پیش آمده مجدد درخواست کد نمایید";
-                    return new PhoneTotpResult(false, "مشکلی پیش آمده مجدد درخواست کد نمایید");
-
-                }
-
-                return new PhoneTotpResult(true, "");
-
-            }
-
-            // اگر کد غلط باشد
-            TempData.Keep(TempDataDict.TotpResetCode);
-            TempData[TempDataDict.ShowTotpResetCode] = true;
-            //TempData[TempDataDict.Error_TotpCode] = "کد وارد شده صحیح نمی باشد";
+        ////    }
 
 
-            return new PhoneTotpResult(false, "کد وارد شده صحیح نمی باشد");
-        }
+        ////    var mathResult = _totp.VerifyTotp(resetCodeTemp.SecretKey, Input.Code);
+        ////    //اگر کد درست باشد
+        ////    if (mathResult.Successed)
+        ////    {
+        ////        //phone number confirmation
+        ////        var user = await _userManager.FindByNameAsync(resetCodeTemp.UserMobileNo);
+        ////        if (user == null)
+        ////        {
+        ////            TempData[TempDataDict.Error_TotpCode] = "مشکلی پیش آمده مجدد درخواست کد نمایید";
+        ////            return new PhoneTotpResult(false, "مشکلی پیش آمده مجدد درخواست کد نمایید");
+
+        ////        }
+
+        ////        return new PhoneTotpResult(true, "");
+
+        ////    }
+
+        ////    // اگر کد غلط باشد
+        ////    TempData.Keep(TempDataDict.TotpResetCode);
+        ////    TempData[TempDataDict.ShowTotpResetCode] = true;
+        ////    //TempData[TempDataDict.Error_TotpCode] = "کد وارد شده صحیح نمی باشد";
+
+
+        ////    return new PhoneTotpResult(false, "کد وارد شده صحیح نمی باشد");
+
+        ////    //#endregion
+
+
+        ////}
 
     }
 }

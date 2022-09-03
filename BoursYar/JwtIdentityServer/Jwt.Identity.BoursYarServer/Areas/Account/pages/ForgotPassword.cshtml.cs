@@ -1,22 +1,23 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
-using IdentityPersianHelper.DataAnnotations;
+﻿using IdentityPersianHelper.DataAnnotations;
 using Jwt.Identity.BoursYarServer.Helpers.Extensions;
+using Jwt.Identity.BoursYarServer.Models.SettingModels;
 using Jwt.Identity.BoursYarServer.Resources;
-using Jwt.Identity.BoursYarServer.SettingModels;
 using Jwt.Identity.Domain.Interfaces.IMessageSender;
 using Jwt.Identity.Domain.Interfaces.IPhoneTotpProvider;
+using Jwt.Identity.Domain.Interfaces.ISendPhoneCode;
 using Jwt.Identity.Domain.Models;
+using Jwt.Identity.Domain.Models.TransferData;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.Text;
+using System.Text.Encodings.Web;
+using System.Threading.Tasks;
 
 namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
 {
@@ -28,22 +29,19 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
         private readonly IPhoneTotpProvider _totp;
         private readonly ISmsSender _smsSender;
         private readonly TotpSettings _options;
+        private readonly ITotpCode _totpCode;
 
-        public ForgotPasswordModel(UserManager<ApplicationUser> userManager, IEmailSender emailSender, IPhoneTotpProvider totp, ISmsSender smsSender, IOptions<TotpSettings> options)
+
+        public ForgotPasswordModel(UserManager<ApplicationUser> userManager, IEmailSender emailSender, IPhoneTotpProvider totp, ISmsSender smsSender, IOptions<TotpSettings> options, ITotpCode totpCode)
         {
             _userManager = userManager;
             _emailSender = emailSender;
             _totp = totp;
             _smsSender = smsSender;
-            _options = options?.Value??new TotpSettings();
+            _totpCode = totpCode;
+            _options = options?.Value ?? new TotpSettings();
         }
-        public class TotpTempData
 
-        {
-            public byte[] SecretKey { get; set; }
-            public string UserMobileNo { get; set; }
-            public DateTime ExpirationTime { get; set; }
-        }
         [BindProperty]
         public InputModel Input { get; set; }
 
@@ -61,27 +59,7 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
             }
             private string _normalEmailOrPhone;
         }
-        private async Task SendPhoneResetAsync(string phoneNo)
-        {
-            if (TempData.ContainsKey(TempDataDict.TotpConfirmationCode))
-            {
-                var totpResetTempData = TempData.Get<TotpTempData>(TempDataDict.TotpResetCode);
-            }
-            var secretKey = _totp.CreateSecretKey();
-            var totpCode = _totp.GenerateTotp(secretKey);
-
-            var totpTemp = new TotpTempData()
-            {
-                SecretKey = secretKey,
-                UserMobileNo = phoneNo,
-                ExpirationTime = DateTime.Now.AddSeconds(_options.Step)
-            };
-            TempData.Set(TempDataDict.TotpResetCode, totpTemp);
-            await _smsSender.SendSmsAsync(phoneNo, totpCode, "شرکت فلان");
-            //just for check
-            await _emailSender.SendEmailAsync(phoneNo, "sms to " + phoneNo, totpCode, false);
-            TempData[TempDataDict.ShowTotpResetCode]=true;
-        }
+      
 
         private async Task SendEmailResetAsync(string email)
         {
@@ -94,15 +72,15 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
             var callbackUrl = Url.Page(
                 "/ResetPassword",
                 pageHandler: null,
-                values: new { area = "Account",  userEmailOrPhone = Input.EmailOrPhone, code  },
+                values: new { area = "Account", userEmailOrPhone = Input.EmailOrPhone, code },
                 protocol: Request.Scheme);
 
             await _emailSender.SendEmailAsync(
                 Input.EmailOrPhone,
                 "Reset Password",
-                $"جهت ریست پسورد خود اینجا<a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>کلیک نمایید</a>.",true);
+                $"جهت ریست پسورد خود اینجا<a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>کلیک نمایید</a>.", true);
 
-        
+
             TempData[TempDataDict.ShowResetEmailMessage] = true;
         }
 
@@ -119,28 +97,36 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
                 if (user == null)
                 {
                     // Don't reveal that the user does not exist or is not confirmed
-                   // return RedirectToPage("./ForgotPasswordConfirmation");
-                   TempData[TempDataDict.ShowResetEmailMessage] = true;
-                   return Page();
+                    // return RedirectToPage("./ForgotPasswordConfirmation");
+                    if (Input.EmailOrPhone.Contains("@"))
+                    {
+                        TempData[TempDataDict.ShowResetEmailMessage] = true;
+                        return Page();
+
+                    }
+                    TempData[TempDataDict.ShowTotpResetCode] = true;
+                    return RedirectToPage("./ResetPassword", new { userEmailOrPhone = Input.EmailOrPhone });
+                   
                 }
-                if(Input.EmailOrPhone.Contains("@") &&
-                  ! (await _userManager.IsEmailConfirmedAsync(user)))
-               
+                if (Input.EmailOrPhone.Contains("@") &&
+                  !(await _userManager.IsEmailConfirmedAsync(user)))
+
                 {
                     // Don't reveal that the user does not exist or is not confirmed
-                   // return RedirectToPage("./ForgotPasswordConfirmation");
-                   TempData[TempDataDict.ShowResetEmailMessage] = true;
-                   return Page();
+                    // return RedirectToPage("./ForgotPasswordConfirmation");
+
+                    TempData[TempDataDict.ShowResetEmailMessage] = true;
+                    return Page();
 
                 }
 
-                if (!Input.EmailOrPhone.Contains("@")&&!(await _userManager.IsPhoneNumberConfirmedAsync(user)))
+                if (!Input.EmailOrPhone.Contains("@") && !(await _userManager.IsPhoneNumberConfirmedAsync(user)))
                 {
                     // Don't reveal that the user does not exist or is not confirmed
-                    return RedirectToPage("./ForgotPasswordConfirmation");
+                    return RedirectToPage("./ResetPassword");
                 }
 
-                if(Input.EmailOrPhone.Contains("@"))
+                if (Input.EmailOrPhone.Contains("@"))
                 {
                     await SendEmailResetAsync(Input.EmailOrPhone);
                     TempData[TempDataDict.ShowResetEmailMessage] = true;
@@ -149,11 +135,23 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
                 }
                 else
                 {
-                    await SendPhoneResetAsync(Input.EmailOrPhone);
-                    return RedirectToPage("./ResetPassword",new{userEmailOrPhone=Input.EmailOrPhone});
+                    // await SendPhoneResetAsync(Input.EmailOrPhone);
+                    //SendResetTotpCode
+                    var resultSendRestTotpCode =
+                        await _totpCode.SendTotpCodeAsync(Input.EmailOrPhone,TotpTypeDict.TotpAccountPasswordResetCode);
+
+                    if (resultSendRestTotpCode.Successed)
+                    {
+                        TempData[TempDataDict.ShowTotpResetCode] = true;
+                        return RedirectToPage("./ResetPassword", new { userEmailOrPhone = Input.EmailOrPhone });
+                    }
+
+                    // TempData[TempDataDict.ShowTotpResetCode]=true;
+                    TempData[TempDataDict.Error_TotpCode] = resultSendRestTotpCode.ErrorMessage;
+                    return Page();
                 }
-                   
-                   
+
+
             }
 
             return Page();

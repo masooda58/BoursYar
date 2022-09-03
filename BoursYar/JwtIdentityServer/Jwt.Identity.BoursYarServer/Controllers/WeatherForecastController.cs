@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Jwt.Identity.Domain.Interfaces.ITokenServices;
 using Jwt.Identity.Domain.Interfaces.IUserRepositories;
 using Jwt.Identity.Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -77,6 +78,7 @@ namespace Jwt.Identity.BoursYarServer.Controllers
 
         [HttpGet]
         [Route("test")]
+        [Authorize]
         public async Task<ActionResult> test()
         {
             var user = new ApplicationUser();

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Jwt.Identity.Domain.Models.TokenModels
+namespace Jwt.Identity.Domain.Models.ResultModels.TokenModels
 {
     public class TokenModel
     {

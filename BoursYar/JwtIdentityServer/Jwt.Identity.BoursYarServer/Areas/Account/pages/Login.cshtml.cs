@@ -103,9 +103,13 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
                
                 var user = await _userManager.FindByNameAsync(Input.EmailOrPhone);
+                if (user==null)
+                {
+                    ModelState.AddModelError(string.Empty, " نام کاربری یا رمز عبور اشتباه است. ");
+                    return Page();
+                }
 
-
-                var result = await _signInManager.PasswordSignInAsync(user, Input.Password, Input.RememberMe, lockoutOnFailure: true);
+                var result = await _signInManager.PasswordSignInAsync(Input.EmailOrPhone, Input.Password, Input.RememberMe, lockoutOnFailure: true);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
