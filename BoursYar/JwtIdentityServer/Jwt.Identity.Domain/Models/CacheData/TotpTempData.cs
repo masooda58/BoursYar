@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Jwt.Identity.Domain.Models.TransferData
+namespace Jwt.Identity.Domain.Models.CacheData
 {
     public class TotpTempData
 

@@ -17,7 +17,7 @@ namespace Jwt.Identity.Domain.Interfaces.IPhoneTotpProvider
         /// <param name="secretKey"></param>
         /// <param name="code"></param>
         /// <returns>  نتیجه تایید کد</returns>
-        public PhoneTotpResult VerifyTotp(byte[] secretKey, string code);
+        public ConfirmResult VerifyTotp(byte[] secretKey, string code);
         /// <summary>
         /// ساخت کلید رندم
         /// </summary>
