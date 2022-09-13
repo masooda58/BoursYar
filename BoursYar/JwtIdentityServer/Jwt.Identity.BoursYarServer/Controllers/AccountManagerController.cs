@@ -10,6 +10,7 @@ namespace Jwt.Identity.BoursYarServer.Controllers
     [Route("AccountManage/[controller]")]
     public class AccountManagerController : Controller
     {
+        [HttpPost]
         public IActionResult Index()
         {
             return View();

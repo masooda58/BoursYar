@@ -4,9 +4,7 @@ using Jwt.Identity.BoursYarServer.Models.SettingModels;
 using Jwt.Identity.BoursYarServer.Resources;
 using Jwt.Identity.Domain.Interfaces.IMessageSender;
 using Jwt.Identity.Domain.Interfaces.IPhoneTotpProvider;
-using Jwt.Identity.Domain.Interfaces.ISendPhoneCode;
 using Jwt.Identity.Domain.Models;
-using Jwt.Identity.Domain.Models.TransferData;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -18,6 +16,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Jwt.Identity.Domain.Interfaces.IConfirmCode;
+using Jwt.Identity.Domain.Models.TypeCode;
 
 namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
 {
@@ -30,6 +30,7 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
         private readonly ISmsSender _smsSender;
         private readonly TotpSettings _options;
         private readonly ITotpCode _totpCode;
+        
 
 
         public ForgotPasswordModel(UserManager<ApplicationUser> userManager, IEmailSender emailSender, IPhoneTotpProvider totp, ISmsSender smsSender, IOptions<TotpSettings> options, ITotpCode totpCode)
@@ -123,7 +124,8 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
                 if (!Input.EmailOrPhone.Contains("@") && !(await _userManager.IsPhoneNumberConfirmedAsync(user)))
                 {
                     // Don't reveal that the user does not exist or is not confirmed
-                    return RedirectToPage("./ResetPassword");
+                    TempData[TempDataDict.ShowTotpResetCode] = true;
+                    return RedirectToPage("./ResetPassword",new { userEmailOrPhone = Input.EmailOrPhone });
                 }
 
                 if (Input.EmailOrPhone.Contains("@"))
@@ -138,11 +140,12 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
                     // await SendPhoneResetAsync(Input.EmailOrPhone);
                     //SendResetTotpCode
                     var resultSendRestTotpCode =
-                        await _totpCode.SendTotpCodeAsync(Input.EmailOrPhone,TotpTypeDict.TotpAccountPasswordResetCode);
-
+                        await _totpCode.SendTotpCodeAsync(Input.EmailOrPhone,TotpTypeCode.TotpAccountPasswordResetCode);
+                   
                     if (resultSendRestTotpCode.Successed)
                     {
                         TempData[TempDataDict.ShowTotpResetCode] = true;
+                        TempData["phonNo"] = Input.EmailOrPhone;
                         return RedirectToPage("./ResetPassword", new { userEmailOrPhone = Input.EmailOrPhone });
                     }
 

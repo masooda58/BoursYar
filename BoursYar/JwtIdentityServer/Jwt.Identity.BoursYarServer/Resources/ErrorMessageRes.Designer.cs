@@ -63,9 +63,9 @@ namespace Jwt.Identity.BoursYarServer.Resources {
         /// <summary>
         ///   Looks up a localized string similar to کد ارسالی منقضی شده است لطفا کد جدید دریافت کنید.
         /// </summary>
-        public static string TotpCodeExpire {
+        public static string CodeExpire {
             get {
-                return ResourceManager.GetString("TotpCodeExpire", resourceCulture);
+                return ResourceManager.GetString("CodeExpire", resourceCulture);
             }
         }
         

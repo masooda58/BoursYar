@@ -4,6 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Jwt.Identity.Domain.Interfaces.ITokenServices;
+using Jwt.Identity.Domain.Models.ResultModels.Response;
 using Jwt.Identity.Domain.Models.ResultModels.TokenModels;
 using Microsoft.IdentityModel.Tokens;
 
@@ -17,7 +18,7 @@ namespace Jwt.Identity.BoursYarServer.Services.TokenServices
         {
             _jwtSetting = config;
         }
-        public UserTokenModel GetAccessToken(List<Claim> authClaims)
+        public UserTokenResponse GetAccessToken(List<Claim> authClaims)
         {
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSetting.Secret));
 
@@ -30,7 +31,7 @@ namespace Jwt.Identity.BoursYarServer.Services.TokenServices
             );
             var mainToken = new JwtSecurityTokenHandler().WriteToken(token);
             var refreshToken = GetRefreshToken();
-            return new UserTokenModel()
+            return new UserTokenResponse()
             {
                 AccessToken = mainToken,
                 Expiration = token.ValidTo,

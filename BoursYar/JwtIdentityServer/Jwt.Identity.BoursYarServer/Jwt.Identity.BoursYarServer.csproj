@@ -7,6 +7,25 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Services\**" />
+    <Content Remove="Services\**" />
+    <EmbeddedResource Remove="Services\**" />
+    <None Remove="Services\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Services\ConfirmCode\MailCode.cs" />
+    <Compile Include="Services\ConfirmCode\TotpCode.cs" />
+    <Compile Include="Services\MessageServices\EmailService.cs" />
+    <Compile Include="Services\MessageServices\SmsServices.cs" />
+    <Compile Include="Services\PhoneTotpProvider\PhoneTotpProvider.cs" />
+    <Compile Include="Services\TokenServices\AuthClaimsGenrators.cs" />
+    <Compile Include="Services\TokenServices\JwtSettingModel.cs" />
+    <Compile Include="Services\TokenServices\TokenGenrators.cs" />
+    <Compile Include="Services\TokenServices\TokenValidators.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="..\..\Common\SharedSettings\JwtIdentitySharedSettings.json" Link="JwtIdentitySharedSettings.json" CopyToOutputDirectory="always" />
   </ItemGroup>
 
@@ -75,7 +94,6 @@
 
   <ItemGroup>
     <Folder Include="Models\TransferData\" />
-    <Folder Include="Models\ViewModel\" />
   </ItemGroup>
 
 </Project>

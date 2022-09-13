@@ -1,10 +1,8 @@
-﻿using Jwt.Identity.BoursYarServer.Helpers.Extensions;
-using Jwt.Identity.BoursYarServer.Resources;
+﻿using Jwt.Identity.BoursYarServer.Resources;
+using Jwt.Identity.Domain.Interfaces.IConfirmCode;
 using Jwt.Identity.Domain.Interfaces.IPhoneTotpProvider;
-using Jwt.Identity.Domain.Interfaces.ISendPhoneCode;
 using Jwt.Identity.Domain.Models;
-using Jwt.Identity.Domain.Models.ResultModels;
-using Jwt.Identity.Domain.Models.TransferData;
+using Jwt.Identity.Domain.Models.TypeCode;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -50,8 +48,16 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
             [Display(Name = "تکرار رمز عبور")]
             [Compare("Password", ErrorMessage = "{0} و {1} مطابقت ندارند")]
             public string ConfirmPassword { get; set; }
-            [Required]
+
+
+            [Required(ErrorMessage = "لطفا {0} را وارد نمایید")]
             [Display(Name = "کد تایید")]
+            [PageRemote(
+
+                HttpMethod = "post",
+                PageHandler = "CheckCode",
+                AdditionalFields = "__RequestVerificationToken"
+            )]
             public string Code { get; set; }
         }
 
@@ -64,15 +70,15 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
                 {
                     return BadRequest("کد تایید  اشتباه است");
                 }
-                else
+
+
+                Input = new InputModel
                 {
-                    Input = new InputModel
-                    {
-                        EmailOrPhone = userEmailOrPhone,
-                        Code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code))
-                    };
-                    return Page();
-                }
+                    EmailOrPhone = userEmailOrPhone,
+                    Code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code))
+                };
+                return Page();
+
             }
 
             if (userEmailOrPhone == null)
@@ -131,12 +137,12 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
 
             #region reset password by Totp
             var resulConfirmationResetTotpCode =
-                await _totpCode.ConfirmTotpCodeAsync(Input.EmailOrPhone, Input.Code,TotpTypeDict.TotpAccountPasswordResetCode);
+                await _totpCode.ConfirmTotpCodeAsync(Input.EmailOrPhone, Input.Code, TotpTypeCode.TotpAccountPasswordResetCode);
             // اگر کد ارسالی منقضی شده باشد
             if (!resulConfirmationResetTotpCode.Successed
-                && resulConfirmationResetTotpCode.ErrorMessage == ErrorMessageRes.TotpCodeExpire)
+                && resulConfirmationResetTotpCode.ErrorMessage == ErrorMessageRes.CodeExpire)
             {
-                TempData[TempDataDict.Error_TotpCode] = ErrorMessageRes.TotpCodeExpire;
+                TempData[TempDataDict.Error_TotpCode] = ErrorMessageRes.CodeExpire;
                 return RedirectToPage("./ForgotPassword");
 
             }
@@ -169,6 +175,29 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
             #endregion
 
 
+        }
+        public async Task<JsonResult> OnPostCheckCode()
+        {
+            var phoneNo = TempData.Peek("PhoneNo")!.ToString();
+            if (phoneNo != null)
+            {
+                var result =
+                    await _totpCode.ConfirmTotpCodeAsync(phoneNo, Input.Code,
+                        TotpTypeCode.TotpAccountPasswordResetCode);
+              if (result.Successed)
+              {
+                  return new JsonResult($"کد وارد شده صحیح است");
+              }
+
+              return new JsonResult(result.ErrorMessage);
+            }
+
+            if (phoneNo == null)
+            {
+                return new JsonResult($"کد تایید را وارد نمایید");
+            }
+
+            return new JsonResult($"کد وارد شده صحیح نمی باشد");
         }
 
         ////private async Task<PhoneTotpResult> ConfirmResetTotpCod()

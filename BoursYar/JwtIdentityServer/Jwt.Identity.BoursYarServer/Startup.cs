@@ -1,12 +1,19 @@
-﻿using Common.Api.Dependency.Cors;
+﻿
+
+using System;
+using Common.Api.Dependency.Cors;
 using Common.Api.Dependency.Swagger;
+using IdentityPersianHelper.Identity;
 using Jwt.Identity.BoursYarServer.Helpers.CustomSignIn;
+using Jwt.Identity.BoursYarServer.Models.SettingModels;
 using Jwt.Identity.BoursYarServer.Security;
+using Jwt.Identity.BoursYarServer.Services.ConfirmCode;
 using Jwt.Identity.BoursYarServer.Services.MessageServices;
 using Jwt.Identity.BoursYarServer.Services.PhoneTotpProvider;
 using Jwt.Identity.BoursYarServer.Services.TokenServices;
 using Jwt.Identity.Data.Context;
 using Jwt.Identity.Data.Repositories.UserRepositories;
+using Jwt.Identity.Domain.Interfaces.IConfirmCode;
 using Jwt.Identity.Domain.Interfaces.IMessageSender;
 using Jwt.Identity.Domain.Interfaces.IPhoneTotpProvider;
 using Jwt.Identity.Domain.Interfaces.ITokenServices;
@@ -15,17 +22,11 @@ using Jwt.Identity.Domain.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using IdentityPersianHelper.Identity;
-using Jwt.Identity.BoursYarServer.Models.SettingModels;
-using Jwt.Identity.BoursYarServer.Services;
-using Jwt.Identity.BoursYarServer.Services.TotpCode;
-using Jwt.Identity.Domain.Interfaces.ISendPhoneCode;
-using Microsoft.AspNetCore.Routing;
 
 namespace Jwt.Identity.BoursYarServer
 {

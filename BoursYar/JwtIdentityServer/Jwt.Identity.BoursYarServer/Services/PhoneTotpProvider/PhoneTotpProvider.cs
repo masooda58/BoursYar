@@ -28,13 +28,13 @@ namespace Jwt.Identity.BoursYarServer.Services.PhoneTotpProvider
             return _totp.ComputeTotp();
         }
  ///  <inheritdoc />
-        public PhoneTotpResult VerifyTotp(byte[] secretKey, string code)
+        public ConfirmResult VerifyTotp(byte[] secretKey, string code)
         {
             CreateTotp(secretKey);
             var isTotpValid = _totp.VerifyTotp(code, out _,VerificationWindow.RfcSpecifiedNetworkDelay);
            return isTotpValid ? 
-               new PhoneTotpResult(true, null)
-               : new PhoneTotpResult(false, "کد وراد شده معتبر نیست لطفا کد جدید دریافت نمایید");
+               new ConfirmResult(true, null)
+               : new ConfirmResult(false, "کد وراد شده معتبر نیست لطفا کد جدید دریافت نمایید");
         }
        
         private void CreateTotp(byte[] secretKey)

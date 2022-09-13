@@ -2,12 +2,13 @@
 using System.Net.Mail;
 using System.Threading.Tasks;
 using Jwt.Identity.Domain.Interfaces.IMessageSender;
+using Jwt.Identity.Domain.Models.ResultModels;
 
 namespace Jwt.Identity.BoursYarServer.Services.MessageServices
 {
     public class EmailService:IEmailSender
     {
-        public  Task SendEmailAsync(string toEmail,string subject, string message, bool isMessageHtml = false)
+        public   Task SendEmailAsync(string toEmail,string subject, string message, bool isMessageHtml = false)
         {
             using (var client = new SmtpClient())
             {
@@ -33,10 +34,12 @@ namespace Jwt.Identity.BoursYarServer.Services.MessageServices
                     IsBodyHtml = isMessageHtml
                 };
 
-                client.Send(emailMessage);
+           
+                   client.Send(emailMessage);
+               
             }
 
-            return Task.CompletedTask;
+            return Task.CompletedTask ;
         }
     }
 }

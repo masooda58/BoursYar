@@ -2,7 +2,6 @@
 using Jwt.Identity.BoursYarServer.Helpers.Extensions;
 using Jwt.Identity.BoursYarServer.Resources;
 using Jwt.Identity.Domain.Interfaces.IMessageSender;
-using Jwt.Identity.Domain.Interfaces.ISendPhoneCode;
 using Jwt.Identity.Domain.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -20,6 +19,8 @@ using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Jwt.Identity.Domain.Interfaces.IConfirmCode;
+using Jwt.Identity.Domain.Models.TypeCode;
 
 namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
 {
@@ -195,7 +196,7 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
                     #region send sms confirm
                     _memoryCache.Remove(TotpTypeDict.TotpAccountConfirmationCode);
                     var resualtSendTotpCodeAsync =
-                        await _totpCode.SendTotpCodeAsync(Input.EmailOrPhone, TotpTypeDict.TotpAccountConfirmationCode);
+                        await _totpCode.SendTotpCodeAsync(Input.EmailOrPhone, TotpTypeCode.TotpAccountConfirmationCode);
                     if (resualtSendTotpCodeAsync.Successed)
                     {
                         TempData[TempDataDict.ShowTotpConfirmationCode] = true;

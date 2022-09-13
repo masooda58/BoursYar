@@ -5,7 +5,6 @@ using Jwt.Identity.BoursYarServer.Models.SettingModels;
 using Jwt.Identity.BoursYarServer.Resources;
 using Jwt.Identity.Domain.Interfaces.IMessageSender;
 using Jwt.Identity.Domain.Interfaces.IPhoneTotpProvider;
-using Jwt.Identity.Domain.Interfaces.ISendPhoneCode;
 using Jwt.Identity.Domain.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -18,6 +17,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Jwt.Identity.Domain.Interfaces.IConfirmCode;
+using Jwt.Identity.Domain.Models.TypeCode;
 
 namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
 {
@@ -137,7 +138,7 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
                     }
 
                     var resualtSendTotpCode =
-                        await _totpCode.SendTotpCodeAsync(EmailOrPhone, TotpTypeDict.TotpAccountConfirmationCode);
+                        await _totpCode.SendTotpCodeAsync(EmailOrPhone, TotpTypeCode.TotpAccountConfirmationCode);
                     if (resualtSendTotpCode.Successed)
                     {
                         TempData[TempDataDict.ShowTotpConfirmationCode] = true;
@@ -174,11 +175,11 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
 
             }
             var resualtConfirmTotpCodeAsync = await _totpCode
-                .ConfirmTotpCodeAsync(EmailOrPhone, VerifySmsCode, TotpTypeDict.TotpAccountConfirmationCode);
+                .ConfirmTotpCodeAsync(EmailOrPhone, VerifySmsCode, TotpTypeCode.TotpAccountConfirmationCode);
             if (!resualtConfirmTotpCodeAsync.Successed &&
                 resualtConfirmTotpCodeAsync.ErrorMessage != ErrorMessageRes.WrongTotpInput)
             {
-                TempData[TempDataDict.Error_TotpCode] = ErrorMessageRes.TotpCodeExpire;
+                TempData[TempDataDict.Error_TotpCode] = ErrorMessageRes.CodeExpire;
 
                 return RedirectToPage("/SendConfirmationCode", new { returnUrl, emailorPhone = EmailOrPhone });
 
