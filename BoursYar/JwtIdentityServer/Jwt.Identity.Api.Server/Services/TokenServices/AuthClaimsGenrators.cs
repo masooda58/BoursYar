@@ -10,14 +10,15 @@ namespace Jwt.Identity.Api.Server.Services.TokenServices
     // این کلاس تعیین می کنن چه مواردی در توکن اصلی قرار بگیرد
     public class AuthClaimsGenrators : IAuthClaimsGenrators
     {
-        public async Task<List<Claim>> CreatClaims(ApplicationUser user)
+        /// <inheritdoc />
+        public List<Claim> CreatClaims(ApplicationUser user)
         {
             var authClaims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, "user.UserName"),
-                new Claim("BoursYarAccess","x"),
-                new Claim("BoursYarAccess","y"),
-                new Claim("id","user.Id"),
+                //new Claim("BoursYarAccess","x"),
+                //new Claim("BoursYarAccess","y"),
+                new Claim("id",user.Id),
 
             };
             return authClaims;

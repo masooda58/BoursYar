@@ -117,16 +117,64 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="TotpCodeExpire" xml:space="preserve">
+  <data name="AccountLucked" xml:space="preserve">
+    <value>اکانت کاربر قفل شده است لطفا بعدا تلاش  نمایید</value>
+  </data>
+  <data name="AccountNotConFirm" xml:space="preserve">
+    <value>اکانت کاربر تایید نشده است لطفا نسبت به تایید اکانت اقدام فرمایید</value>
+  </data>
+  <data name="CallBackUrlNotValid" xml:space="preserve">
+    <value>مسیر ارسالی معتبر نمی باشد</value>
+  </data>
+  <data name="ClientNoExist" xml:space="preserve">
+    <value>کلایت معتبر ندارد</value>
+  </data>
+  <data name="CodeExpire" xml:space="preserve">
     <value>کد ارسالی منقضی شده است لطفا کد جدید دریافت کنید</value>
+  </data>
+  <data name="CookiesSet" xml:space="preserve">
+    <value>کوکی تنظیم گردید</value>
+  </data>
+  <data name="DouplicateClient" xml:space="preserve">
+    <value>کلاینت قبلا ثبت شده است</value>
+  </data>
+  <data name="EmailSent" xml:space="preserve">
+    <value>ایمیل ارسال گردید</value>
+  </data>
+  <data name="MobileConfirmed" xml:space="preserve">
+    <value>شماره موبایل تایید شد</value>
+  </data>
+  <data name="NotExistExternalProvider" xml:space="preserve">
+    <value>ورود با تامین کننده خارجی پیکربندی نشده است</value>
+  </data>
+  <data name="NotValidProvider" xml:space="preserve">
+    <value>provider معتبر نیست</value>
+  </data>
+  <data name="OKTotpInput" xml:space="preserve">
+    <value>کد وارد شده صحیح است</value>
+  </data>
+  <data name="TotpSent" xml:space="preserve">
+    <value>کد تایید ارسال گردید</value>
   </data>
   <data name="UnknownTotpError" xml:space="preserve">
     <value>مشکلی پیش آمده مجدد درخواست کد نمایید</value>
   </data>
   <data name="UnkonwnError" xml:space="preserve">
-    <value>مشکلی پیش آمده لطفا مجدد ثبت نام نمایید</value>
+    <value>مشکلی پیش آمده لطفا مجدد اقدام نام نمایید</value>
+  </data>
+  <data name="UserCreated" xml:space="preserve">
+    <value>کاربر با موفقیت ساخته شد</value>
+  </data>
+  <data name="UserLogin" xml:space="preserve">
+    <value>کارب با موفقیت وارد شد</value>
+  </data>
+  <data name="WrongLoginType" xml:space="preserve">
+    <value>نوع لاگین معتبر نیست</value>
   </data>
   <data name="WrongTotpInput" xml:space="preserve">
     <value>کد وارد شده صحیح نمی باشد</value>
+  </data>
+  <data name="WrongUserOrPass" xml:space="preserve">
+    <value>نام کاربری یا رمز عبور اشتباه است</value>
   </data>
 </root>

@@ -5,9 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="..\..\Common\SharedSettings\JwtIdentitySharedSettings.json" Link="JwtIdentitySharedSettings.json" CopyToOutputDirectory="always" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="BoursYar.Authorization" Version="1.0.0" />
-    <PackageReference Include="Common.Api.Dependency" Version="1.0.0" />
+    <PackageReference Include="Common.Api.Dependency" Version="1.0.2" />
     <PackageReference Include="Common.Jwt.Authentication" Version="1.0.1" />
+    <PackageReference Include="Google.Apis.Auth" Version="1.57.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="5.0.17" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.17" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.8" />
@@ -29,16 +33,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Resources\ErrorMessageRes.Designer.cs">
-      <DependentUpon>ErrorMessageRes.resx</DependentUpon>
+    <Compile Update="Resources\MessageRes.Designer.cs">
+      <DependentUpon>MessageRes.resx</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="Resources\ErrorMessageRes.resx">
-      <LastGenOutput>ErrorMessageRes.Designer.cs</LastGenOutput>
+    <EmbeddedResource Update="Resources\MessageRes.resx">
+      <LastGenOutput>MessageRes.Designer.cs</LastGenOutput>
       <Generator>PublicResXFileCodeGenerator</Generator>
     </EmbeddedResource>
   </ItemGroup>

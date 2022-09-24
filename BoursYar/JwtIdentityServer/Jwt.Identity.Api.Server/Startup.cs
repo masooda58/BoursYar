@@ -14,7 +14,21 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
+using Jwt.Identity.Api.Server.Services.ConfirmCode;
+using Jwt.Identity.Api.Server.Services.MessageServices;
+using Jwt.Identity.Api.Server.Services.PhoneTotpProvider;
+using Jwt.Identity.Api.Server.Services.TokenServices;
+using Jwt.Identity.Data.Repositories;
+using Jwt.Identity.Data.Repositories.UserRepositories;
+using Jwt.Identity.Domain.Interfaces.IConfirmCode;
+using Jwt.Identity.Domain.Interfaces.IMessageSender;
+using Jwt.Identity.Domain.Interfaces.IPhoneTotpProvider;
+using Jwt.Identity.Domain.Interfaces.IRepository;
+using Jwt.Identity.Domain.Interfaces.ITokenServices;
+using Jwt.Identity.Domain.Interfaces.IUserRepositories;
+using Jwt.Identity.Domain.Models.Client;
 using Jwt.Identity.Domain.Models.SettingModels;
+using Microsoft.AspNetCore.Http;
 
 namespace Jwt.Identity.Api.Server
 {
@@ -83,6 +97,13 @@ namespace Jwt.Identity.Api.Server
                 });
             #endregion
 
+            services.AddAuthentication()
+                .AddGoogle(option =>
+            {
+                option.ClientId = "346095678950-dhuqj3ko64i5i1becqteg2v3rv9l8j6a.apps.googleusercontent.com";
+                option.ClientSecret = "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";
+            });
+
             #region MemoryCache
 
             services.AddMemoryCache();
@@ -107,13 +128,48 @@ namespace Jwt.Identity.Api.Server
             services.AddOurSwagger();
             var corsOrigin = Configuration.GetSection("Cors:Origin").Get<string[]>();
             var corsMethod = Configuration.GetSection("Cors:Method").Get<string[]>();
-            services.AddOurCors(corsOrigin, corsMethod);
+          //  services.AddOurCors(corsOrigin, corsMethod);
 
             #endregion
 
             #endregion
 
-            services.AddControllers();
+           services.AddControllers()
+                .ConfigureApiBehaviorOptions(options =>
+                {
+                 //   options.SuppressConsumesConstraintForFormFileParameters = true;
+                 //   options.SuppressInferBindingSourcesForParameters = true;
+                    options.SuppressModelStateInvalidFilter = true;
+                 //   options.SuppressMapClientErrors = true;
+                 //   options.ClientErrorMapping[StatusCodes.Status404NotFound].Link =
+                  //      "/404";
+                });
+            services.AddHttpContextAccessor();
+
+            #region dependancy
+            services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+            services.AddSingleton<ITokenGenrators, TokenGenrators>();
+            services.AddSingleton<ITokenValidators, TokenValidators>();
+            services.AddSingleton<IAuthClaimsGenrators, AuthClaimsGenrators>();
+            services.AddScoped<IRepositoryService<Client>, RepositoryService<Client>>();
+            services.AddScoped<IEmailSender, EmailService>();
+            services.AddScoped<ISmsSender, SmsServices>();
+            services.AddTransient<IPhoneTotpProvider, PhoneTotpProvider>();
+            services.AddScoped<ITotpCode, TotpCode>();
+            services.AddScoped<IMailCode, MailCode>();
+            services.AddSingleton<DataProtectionPepuseString>();
+
+            #endregion
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CORSAllowLocalHost3000",
+                    builder =>
+                        builder.WithOrigins(new[] { "http://localhost:3000", "http://localhost:8080" })
+                            .AllowAnyHeader()
+                            .AllowAnyMethod()
+                            .AllowCredentials() // <<< this is required for cookies to be set on the client - sets the 'Access-Control-Allow-Credentials' to true
+                );
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -125,7 +181,14 @@ namespace Jwt.Identity.Api.Server
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Jwt.Identity.Api.Server v1"));
             }
-            app.UseCors();
+            app.UseCors(builder =>
+            {
+                builder
+                    .WithOrigins("http://localhost:3000", "https://example.com")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
+            });
             app.UseHttpsRedirection();
 
             app.UseRouting();

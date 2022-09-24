@@ -5,7 +5,7 @@ using System.Security.Claims;
 using System.Text;
 using Common.Jwt.Authentication;
 using Jwt.Identity.Domain.Interfaces.ITokenServices;
-using Jwt.Identity.Domain.Models.ResultModels.Response;
+using Jwt.Identity.Domain.Models.Response;
 using Jwt.Identity.Domain.Models.ResultModels.TokenModels;
 using Microsoft.IdentityModel.Tokens;
 
