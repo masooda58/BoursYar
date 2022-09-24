@@ -9,7 +9,7 @@ using Jwt.Identity.Domain.Interfaces.IConfirmCode;
 using Jwt.Identity.Domain.Interfaces.IMessageSender;
 using Jwt.Identity.Domain.Models;
 using Jwt.Identity.Domain.Models.ResultModels;
-using Jwt.Identity.Domain.Models.TypeCode;
+using Jwt.Identity.Domain.Models.TypeEnum;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -32,50 +32,54 @@ namespace Jwt.Identity.BoursYarServer.Services.ConfirmCode
             _httpContext = context;
         }
 
-        public async Task<ConfirmResult> SendMailCodeAsync(ApplicationUser user, MailTypeCode type)
+        public async Task<ConfirmResult> SendMailCodeAsync(ApplicationUser user, MailTypeCode type,
+            string callbackUri = null)
         {
-
-            switch (type)
-            {
-                case MailTypeCode.MailAccountConfirmationCode:
+      
+                switch (type)
                 {
-                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                    case MailTypeCode.MailAccountConfirmationCode:
+                    {
+                        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
 
                
-                    var callbackUrl = _url.Page(
-                        "/ConfirmEmail",
-                        pageHandler: null,
-                        values: new { area = "Account", email = user.Email, code = code },
-                        protocol: _httpContext.HttpContext?.Request.Scheme);
+                        var callbackUrl = _url.Page(
+                            "/ConfirmEmail",
+                            pageHandler: null,
+                            values: new { area = "Account", email = user.Email, code = code },
+                            protocol: _httpContext.HttpContext?.Request.Scheme);
 
-                    await _emailSender.SendEmailAsync(user.Email, "تاییدیه ایمیل",
-                        $"جهت تایید ایمیل اینجا <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>کلیک نمایید</a>.", true);
+                        await _emailSender.SendEmailAsync(user.Email, "تاییدیه ایمیل",
+                            $"جهت تایید ایمیل اینجا <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>کلیک نمایید</a>.", true);
 
-                    return new ConfirmResult(true, "");
-                }
-                case MailTypeCode.MailAccountPasswordResetCode:
-                {
-                    var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-                    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                        return new ConfirmResult(true, "");
+                    }
+                    case MailTypeCode.MailAccountPasswordResetCode:
+                    {
+                        var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+                        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
 
                
-                    var callbackUrl = _url.Page(
-                        "/ResetPassword",
-                        pageHandler: null,
-                        values: new { area = "Account", userEmailOrPhone = user.Email, code },
-                        protocol: _httpContext.HttpContext?.Request.Scheme);
+                        var callbackUrl = _url.Page(
+                            "/ResetPassword",
+                            pageHandler: null,
+                            values: new { area = "Account", userEmailOrPhone = user.Email, code },
+                            protocol: _httpContext.HttpContext?.Request.Scheme);
 
-                    await _emailSender.SendEmailAsync(
-                        user.Email,
-                        "Reset Password",
-                        $"جهت ریست پسورد خود اینجا<a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>کلیک نمایید</a>.", true);
+                        await _emailSender.SendEmailAsync(
+                            user.Email,
+                            "Reset Password",
+                            $"جهت ریست پسورد خود اینجا<a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>کلیک نمایید</a>.", true);
 
-                    return new ConfirmResult(true, "");
+                        return new ConfirmResult(true, "");
+                    }
+                    default:
+                        return new ConfirmResult(false, "خطای نوع ارسال");
                 }
-                default:
-                    return new ConfirmResult(false, "خطای نوع ارسال");
-            }
+           
+           
+            
         }
 
      

@@ -11,7 +11,7 @@ namespace Jwt.Identity.BoursYarServer.Services.TokenServices
     // این کلاس تعیین می کنن چه مواردی در توکن اصلی قرار بگیرد
     public class AuthClaimsGenrators : IAuthClaimsGenrators
     {
-        public async Task<List<Claim>> CreatClaims(ApplicationUser user)
+        public  List<Claim> CreatClaims(ApplicationUser user)
         {
             var authClaims = new List<Claim>
             {

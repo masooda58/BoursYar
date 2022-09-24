@@ -8,7 +8,7 @@ using Jwt.Identity.Domain.Interfaces.IPhoneTotpProvider;
 using Jwt.Identity.Domain.Models;
 using Jwt.Identity.Domain.Models.CacheData;
 using Jwt.Identity.Domain.Models.ResultModels;
-using Jwt.Identity.Domain.Models.TypeCode;
+using Jwt.Identity.Domain.Models.TypeEnum;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -87,17 +87,10 @@ namespace Jwt.Identity.BoursYarServer.Services.ConfirmCode
             var secretKey = _totp.CreateSecretKey();
             var totpCode = _totp.GenerateTotp(secretKey);
 
-            var totpTemp = new TotpTempData()
-            {
-                SecretKey = secretKey,
-                UserMobileNo = phoneNo,
-                ExpirationTime = DateTime.Now.AddSeconds(_options.Step)
-            };
-            var tempIpBlock = new TempIpBlock()
-            {
-                IpAddress = remoteIpAddress!.ToString(),
-                ExpirationTime = DateTime.Now.AddSeconds(_options.Step-2)
-            };
+            var totpTemp = new TotpTempData(SecretKey: secretKey, UserMobileNo: phoneNo,
+                ExpirationTime: DateTime.Now.AddSeconds(_options.Step));
+            var tempIpBlock = new TempIpBlock(IpAddress: remoteIpAddress!.ToString(),
+                ExpirationTime: DateTime.Now.AddSeconds(_options.Step - 2));
             // var memoryCacheOptions = new MemoryCacheEntryOptions()
             //    .SetSlidingExpiration(TimeSpan.FromSeconds(_options.Step));
             _memoryCache.Set(phoneNo + sendType, totpTemp,

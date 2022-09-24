@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using IdentityPersianHelper.DataAnnotations;
 using Jwt.Identity.BoursYarServer.Helpers.Extensions;
 using Jwt.Identity.Domain.Models;
-using Jwt.Identity.Domain.Models.TypeCode;
+using Jwt.Identity.Domain.Models.TypeEnum;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 

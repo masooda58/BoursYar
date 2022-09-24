@@ -82,7 +82,7 @@ namespace Jwt.Identity.BoursYarServer.Controllers
         public async Task<ActionResult> test()
         {
             var user = new ApplicationUser();
-            var authClaims = await _claimsGenrators.CreatClaims(user);
+            var authClaims =  _claimsGenrators.CreatClaims(user);
 
             var token = _tokenGenrator.GetAccessToken(authClaims);
             return Ok(token);
@@ -98,7 +98,7 @@ namespace Jwt.Identity.BoursYarServer.Controllers
             if (user != null && await _userManager.CheckPasswordAsync(user, model.password))
             {
 
-                var authClaims = await _claimsGenrators.CreatClaims(user);
+                var authClaims =  _claimsGenrators.CreatClaims(user);
 
                 var token = _tokenGenrator.GetAccessToken(authClaims);
                 await _refreshTokenRepository.DeleteRefreshTokenByuserIdAsync(user.Id);

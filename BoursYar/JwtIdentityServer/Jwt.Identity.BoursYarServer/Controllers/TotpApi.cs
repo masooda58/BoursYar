@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Jwt.Identity.BoursYarServer.Models.ViewModel;
 using Jwt.Identity.Domain.Interfaces.IConfirmCode;
 using Jwt.Identity.Domain.Models.ResultModels;
-using Jwt.Identity.Domain.Models.TypeCode;
+using Jwt.Identity.Domain.Models.TypeEnum;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Newtonsoft.Json;

@@ -2,7 +2,6 @@
 using Jwt.Identity.Domain.Interfaces.IConfirmCode;
 using Jwt.Identity.Domain.Interfaces.IPhoneTotpProvider;
 using Jwt.Identity.Domain.Models;
-using Jwt.Identity.Domain.Models.TypeCode;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +11,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Threading.Tasks;
+using Jwt.Identity.Domain.Models.TypeEnum;
 
 namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
 {

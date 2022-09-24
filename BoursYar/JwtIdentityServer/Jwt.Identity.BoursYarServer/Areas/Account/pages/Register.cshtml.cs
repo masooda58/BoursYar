@@ -20,7 +20,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Jwt.Identity.Domain.Interfaces.IConfirmCode;
-using Jwt.Identity.Domain.Models.TypeCode;
+using Jwt.Identity.Domain.Models.TypeEnum;
 
 namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
 {
