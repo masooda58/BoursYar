@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Jwt.Identity.Data.Migrations
 {
     [DbContext(typeof(IdentityContext))]
-    [Migration("20220704230434_First_Identity")]
-    partial class First_Identity
+    [Migration("20220918103225_uniqui clientname")]
+    partial class uniquiclientname
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -21,7 +21,7 @@ namespace Jwt.Identity.Data.Migrations
                 .HasAnnotation("ProductVersion", "5.0.8")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("Jwt.Identity.Domain.Model.ApplicationUser", b =>
+            modelBuilder.Entity("Jwt.Identity.Domain.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -97,11 +97,51 @@ namespace Jwt.Identity.Data.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("Jwt.Identity.Domain.Model.RefreshToken", b =>
+            modelBuilder.Entity("Jwt.Identity.Domain.Models.Client.Client", b =>
+                {
+                    b.Property<int>("ClientId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("BaseUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClientName")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("EmailLandingPage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("LoginType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("LoginUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SignInExternal")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SignOut")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ClientId");
+
+                    b.HasIndex("ClientName")
+                        .IsUnique()
+                        .HasFilter("[ClientName] IS NOT NULL");
+
+                    b.ToTable("Clients");
+                });
+
+            modelBuilder.Entity("Jwt.Identity.Domain.Models.RefreshToken", b =>
                 {
                     b.Property<Guid>("IdGuid")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("TempRefreshToken")
                         .HasColumnType("nvarchar(max)");
@@ -249,11 +289,11 @@ namespace Jwt.Identity.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("Jwt.Identity.Domain.Model.RefreshToken", b =>
+            modelBuilder.Entity("Jwt.Identity.Domain.Models.RefreshToken", b =>
                 {
-                    b.HasOne("Jwt.Identity.Domain.Model.ApplicationUser", "User")
+                    b.HasOne("Jwt.Identity.Domain.Models.ApplicationUser", "User")
                         .WithOne("RefreshToken")
-                        .HasForeignKey("Jwt.Identity.Domain.Model.RefreshToken", "UserId");
+                        .HasForeignKey("Jwt.Identity.Domain.Models.RefreshToken", "UserId");
 
                     b.Navigation("User");
                 });
@@ -269,7 +309,7 @@ namespace Jwt.Identity.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Jwt.Identity.Domain.Model.ApplicationUser", null)
+                    b.HasOne("Jwt.Identity.Domain.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -278,7 +318,7 @@ namespace Jwt.Identity.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Jwt.Identity.Domain.Model.ApplicationUser", null)
+                    b.HasOne("Jwt.Identity.Domain.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -293,7 +333,7 @@ namespace Jwt.Identity.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Jwt.Identity.Domain.Model.ApplicationUser", null)
+                    b.HasOne("Jwt.Identity.Domain.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -302,14 +342,14 @@ namespace Jwt.Identity.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Jwt.Identity.Domain.Model.ApplicationUser", null)
+                    b.HasOne("Jwt.Identity.Domain.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Jwt.Identity.Domain.Model.ApplicationUser", b =>
+            modelBuilder.Entity("Jwt.Identity.Domain.Models.ApplicationUser", b =>
                 {
                     b.Navigation("RefreshToken");
                 });

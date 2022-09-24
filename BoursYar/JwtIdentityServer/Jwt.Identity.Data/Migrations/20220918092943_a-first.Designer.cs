@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Jwt.Identity.Data.Migrations
 {
     [DbContext(typeof(IdentityContext))]
-    [Migration("20220705221102_ADD_CreatTime_Refrehtoken")]
-    partial class ADD_CreatTime_Refrehtoken
+    [Migration("20220918092943_a-first")]
+    partial class afirst
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -95,6 +95,39 @@ namespace Jwt.Identity.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
+                });
+
+            modelBuilder.Entity("Jwt.Identity.Domain.Models.Client.Client", b =>
+                {
+                    b.Property<int>("ClientId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("BaseUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClientName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EmailLandingPage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("LoginType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("LoginUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SignInExternal")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SignOut")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ClientId");
+
+                    b.ToTable("Clients");
                 });
 
             modelBuilder.Entity("Jwt.Identity.Domain.Models.RefreshToken", b =>

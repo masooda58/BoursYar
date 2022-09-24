@@ -1,9 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-using System;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Jwt.Identity.Data.Migrations
 {
-    public partial class First_Identity : Migration
+    public partial class afirst : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -47,6 +47,25 @@ namespace Jwt.Identity.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Clients",
+                columns: table => new
+                {
+                    ClientId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ClientName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    EmailLandingPage = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BaseUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LoginUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SignInExternal = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SignOut = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LoginType = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Clients", x => x.ClientId);
                 });
 
             migrationBuilder.CreateTable(
@@ -161,7 +180,8 @@ namespace Jwt.Identity.Data.Migrations
                 {
                     IdGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    TempRefreshToken = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    TempRefreshToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatTime = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -237,6 +257,9 @@ namespace Jwt.Identity.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "Clients");
 
             migrationBuilder.DropTable(
                 name: "RefreshTokens");
