@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace IdentityPersianHelper.DataAnnotations
 {
@@ -6,10 +7,14 @@ namespace IdentityPersianHelper.DataAnnotations
     {
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            if (value != null)
+            if (value != null ) 
             {
-                string valueAsString = value.ToString();
 
+                string valueAsString = value.ToString();
+                if (string.IsNullOrEmpty(valueAsString))
+                {
+                    return ValidationResult.Success;
+                }
 
                 var emailValidtionAttribute = new EmailAddressAttribute();
                 var mobilValidation = new MobileNoAttribute();
