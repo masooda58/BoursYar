@@ -60,7 +60,8 @@ namespace Common.Api.Dependency.Cors
                             builder
                                 .WithOrigins(corsOrigin)
                                 .AllowAnyMethod()
-                                .AllowAnyHeader();
+                                .AllowAnyHeader()
+                                .AllowCredentials();
                         });
                 });
                 return services;
@@ -76,7 +77,8 @@ namespace Common.Api.Dependency.Cors
                             builder
                                 .WithOrigins(corsOrigin)
                                 .WithMethods(corsMethod)
-                                .AllowAnyHeader();
+                                .AllowAnyHeader()
+                                .AllowCredentials();
                         });
                 });
                 return services;
