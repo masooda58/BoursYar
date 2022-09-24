@@ -1,23 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
-namespace Jwt.Identity.Domain.Models.ResultModels.Response
+namespace Jwt.Identity.Domain.Models.Response
 {
   public  class ResultResponse
     {
         public bool Successed { get; set; }
-        public IEnumerable<string> ErrorMessage{ get; set; }
-        public ResultResponse( bool successed ,IEnumerable<string> errorMessage)
+        public IEnumerable<string> Message{ get; set; }
+        public object ResponseValues{get; set; }
+        public ResultResponse( bool successed ,IEnumerable<string> message, object values=null)
         {
 
             Successed = successed;
-            ErrorMessage = errorMessage;
+            Message = message;
+            ResponseValues = values ?? new{};
+           
         }
 
-        public ResultResponse(bool successed, string errorMessage) :
-            this(successed, new List<string>(){ errorMessage }){}
+        public ResultResponse(bool successed, string message) :
+            this(successed, new List<string>(){ message }){}
+        public ResultResponse(bool successed, string message,object values) :
+            this(successed, new List<string>(){ message },values){}
+
     }
 }

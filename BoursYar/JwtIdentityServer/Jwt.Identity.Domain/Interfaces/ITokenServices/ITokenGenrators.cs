@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Security.Claims;
-using Jwt.Identity.Domain.Models.ResultModels.Response;
+using Jwt.Identity.Domain.Models.Response;
 using Jwt.Identity.Domain.Models.ResultModels.TokenModels;
 
 namespace Jwt.Identity.Domain.Interfaces.ITokenServices

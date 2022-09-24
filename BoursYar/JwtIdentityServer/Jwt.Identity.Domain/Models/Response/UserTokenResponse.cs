@@ -1,7 +1,7 @@
 ﻿using System;
 using Jwt.Identity.Domain.Models.ResultModels.TokenModels;
 
-namespace Jwt.Identity.Domain.Models.ResultModels.Response
+namespace Jwt.Identity.Domain.Models.Response
 {
     public class UserTokenResponse : TokenModel
     {

@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Jwt.Identity.Domain.Models;
 using Jwt.Identity.Domain.Models.ResultModels;
-using Jwt.Identity.Domain.Models.TypeCode;
+using Jwt.Identity.Domain.Models.TypeEnum;
 
 namespace Jwt.Identity.Domain.Interfaces.IConfirmCode
 {
