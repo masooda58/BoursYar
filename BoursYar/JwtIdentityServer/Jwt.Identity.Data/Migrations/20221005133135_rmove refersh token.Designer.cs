@@ -4,14 +4,16 @@ using Jwt.Identity.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Jwt.Identity.Data.Migrations
 {
     [DbContext(typeof(IdentityContext))]
-    partial class IdentityContextModelSnapshot : ModelSnapshot
+    [Migration("20221005133135_rmove refersh token")]
+    partial class rmoverefershtoken
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -136,36 +138,6 @@ namespace Jwt.Identity.Data.Migrations
                         .HasFilter("[ClientName] IS NOT NULL");
 
                     b.ToTable("Clients");
-                });
-
-            modelBuilder.Entity("Jwt.Identity.Domain.Models.UserLogInOutLog", b =>
-                {
-                    b.Property<Guid>("IdGuid")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Device")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("IpAdress")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("SignInOut")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Time")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("IdGuid");
-
-                    b.HasIndex("UserId")
-                        .IsUnique()
-                        .HasFilter("[UserId] IS NOT NULL");
-
-                    b.ToTable("UserLogInOutLogs");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -299,15 +271,6 @@ namespace Jwt.Identity.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("Jwt.Identity.Domain.Models.UserLogInOutLog", b =>
-                {
-                    b.HasOne("Jwt.Identity.Domain.Models.ApplicationUser", "User")
-                        .WithOne("UserLogInOutLoger")
-                        .HasForeignKey("Jwt.Identity.Domain.Models.UserLogInOutLog", "UserId");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -357,11 +320,6 @@ namespace Jwt.Identity.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Jwt.Identity.Domain.Models.ApplicationUser", b =>
-                {
-                    b.Navigation("UserLogInOutLoger");
                 });
 #pragma warning restore 612, 618
         }

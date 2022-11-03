@@ -21,21 +21,22 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
         {
             try
             {
-                if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(refreshToken))
-                {
-                    return false;
-                }
-                var result = await _context.AddAsync(new RefreshToken()
+                //if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(refreshToken))
+                //{
+                //    return false;
+                //}
+                //var result = await _context.AddAsync(new RefreshToken()
 
-                {
-                    UserId = userId,
-                    TempRefreshToken = refreshToken,
-                    CreatTime = DateTime.Now
+                //{
+                //    UserId = userId,
+                //    TempRefreshToken = refreshToken,
+                //    CreatTime = DateTime.Now
 
 
-                });
-                await _context.SaveChangesAsync();
-                return result != null;
+                //});
+                //await _context.SaveChangesAsync();
+               // return result != null;
+                return true;
             }
             catch (Exception e)
             {
@@ -50,28 +51,29 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
         public async Task<string> GetUserIdByRefreshTokenAsync(string refreshToken)
         {
 
-            var result =string.IsNullOrEmpty(refreshToken)?null: await _context.RefreshTokens.FirstOrDefaultAsync
-                (r => r.TempRefreshToken == refreshToken);
-            return result?.UserId;
+            //var result = string.IsNullOrEmpty(refreshToken) ? null : await _context.RefreshTokens.FirstOrDefaultAsync
+            //    (r => r.TempRefreshToken == refreshToken);
+            //return result?.UserId;
+            return "ok";
         }
 
         public async Task<bool> DeleteRefreshTokenByuserIdAsync(string userId)
         {
-            try
-            {
-                if (string.IsNullOrEmpty(userId))
-                {
-                    return false;
-                }
-                _context.RemoveRange(_context.RefreshTokens.Where(u => u.UserId == userId));
-                var result = await _context.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception e)
-            {
-                return false;
-            }
-
+            //try
+            //{
+            //    if (string.IsNullOrEmpty(userId))
+            //    {
+            //        return false;
+            //    }
+            //    _context.RemoveRange(_context.RefreshTokens.Where(u => u.UserId == userId));
+            //    var result = await _context.SaveChangesAsync();
+            //    return true;
+            //}
+            //catch (Exception e)
+            //{
+            //    return false;
+            //}
+            return true;
 
         }
     }

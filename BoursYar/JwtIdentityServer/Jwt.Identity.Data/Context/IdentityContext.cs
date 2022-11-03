@@ -7,8 +7,10 @@ namespace Jwt.Identity.Data.Context
 {
     public class IdentityContext : IdentityDbContext<ApplicationUser>
     {
-        public DbSet<RefreshToken> RefreshTokens { get; set; }
+       
         public DbSet<Client> Clients { get; set; }
+        public DbSet<UserLogInOutLog> UserLogInOutLogs { get; set; }
+        
         public IdentityContext(DbContextOptions<IdentityContext> options)
             : base(options)
         {
