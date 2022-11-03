@@ -141,6 +141,9 @@
   <data name="EmailSent" xml:space="preserve">
     <value>ایمیل ارسال گردید</value>
   </data>
+  <data name="InvalidRefreshToken" xml:space="preserve">
+    <value>توکن وارد شده معتبر نمی باشد</value>
+  </data>
   <data name="MobileConfirmed" xml:space="preserve">
     <value>شماره موبایل تایید شد</value>
   </data>
@@ -166,7 +169,7 @@
     <value>کاربر با موفقیت ساخته شد</value>
   </data>
   <data name="UserLogin" xml:space="preserve">
-    <value>کارب با موفقیت وارد شد</value>
+    <value>کاربر با موفقیت وارد شد</value>
   </data>
   <data name="WrongLoginType" xml:space="preserve">
     <value>نوع لاگین معتبر نیست</value>

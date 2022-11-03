@@ -20,11 +20,14 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using static Google.Apis.Auth.GoogleJsonWebSignature;
@@ -49,6 +52,7 @@ namespace Jwt.Identity.Api.Server.Controllers
         private readonly IAuthClaimsGenrators _claimsGenrators;
         private readonly ITokenGenrators _tokenGenrator;
         private readonly IRefreshTokenRepository _refreshTokenRepository;
+        private readonly ITokenValidators _tokenValidators;
 
         public AccountController(UserManager<ApplicationUser> userManager,
             ITotpCode totpCode, ILogger<RegisterRequest> logger,
@@ -56,7 +60,7 @@ namespace Jwt.Identity.Api.Server.Controllers
             IOptions<TotpSettings> options,
             IDataProtectionProvider dataProtectionProvider, DataProtectionPepuseString dataProtectionPepuseString,
             SignInManager<ApplicationUser> signInManager, IAuthClaimsGenrators claimsGenrators,
-            ITokenGenrators tokenGenrator, IRefreshTokenRepository refreshTokenRepository)
+            ITokenGenrators tokenGenrator, IRefreshTokenRepository refreshTokenRepository, ITokenValidators tokenValidators)
         {
             _userManager = userManager;
             _totpCode = totpCode;
@@ -67,6 +71,7 @@ namespace Jwt.Identity.Api.Server.Controllers
             _claimsGenrators = claimsGenrators;
             _tokenGenrator = tokenGenrator;
             _refreshTokenRepository = refreshTokenRepository;
+            _tokenValidators = tokenValidators;
             _totpSettings = options?.Value ?? new TotpSettings();
             _protector = dataProtectionProvider.CreateProtector(dataProtectionPepuseString.PhoneNoInCooki);
         }
@@ -244,7 +249,7 @@ namespace Jwt.Identity.Api.Server.Controllers
 
             #endregion
 
-            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+          //  await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
 
             // This doesn't count login failures towards account lockout
@@ -770,6 +775,7 @@ namespace Jwt.Identity.Api.Server.Controllers
             
         }
         [HttpPost("SignOut/{clientName}")]
+        //[Authorize(AuthenticationSchemes="JWT_OR_COOKIE")]
         [Authorize]
         public async Task<ActionResult> SignOut(string clientName)
         {
@@ -791,6 +797,66 @@ namespace Jwt.Identity.Api.Server.Controllers
             await _refreshTokenRepository.DeleteRefreshTokenByuserIdAsync(userId);
             return Ok(new ResultResponse(true, "logout"));
         }
+
+        [HttpPost("RefreshTokent/{clientName}")]
+        public async Task<ActionResult> RefreshTokent(string clientName, [FromBody] string? refreshToken)
+        {
+            var client = IntialClients.GetClients().SingleOrDefault(c => c.ClientName == clientName.ToUpper());
+            if (client == null)
+            {
+                return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
+            }
+
+            bool isRefreshTokenValid = false;
+            string  validToken = "";
+            if (!string.IsNullOrEmpty(refreshToken) &&
+                client is { LoginType: LoginType.Token or LoginType.TokenAndCookie })
+            {
+                isRefreshTokenValid = _tokenValidators.Validate(refreshToken);
+                if (isRefreshTokenValid)
+                {
+                    validToken = refreshToken;
+                }
+            
+    
+            }
+
+            if (string.IsNullOrEmpty(refreshToken) &&  client is { LoginType: LoginType.Cookie or LoginType.TokenAndCookie })
+            {
+                var isRefreshTokenInCookie =
+                    HttpContext.Request.Cookies.TryGetValue("Refresh-TokenSession", out string refreshTokenCookie);
+                if (isRefreshTokenInCookie)
+                {
+                    isRefreshTokenValid = _tokenValidators.Validate(refreshTokenCookie);
+                    if (isRefreshTokenValid)
+                    {
+                        validToken = refreshTokenCookie;
+                    }
+                }
+               
+            }
+
+            if (!string.IsNullOrEmpty(validToken))
+            {
+                var userId =await _refreshTokenRepository.GetUserIdByRefreshTokenAsync(validToken);
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return NotFound(new ResultResponse(false, MessageRes.InvalidRefreshToken));
+                }
+
+                var user = await _userManager.FindByIdAsync(userId);
+                if (user == null)
+                {
+                    return NotFound(new ResultResponse(false, MessageRes.InvalidRefreshToken));
+                }
+
+                return await LoginJwt(user, client.LoginType);
+            }
+        
+
+            return BadRequest(new ResultResponse(false, MessageRes.InvalidRefreshToken));
+
+        }
         private async Task<ActionResult> LoginJwt(ApplicationUser user, LoginType loginType)
         {
             var authClaims = _claimsGenrators.CreatClaims(user);
@@ -800,6 +866,7 @@ namespace Jwt.Identity.Api.Server.Controllers
             await _refreshTokenRepository.WritRefreshTokenAsync(user.Id, token.RefreshToken);
             // string  tokenSerialized = JsonSerializer.Serialize<UserTokenResponse>(token);
 
+            Response.Cookies.Append("test", "test",CookiesOptions.SetCookieOptionsPresist());
             switch (loginType)
             {
                 case LoginType.TokenAndCookie:
@@ -821,6 +888,14 @@ namespace Jwt.Identity.Api.Server.Controllers
 
             return Ok(new ResultResponse(false, MessageRes.WrongLoginType));
 
+        }
+        [HttpPost("test")]
+        public async Task<ActionResult> Test(LoginRequest login)
+        {
+            ValidationContext vc = new ValidationContext(login);
+            ICollection<ValidationResult> results = new List<ValidationResult>(); // Will contain the results of the validation
+            bool isValid = Validator.TryValidateObject(login, vc, results, true);
+            return Ok();
         }
 
     }

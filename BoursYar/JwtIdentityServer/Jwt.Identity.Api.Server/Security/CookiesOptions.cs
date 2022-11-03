@@ -15,8 +15,19 @@ namespace Jwt.Identity.Api.Server.Security
                 HttpOnly = true,
                 Secure = true,
                 // Domain = client.BaseUrl.ToString(),
-                SameSite = SameSiteMode.None,
+                SameSite = SameSiteMode.Lax,
                 Expires = expireDateTime,
+            };
+        }
+        public static CookieOptions SetCookieOptionsPresist()
+        {
+            return new CookieOptions()
+            {
+                HttpOnly = true,
+                Secure = true,
+                // Domain = client.BaseUrl.ToString(),
+                SameSite = SameSiteMode.Lax,
+                
             };
         }
     }

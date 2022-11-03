@@ -133,6 +133,15 @@ namespace Jwt.Identity.Api.Server.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to توکن وارد شده معتبر نمی باشد.
+        /// </summary>
+        public static string InvalidRefreshToken {
+            get {
+                return ResourceManager.GetString("InvalidRefreshToken", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to شماره موبایل تایید شد.
         /// </summary>
         public static string MobileConfirmed {
@@ -205,7 +214,7 @@ namespace Jwt.Identity.Api.Server.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to کارب با موفقیت وارد شد.
+        ///   Looks up a localized string similar to کاربر با موفقیت وارد شد.
         /// </summary>
         public static string UserLogin {
             get {
