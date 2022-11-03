@@ -127,7 +127,7 @@ namespace Jwt.Identity.BoursYarServer
             services.AddHttpContextAccessor();
 
             #region dependancy
-            services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+          //  services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
             services.AddSingleton<ITokenGenrators, TokenGenrators>();
             services.AddSingleton<ITokenValidators, TokenValidators>();
             services.AddSingleton<IAuthClaimsGenrators, AuthClaimsGenrators>();
