@@ -10,16 +10,18 @@ using Jwt.Identity.Domain.Models.Request;
 using Jwt.Identity.Domain.Models.Response;
 using Jwt.Identity.Domain.Models.SettingModels;
 using Jwt.Identity.Domain.Models.TypeEnum;
-using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
@@ -27,9 +29,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
 using static Google.Apis.Auth.GoogleJsonWebSignature;
 
 
@@ -892,10 +891,13 @@ namespace Jwt.Identity.Api.Server.Controllers
         [HttpPost("test")]
         public async Task<ActionResult> Test(LoginRequest login)
         {
+
             ValidationContext vc = new ValidationContext(login);
+           // var r = new ValidationResult("string errorMessage", new string[] { vc.MemberName });
             ICollection<ValidationResult> results = new List<ValidationResult>(); // Will contain the results of the validation
-            bool isValid = Validator.TryValidateObject(login, vc, results, true);
-            return Ok();
+          // var results= new ValidationResult(FormatErrorMessage(vc.DisplayName), new string[] { vc.MemberName });
+            bool isValid = Validator.TryValidateObject(login, vc, results,true);
+            return Ok(results);
         }
 
     }

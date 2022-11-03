@@ -5,8 +5,10 @@ namespace IdentityPersianHelper.DataAnnotations
 {
     public class PhoneOrEmailAttribute : ValidationAttribute
     {
+
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
+
             if (value != null ) 
             {
 
@@ -24,9 +26,9 @@ namespace IdentityPersianHelper.DataAnnotations
                     return ValidationResult.Success;
                 }
 
-                return valueAsString.Contains("@")
-                    ? new ValidationResult("ایمیل وارد شده معتبر نیست")
-                    : new ValidationResult("شماره موبایل وارد شده معتبر نیست");
+                return new ValidationResult("اطلاعات وارد شده معتبر نیست",
+                    new string[] { validationContext.MemberName });
+
 
 
             }
