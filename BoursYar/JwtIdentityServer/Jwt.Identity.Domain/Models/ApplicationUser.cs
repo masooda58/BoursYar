@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -13,6 +14,9 @@ namespace Jwt.Identity.Domain.Models
         public bool Approved { get; set; } = false;
         [NotMapped]
         public string FullName => FirstName + " " + LastName;
-        public virtual RefreshToken RefreshToken { get; set; }
+
+        public virtual  UserLogInOutLog UserLogInOutLoger { get; set; }
+     
+   
     }
 }

@@ -6,17 +6,14 @@ namespace Jwt.Identity.Domain.Models
 {
     public class RefreshToken
     {
-        [Key]
-        public Guid IdGuid { get; set; }
-        [ForeignKey("UserId")]
+       
+     
         public string UserId { get; set; }
         public string TempRefreshToken { get; set; }
-        public DateTime CreatTime
-        {
-            get;
-            set;
-        }
+        public DateTime CreatTime { get; set; }=DateTime.Now;
 
-        public virtual ApplicationUser User { get; set; }
+     
+
+       
     }
 }
