@@ -4,7 +4,7 @@
     //"WDbContext": "Server=DESKTOP-VISTA74\\SQLEXPRESS;Database=WDb_1;Trusted_Connection=True;MultipleActiveResultSets=true"
   },
   "JWT": {
-    "ValidAudience": "http://localhost:3000",
+    "ValidAudience": "http://localhost:3001",
     "ValidIssuer": "http://localhost:44394",
     "AccessTokenExpirationMinutes": "2",
     "Secret": "JWTAuthenticationHIGHsecuredPasswordVVVp1OH7Xzyr",
@@ -21,7 +21,7 @@
 
   },
   "Cors": {
-    "Origin": [ "Https://localhost:44379", "Https://localhost:3001" ],
+    "Origin": [ "Https://localhost:44379", "Https://localhost:3005" ],
     "Method": [ "OPTIONS", "GET", "HEAD", "POST", "PUT", "DELETE" ]
   },
   "AllowedHosts": "*"
