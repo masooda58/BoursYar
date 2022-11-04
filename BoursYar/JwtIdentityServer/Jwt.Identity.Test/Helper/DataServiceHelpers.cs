@@ -1,31 +1,30 @@
-﻿using Jwt.Identity.Data.Context;
+﻿using System.Collections.Generic;
+using Jwt.Identity.Data.Context;
 using Jwt.Identity.Data.Repositories.UserRepositories;
-using Jwt.Identity.Domain.Models;
+using Jwt.Identity.Domain.User.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Jwt.Identity.BoursYarServer;
-
-using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
+using Microsoft.Extensions.Logging;
+
 #pragma warning disable CS1591
 
 namespace Jwt.Identity.Test.Helper
 {
     /// <summary>
-    /// می باشد JWT.Identity های پروژه Test برای ساخت Helper این کلاس یک
+    ///     می باشد JWT.Identity های پروژه Test برای ساخت Helper این کلاس یک
     /// </summary>
     /// <remarks>
-    /// <para> استفاده می شود Helper یک API,Domain,data برای هر سه پروژه</para>
-    /// <para>هر دو برای تست از این کلاس استفاده می کنند<see cref="RoleManagementService"/> و <see cref="RoleManagementService"/> </para>
+    ///     <para> استفاده می شود Helper یک API,Domain,data برای هر سه پروژه</para>
+    ///     <para>
+    ///         هر دو برای تست از این کلاس استفاده می کنند<see cref="RoleManagementService" /> و
+    ///         <see cref="RoleManagementService" />
+    ///     </para>
     /// </remarks>
-
     public static class DataServiceHelpers
 
     {
-
         public static IdentityContext CreateDbContext()
 
         {
@@ -43,7 +42,6 @@ namespace Jwt.Identity.Test.Helper
             var dbContextOptions = builder.Options;
 
             return new IdentityContext(dbContextOptions);
-
         }
 
         public static UserManager<ApplicationUser> CreateUserManager(IdentityContext context)
@@ -51,10 +49,10 @@ namespace Jwt.Identity.Test.Helper
         {
             var userStore = new UserStore<ApplicationUser>(context);
             var passwordHasher = new PasswordHasher<ApplicationUser>();
-            var userValidators = new List<UserValidator<ApplicationUser>> { new UserValidator<ApplicationUser>() };
+            var userValidators = new List<UserValidator<ApplicationUser>> { new() };
             var passwordValidators = new List<PasswordValidator<ApplicationUser>>
-                { new PasswordValidator<ApplicationUser>() };
-            var userLogger = (new LoggerFactory()).CreateLogger<UserManager<ApplicationUser>>();
+                { new() };
+            var userLogger = new LoggerFactory().CreateLogger<UserManager<ApplicationUser>>();
 
             return new UserManager<ApplicationUser>(userStore, null, passwordHasher, userValidators, passwordValidators,
                 null, null, null, userLogger);
@@ -62,10 +60,9 @@ namespace Jwt.Identity.Test.Helper
 
         public static RoleManager<IdentityRole> CreateRoleManager(IdentityContext context)
         {
-
-    var roleStore = new RoleStore<IdentityRole>(context);
-            var roleValidators = new List<RoleValidator<IdentityRole>> { new RoleValidator<IdentityRole>() };
-            var roleLogger = (new LoggerFactory()).CreateLogger<RoleManager<IdentityRole>>();
+            var roleStore = new RoleStore<IdentityRole>(context);
+            var roleValidators = new List<RoleValidator<IdentityRole>> { new() };
+            var roleLogger = new LoggerFactory().CreateLogger<RoleManager<IdentityRole>>();
 
             return new RoleManager<IdentityRole>(roleStore, roleValidators, null, null, roleLogger);
         }
@@ -73,7 +70,7 @@ namespace Jwt.Identity.Test.Helper
         public static List<ApplicationUser> GetTestUsers()
 
         {
-            List<ApplicationUser> returnList = new List<ApplicationUser>();
+            var returnList = new List<ApplicationUser>();
 
             returnList.Add(new ApplicationUser
             {
@@ -118,6 +115,5 @@ namespace Jwt.Identity.Test.Helper
         {
             return new RefreshTokenRepository(context);
         }
-
     }
 }

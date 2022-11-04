@@ -10,7 +10,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\IdentityPersianHelper\IdentityPersianHelper.csproj" />
+    <Folder Include="Shared\Models\Request\" />
+    <Folder Include="Shared\Models\Response\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Jwt.Identity.Framework\Jwt.Identity.Framework.csproj" />
   </ItemGroup>
 
 </Project>

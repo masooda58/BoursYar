@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using IdentityPersianHelper.DataAnnotations;
+﻿using System.Threading.Tasks;
+using Jwt.Identity.Framework.DataAnnotations;
 using Xunit;
 
 namespace Jwt.Identity.Test
@@ -20,17 +16,14 @@ namespace Jwt.Identity.Test
         [InlineData("9413406285", true)]
         [InlineData("413406285", false)]
         [InlineData("+9213406285", false)]
-
-
-        public async Task MobileNoValidationAttribute(string mobileNo,bool expectedValid)
+        public async Task MobileNoValidationAttribute(string mobileNo, bool expectedValid)
         {
             var attrbute = new MobileNoAttribute();
-           
-            //act
-          var actuleValid=  attrbute.IsValid(mobileNo);
-           // Assert
-           Assert.Equal(expectedValid,actuleValid);
 
+            //act
+            var actuleValid = attrbute.IsValid(mobileNo);
+            // Assert
+            Assert.Equal(expectedValid, actuleValid);
         }
     }
 }

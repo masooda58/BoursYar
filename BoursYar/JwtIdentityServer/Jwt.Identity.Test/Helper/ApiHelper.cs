@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿using System.IO;
 using Jwt.Identity.BoursYarServer.Services.TokenServices;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -14,31 +8,30 @@ using Newtonsoft.Json.Linq;
 namespace Jwt.Identity.Test.Helper
 {
     /// <summary>
-    ///  API برای پروژه Helper
+    ///     API برای پروژه Helper
     /// </summary>
     public static class ApiHelper
     {
         public static TokenGenrators CreaTokenGenrators()
         {
             return new TokenGenrators(LoadJson());
-
         }
+
         public static TokenValidators CreaTokenValidators()
         {
             return new TokenValidators(LoadJson());
-
         }
+
         private static JwtSettingModel LoadJson()
         {
-            using (StreamReader r = new StreamReader("JwtIdentitySharedSettings.json"))
+            using (var r = new StreamReader("JwtIdentitySharedSettings.json"))
             {
-                string json = r.ReadToEnd();
+                var json = r.ReadToEnd();
                 var data = (JObject)JsonConvert.DeserializeObject(json);
-                var jwt =data["JWT"].ToString();
-                JwtSettingModel items = JsonConvert.DeserializeObject<JwtSettingModel>(jwt);
+                var jwt = data["JWT"].ToString();
+                var items = JsonConvert.DeserializeObject<JwtSettingModel>(jwt);
                 return items;
             }
         }
-        
     }
 }

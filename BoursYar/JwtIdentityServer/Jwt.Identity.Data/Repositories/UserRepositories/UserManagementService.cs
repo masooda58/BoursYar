@@ -1,12 +1,12 @@
-﻿using Jwt.Identity.Data.Context;
-using Jwt.Identity.Domain.Interfaces.IUserRepositories;
-using Jwt.Identity.Domain.Models;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Jwt.Identity.Data.Context;
+using Jwt.Identity.Domain.User.Data;
+using Jwt.Identity.Domain.User.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Jwt.Identity.Data.Repositories.UserRepositories
 {
@@ -23,16 +23,18 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
         }
 
         #region User-Role
+
         // GetUserRoleAsync باهم تست می شوند
         public async Task<List<string>> GetUserRoleAsync(ApplicationUser user)
         {
             var roles = await _userManager.GetRolesAsync(user);
             return (List<string>)roles;
         }
+
         public async Task<List<string>> GetUserRoleAsync(string userIdOrEmail)
         {
-            ApplicationUser user = await _context.Users.AsNoTracking().Where(u => u.Id == userIdOrEmail).FirstOrDefaultAsync() ??
-                                   await _context.Users.AsNoTracking().Where(u => u.Email == userIdOrEmail).FirstOrDefaultAsync();
+            var user = await _context.Users.AsNoTracking().Where(u => u.Id == userIdOrEmail).FirstOrDefaultAsync() ??
+                       await _context.Users.AsNoTracking().Where(u => u.Email == userIdOrEmail).FirstOrDefaultAsync();
             if (user != null)
             {
                 var roles = await _userManager.GetRolesAsync(user);
@@ -40,9 +42,7 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
             }
 
             return null;
-
         }
-
 
         #endregion
 
@@ -53,9 +53,9 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
             var users = _userManager.Users.AsNoTracking();
 
             if (!string.IsNullOrEmpty(searchString))
-                users = users.Where(user => (user.LastName.Contains(searchString)
-                                             || user.FirstName.Contains(searchString)
-                                             || user.Email.Contains(searchString)));
+                users = users.Where(user => user.LastName.Contains(searchString)
+                                            || user.FirstName.Contains(searchString)
+                                            || user.Email.Contains(searchString));
 
             return await users.CountAsync();
         }
@@ -65,14 +65,15 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
             var users = _userManager.Users.AsNoTracking();
 
             if (!string.IsNullOrEmpty(searchString))
-                users = users.Where(user => (user.LastName.Contains(searchString)
-                                             || user.FirstName.Contains(searchString)
-                                             || user.Email.Contains(searchString)));
+                users = users.Where(user => user.LastName.Contains(searchString)
+                                            || user.FirstName.Contains(searchString)
+                                            || user.Email.Contains(searchString));
 
             return await users.ToListAsync();
         }
 
-        public async Task<List<ApplicationUser>> GetUsersAsync(int offset, int limit, string sortOrder, string searchString)
+        public async Task<List<ApplicationUser>> GetUsersAsync(int offset, int limit, string sortOrder,
+            string searchString)
         {
             offset = offset < 0 ? 0 : offset;
             limit = limit < 0 ? 0 : limit;
@@ -81,9 +82,9 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
             var pageUsers = _userManager.Users.AsNoTracking();
 
             if (!string.IsNullOrEmpty(searchString))
-                pageUsers = pageUsers.Where(user => (user.LastName.Contains(searchString)
-                                                     || user.FirstName.Contains(searchString)
-                                                     || user.Email.Contains(searchString)));
+                pageUsers = pageUsers.Where(user => user.LastName.Contains(searchString)
+                                                    || user.FirstName.Contains(searchString)
+                                                    || user.Email.Contains(searchString));
 
             switch (sortOrder)
             {
@@ -120,6 +121,7 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
 
             return await pageUsers.ToListAsync();
         }
+
         public async Task<ApplicationUser> GetUserAsync(ClaimsPrincipal claimsPrincipal)
         {
             return await _userManager.GetUserAsync(claimsPrincipal);
@@ -144,7 +146,7 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
         public async Task<IdentityResult> AddUserAsync(ApplicationUser user, string password, string role)
         {
             if (await _userManager.FindByEmailAsync(user.Email) != null)
-                return IdentityResult.Failed(new IdentityError() { Description = "Email already in use!" });
+                return IdentityResult.Failed(new IdentityError { Description = "Email already in use!" });
 
             var result = await _userManager.CreateAsync(user, password);
 
@@ -158,7 +160,7 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
         {
             var existingUser = await _userManager.FindByEmailAsync(user.Email);
             if (existingUser != null && existingUser.Id != user.Id)
-                return IdentityResult.Failed(new IdentityError() { Description = "Email already in use!" });
+                return IdentityResult.Failed(new IdentityError { Description = "Email already in use!" });
 
             // _context.Entry(departmentToUpdate).Property("RowVersion").OriginalValue = rowVersion;
             _context.Entry(user).State = EntityState.Modified;
@@ -169,7 +171,7 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
 
             await _context.SaveChangesAsync();
 
-            string[] existingRoles = (await _userManager.GetRolesAsync(user)).ToArray();
+            var existingRoles = (await _userManager.GetRolesAsync(user)).ToArray();
             var result = await _userManager.RemoveFromRolesAsync(user, existingRoles);
 
             if (result.Succeeded)
@@ -180,12 +182,12 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
 
         public async Task<IdentityResult> DeleteUserAsync(string userId)
         {
-            ApplicationUser user = await _userManager.FindByIdAsync(userId);
+            var user = await _userManager.FindByIdAsync(userId);
             return await _userManager.DeleteAsync(user);
         }
+
         public async Task<IdentityResult> DeleteUserAsync(ApplicationUser user)
         {
-
             return await _userManager.DeleteAsync(user);
         }
 
@@ -205,7 +207,7 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
 
         public async Task<bool> IsEmailInUseAsync(string email, string excludeUserId)
         {
-            ApplicationUser user = await _userManager.FindByEmailAsync(email);
+            var user = await _userManager.FindByEmailAsync(email);
 
             return user != null && user.Id != excludeUserId;
         }
@@ -216,7 +218,5 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
         }
 
         #endregion
-
-
     }
 }

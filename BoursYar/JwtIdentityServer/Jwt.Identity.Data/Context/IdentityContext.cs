@@ -1,5 +1,5 @@
-﻿using Jwt.Identity.Domain.Models;
-using Jwt.Identity.Domain.Models.Client;
+﻿using Jwt.Identity.Domain.Clients.Entity;
+using Jwt.Identity.Domain.User.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,14 +7,13 @@ namespace Jwt.Identity.Data.Context
 {
     public class IdentityContext : IdentityDbContext<ApplicationUser>
     {
-       
-        public DbSet<Client> Clients { get; set; }
-        public DbSet<UserLogInOutLog> UserLogInOutLogs { get; set; }
-        
         public IdentityContext(DbContextOptions<IdentityContext> options)
             : base(options)
         {
         }
+
+        public DbSet<Client> Clients { get; set; }
+        public DbSet<UserLogInOutLog> UserLogInOutLogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -29,4 +28,3 @@ namespace Jwt.Identity.Data.Context
         }
     }
 }
-

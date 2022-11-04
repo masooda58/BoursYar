@@ -1,11 +1,11 @@
-﻿using Jwt.Identity.Data.Repositories.UserRepositories;
-using Jwt.Identity.Domain.Models;
+﻿using System.Security.Claims;
+using System.Threading.Tasks;
+using Jwt.Identity.Data.Repositories.UserRepositories;
+using Jwt.Identity.Domain.User.Entities;
 using Jwt.Identity.Test.Helper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using System.Security.Claims;
-using System.Threading.Tasks;
 using Xunit;
 using static Jwt.Identity.Test.Helper.DataServiceHelpers;
 
@@ -16,15 +16,15 @@ using static Jwt.Identity.Test.Helper.DataServiceHelpers;
 namespace Jwt.Identity.Test
 {
     /// <summary>
-    ///  Data در پروژه UserManagerService تست
+    ///     Data در پروژه UserManagerService تست
     /// </summary>
     /// <remarks>
-    /// در این فایل برای توابع راهنما نوشته نشده است اسامی گویاست
+    ///     در این فایل برای توابع راهنما نوشته نشده است اسامی گویاست
     /// </remarks>
     public class UserManagerServiceTest
     {
-
         private const string ACCEPTABLE_PASSWORD = "accEPTable123!@#Pass";
+
         [Theory]
         [InlineData("aFirstName", 1)]
         [InlineData("aLastName", 1)]
@@ -32,7 +32,8 @@ namespace Jwt.Identity.Test
         [InlineData("FirstName", 4)]
         [InlineData("LastName", 4)]
         [InlineData("Email", 4)]
-        public async Task GetAllUsersCountAsync_ManyUsers_ReturnsMatchingUserCount(string searchString, int expectedCount)
+        public async Task GetAllUsersCountAsync_ManyUsers_ReturnsMatchingUserCount(string searchString,
+            int expectedCount)
         {
             using (var dbContext = CreateDbContext())
             using (var userManager = CreateUserManager(dbContext))
@@ -43,10 +44,7 @@ namespace Jwt.Identity.Test
 
                 var testUsers = GetTestUsers();
 
-                foreach (ApplicationUser user in testUsers)
-                {
-                    await userManager.CreateAsync(user, ACCEPTABLE_PASSWORD);
-                }
+                foreach (var user in testUsers) await userManager.CreateAsync(user, ACCEPTABLE_PASSWORD);
 
                 // Act
                 var actualCount = await userManagementService.GetAllUsersCountAsync(searchString);
@@ -55,6 +53,7 @@ namespace Jwt.Identity.Test
                 Assert.Equal(expectedCount, actualCount);
             }
         }
+
         // Tests all possible combinations for sorting for first and last user using offset
         [Theory]
         [InlineData("Fname", 0, "d@b.cUserName")]
@@ -73,7 +72,8 @@ namespace Jwt.Identity.Test
         [InlineData("Approved", 3, "d@b.cUserName")]
         [InlineData("Approved_desc", 0, "d@b.cUserName")]
         [InlineData("Approved_desc", 3, "c@b.cUserName")]
-        public async Task GetUsersAsync_ManyUsers_ReturnsCorrectFirstUser(string sortOrder, int offset, string expectedFirstUserName)
+        public async Task GetUsersAsync_ManyUsers_ReturnsCorrectFirstUser(string sortOrder, int offset,
+            string expectedFirstUserName)
         {
             using (var dbContext = CreateDbContext())
             using (var userManager = CreateUserManager(dbContext))
@@ -84,18 +84,20 @@ namespace Jwt.Identity.Test
 
                 var testUsers = GetTestUsers();
 
-                foreach (ApplicationUser user in testUsers)
+                foreach (var user in testUsers)
                 {
                     var result = await userManager.CreateAsync(user, ACCEPTABLE_PASSWORD);
                 }
 
                 // Act
-                var actualFirstUserName = (await userManagementService.GetUsersAsync(offset, 1, sortOrder, null))[0].UserName;
+                var actualFirstUserName =
+                    (await userManagementService.GetUsersAsync(offset, 1, sortOrder, null))[0].UserName;
 
                 // Assert
                 Assert.Equal(expectedFirstUserName, actualFirstUserName);
             }
         }
+
         [Fact]
         public async Task GetUserRoleAsync_UserWithuserIdOrEmailAndRole_ReturnsRole()
         {
@@ -112,7 +114,7 @@ namespace Jwt.Identity.Test
 
                 var testUsers = GetTestUsers();
 
-                ApplicationUser user = testUsers[0];
+                var user = testUsers[0];
                 await userManager.CreateAsync(user, ACCEPTABLE_PASSWORD);
                 await userManager.AddToRoleAsync(user, ROLE_NAME);
 
@@ -123,6 +125,7 @@ namespace Jwt.Identity.Test
                 Assert.Equal(ROLE_NAME, actualRoleName[0]);
             }
         }
+
         [Fact]
         public async Task AddUserAsync_EmailExists_ReturnsError()
         {
@@ -140,11 +143,11 @@ namespace Jwt.Identity.Test
 
                 var testUsers = GetTestUsers();
 
-                ApplicationUser user1 = testUsers[0];
+                var user1 = testUsers[0];
                 await userManager.CreateAsync(user1, ACCEPTABLE_PASSWORD);
                 await userManager.AddToRoleAsync(user1, ROLE_NAME);
 
-                ApplicationUser user2 = testUsers[1];
+                var user2 = testUsers[1];
                 user2.Email = NEW_EMAIL;
 
                 // Act
@@ -154,6 +157,7 @@ namespace Jwt.Identity.Test
                 Assert.False(identityResult.Succeeded);
             }
         }
+
         [Fact]
         public async Task AddUserAsync_EmailUnique_AddsUserWithPassword()
         {
@@ -170,7 +174,7 @@ namespace Jwt.Identity.Test
 
                 var testUsers = GetTestUsers();
 
-                ApplicationUser user = testUsers[0];
+                var user = testUsers[0];
 
                 // Act
                 await userManagementService.AddUserAsync(user, ACCEPTABLE_PASSWORD, ROLE_NAME);
@@ -179,6 +183,7 @@ namespace Jwt.Identity.Test
                 Assert.True(await userManager.CheckPasswordAsync(user, ACCEPTABLE_PASSWORD));
             }
         }
+
         [Fact]
         public async Task AddUserAsync_EmailUnique_AddsUserToRole()
         {
@@ -195,7 +200,7 @@ namespace Jwt.Identity.Test
 
                 var testUsers = GetTestUsers();
 
-                ApplicationUser user = testUsers[0];
+                var user = testUsers[0];
 
                 // Act
                 await userManagementService.AddUserAsync(user, ACCEPTABLE_PASSWORD, ROLE_NAME);
@@ -204,6 +209,7 @@ namespace Jwt.Identity.Test
                 Assert.True(await userManager.IsInRoleAsync(user, ROLE_NAME));
             }
         }
+
         [Fact]
         public async Task UpdateUserAsync_EmailExists_ReturnsError()
         {
@@ -221,11 +227,11 @@ namespace Jwt.Identity.Test
 
                 var testUsers = GetTestUsers();
 
-                ApplicationUser user1 = testUsers[0];
+                var user1 = testUsers[0];
                 await userManager.CreateAsync(user1, ACCEPTABLE_PASSWORD);
                 await userManager.AddToRoleAsync(user1, ROLE_NAME);
 
-                ApplicationUser user2 = testUsers[1];
+                var user2 = testUsers[1];
                 await userManager.CreateAsync(user2, ACCEPTABLE_PASSWORD);
                 await userManager.AddToRoleAsync(user2, ROLE_NAME);
                 user2.Email = NEW_EMAIL;
@@ -237,6 +243,7 @@ namespace Jwt.Identity.Test
                 Assert.False(identityResult.Succeeded);
             }
         }
+
         [Fact]
         public async Task UpdateUserAsync_EmailUnique_UpdatesUserProperties()
         {
@@ -253,7 +260,7 @@ namespace Jwt.Identity.Test
 
                 var testUsers = GetTestUsers();
 
-                ApplicationUser user1 = testUsers[0];
+                var user1 = testUsers[0];
                 await userManager.CreateAsync(user1, ACCEPTABLE_PASSWORD);
                 await userManager.AddToRoleAsync(user1, ROLE_NAME);
 
@@ -264,7 +271,8 @@ namespace Jwt.Identity.Test
 
                 // Act
                 await userManagementService.UpdateUserAsync(user1, ROLE_NAME);
-                var actualUser = await dbContext.Users.AsNoTracking() // Retrieve fresh entity rather than through the Change Tracker
+                var actualUser = await dbContext.Users
+                    .AsNoTracking() // Retrieve fresh entity rather than through the Change Tracker
                     .FirstOrDefaultAsync(user => user.Id == user1.Id);
 
                 // Assert
@@ -272,6 +280,7 @@ namespace Jwt.Identity.Test
                 Assert.True(JsonConvert.SerializeObject(actualUser) == JsonConvert.SerializeObject(user1));
             }
         }
+
         [Fact]
         public async Task UpdateUserAsync_EmailUnique_UpdatesUserRole()
         {
@@ -289,7 +298,7 @@ namespace Jwt.Identity.Test
 
                 var testUsers = GetTestUsers();
 
-                ApplicationUser user1 = testUsers[0];
+                var user1 = testUsers[0];
                 await userManager.CreateAsync(user1, ACCEPTABLE_PASSWORD);
                 await userManager.AddToRoleAsync(user1, ROLE_NAME1);
 
@@ -298,9 +307,10 @@ namespace Jwt.Identity.Test
 
                 // Assert
                 Assert.True(await userManager.IsInRoleAsync(user1, ROLE_NAME2) &&
-                    !await userManager.IsInRoleAsync(user1, ROLE_NAME1));
+                            !await userManager.IsInRoleAsync(user1, ROLE_NAME1));
             }
         }
+
         [Fact]
         public async Task DeleteUserAsync_UserExists_DeletesUser()
         {
@@ -313,7 +323,7 @@ namespace Jwt.Identity.Test
 
                 var testUsers = GetTestUsers();
 
-                ApplicationUser user1 = testUsers[0];
+                var user1 = testUsers[0];
                 await userManager.CreateAsync(user1, ACCEPTABLE_PASSWORD);
 
                 // Act
@@ -324,6 +334,7 @@ namespace Jwt.Identity.Test
                 Assert.Null(actualUser);
             }
         }
+
         [Fact]
         public async Task ChangePasswordAsync_UserExists_ChangesPassword()
         {
@@ -336,7 +347,7 @@ namespace Jwt.Identity.Test
 
                 var testUsers = GetTestUsers();
 
-                ApplicationUser user1 = testUsers[0];
+                var user1 = testUsers[0];
                 await userManager.CreateAsync(user1, ACCEPTABLE_PASSWORD);
 
                 const string ACCEPTABLE_PASSWORD2 = "accEPTable123!@#Pass2";
@@ -347,6 +358,7 @@ namespace Jwt.Identity.Test
                 Assert.True(await userManager.CheckPasswordAsync(user1, ACCEPTABLE_PASSWORD2));
             }
         }
+
         [Fact]
         public async Task IsEmailInUseAsync_EmailInUseUserNotExcluded_ReturnsTrue()
         {
@@ -359,16 +371,17 @@ namespace Jwt.Identity.Test
 
                 var testUsers = GetTestUsers();
 
-                ApplicationUser user1 = testUsers[0];
+                var user1 = testUsers[0];
                 await userManager.CreateAsync(user1, ACCEPTABLE_PASSWORD);
 
                 // Act
-                bool result = await userManagementService.IsEmailInUseAsync(user1.Email, null);
+                var result = await userManagementService.IsEmailInUseAsync(user1.Email, null);
 
                 // Assert
                 Assert.True(result);
             }
         }
+
         [Fact]
         public async Task IsEmailInUseAsync_EmailInUseUserExcluded_ReturnsFalse()
         {
@@ -381,16 +394,17 @@ namespace Jwt.Identity.Test
 
                 var testUsers = GetTestUsers();
 
-                ApplicationUser user1 = testUsers[0];
+                var user1 = testUsers[0];
                 await userManager.CreateAsync(user1, ACCEPTABLE_PASSWORD);
 
                 // Act
-                bool result = await userManagementService.IsEmailInUseAsync(user1.Email, user1.Id);
+                var result = await userManagementService.IsEmailInUseAsync(user1.Email, user1.Id);
 
                 // Assert
                 Assert.False(result);
             }
         }
+
         [Fact]
         public async Task GetUserAsync_UserExists_ReturnsUser()
         {
@@ -403,7 +417,7 @@ namespace Jwt.Identity.Test
 
                 var testUsers = GetTestUsers();
 
-                ApplicationUser user1 = testUsers[0];
+                var user1 = testUsers[0];
                 await userManager.CreateAsync(user1, ACCEPTABLE_PASSWORD);
 
                 var claims = new[]
@@ -435,7 +449,7 @@ namespace Jwt.Identity.Test
 
                 var testUsers = GetTestUsers();
 
-                ApplicationUser user1 = testUsers[0];
+                var user1 = testUsers[0];
                 await userManager.CreateAsync(user1, ACCEPTABLE_PASSWORD);
                 var user1Id = user1.Id;
                 var user2id = userdata;
@@ -443,7 +457,6 @@ namespace Jwt.Identity.Test
                 var nullUser = await userManagementService.FindUserAsync(user2id.Id);
                 Assert.True(actualUser != null && nullUser == null);
             }
-
         }
     }
 }

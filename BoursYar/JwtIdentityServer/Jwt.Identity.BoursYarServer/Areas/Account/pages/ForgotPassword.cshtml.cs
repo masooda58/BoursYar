@@ -1,39 +1,37 @@
-﻿using IdentityPersianHelper.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text;
+using System.Text.Encodings.Web;
+using System.Threading.Tasks;
 using Jwt.Identity.BoursYarServer.Helpers.Extensions;
 using Jwt.Identity.BoursYarServer.Models.SettingModels;
 using Jwt.Identity.BoursYarServer.Resources;
-using Jwt.Identity.Domain.Interfaces.IMessageSender;
-using Jwt.Identity.Domain.Interfaces.IPhoneTotpProvider;
-using Jwt.Identity.Domain.Models;
+using Jwt.Identity.Domain.IServices;
+using Jwt.Identity.Domain.IServices.Totp;
+using Jwt.Identity.Domain.IServices.Totp.Enum;
+using Jwt.Identity.Domain.User.Entities;
+using Jwt.Identity.Framework.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
-using System;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
-using Jwt.Identity.Domain.Interfaces.IConfirmCode;
-using Jwt.Identity.Domain.Models.TypeEnum;
 
 namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
 {
     [AllowAnonymous]
     public class ForgotPasswordModel : PageModel
     {
-        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IEmailSender _emailSender;
-        private readonly IPhoneTotpProvider _totp;
-        private readonly ISmsSender _smsSender;
         private readonly TotpSettings _options;
+        private readonly ISmsSender _smsSender;
+        private readonly IPhoneTotpProvider _totp;
         private readonly ITotpCode _totpCode;
-        
+        private readonly UserManager<ApplicationUser> _userManager;
 
 
-        public ForgotPasswordModel(UserManager<ApplicationUser> userManager, IEmailSender emailSender, IPhoneTotpProvider totp, ISmsSender smsSender, IOptions<TotpSettings> options, ITotpCode totpCode)
+        public ForgotPasswordModel(UserManager<ApplicationUser> userManager, IEmailSender emailSender,
+            IPhoneTotpProvider totp, ISmsSender smsSender, IOptions<TotpSettings> options, ITotpCode totpCode)
         {
             _userManager = userManager;
             _emailSender = emailSender;
@@ -43,24 +41,8 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
             _options = options?.Value ?? new TotpSettings();
         }
 
-        [BindProperty]
-        public InputModel Input { get; set; }
+        [BindProperty] public InputModel Input { get; set; }
 
-        public class InputModel
-        {
-            [BindProperty]
-            [Required(ErrorMessage = "لطفا {0} را وارد نمایید")]
-            // [EmailAddress(ErrorMessage = "{0} وارد شده صحیح نمی باشد")]
-            [PhoneOrEmail]
-            [Display(Name = "ایمیل یا شماره موبایل")]
-            public string EmailOrPhone
-            {
-                get => _normalEmailOrPhone.ToNormalPhoneNo();
-                set => _normalEmailOrPhone = value;
-            }
-            private string _normalEmailOrPhone;
-        }
-      
 
         private async Task SendEmailResetAsync(string email)
         {
@@ -72,9 +54,9 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
             code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
             var callbackUrl = Url.Page(
                 "/ResetPassword",
-                pageHandler: null,
-                values: new { area = "Account", userEmailOrPhone = Input.EmailOrPhone, code },
-                protocol: Request.Scheme);
+                null,
+                new { area = "Account", userEmailOrPhone = Input.EmailOrPhone, code },
+                Request.Scheme);
 
             await _emailSender.SendEmailAsync(
                 Input.EmailOrPhone,
@@ -87,9 +69,8 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
 
         public async Task OnGet()
         {
-
-
         }
+
         public async Task<IActionResult> OnPostAsync()
         {
             if (ModelState.IsValid)
@@ -103,14 +84,14 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
                     {
                         TempData[TempDataDict.ShowResetEmailMessage] = true;
                         return Page();
-
                     }
+
                     TempData[TempDataDict.ShowTotpResetCode] = true;
                     return RedirectToPage("./ResetPassword", new { userEmailOrPhone = Input.EmailOrPhone });
-                   
                 }
+
                 if (Input.EmailOrPhone.Contains("@") &&
-                  !(await _userManager.IsEmailConfirmedAsync(user)))
+                    !await _userManager.IsEmailConfirmedAsync(user))
 
                 {
                     // Don't reveal that the user does not exist or is not confirmed
@@ -118,14 +99,13 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
 
                     TempData[TempDataDict.ShowResetEmailMessage] = true;
                     return Page();
-
                 }
 
-                if (!Input.EmailOrPhone.Contains("@") && !(await _userManager.IsPhoneNumberConfirmedAsync(user)))
+                if (!Input.EmailOrPhone.Contains("@") && !await _userManager.IsPhoneNumberConfirmedAsync(user))
                 {
                     // Don't reveal that the user does not exist or is not confirmed
                     TempData[TempDataDict.ShowTotpResetCode] = true;
-                    return RedirectToPage("./ResetPassword",new { userEmailOrPhone = Input.EmailOrPhone });
+                    return RedirectToPage("./ResetPassword", new { userEmailOrPhone = Input.EmailOrPhone });
                 }
 
                 if (Input.EmailOrPhone.Contains("@"))
@@ -135,29 +115,41 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
                     return Page();
                     //return RedirectToPage("./ForgotPasswordConfirmation");
                 }
-                else
-                {
-                    // await SendPhoneResetAsync(Input.EmailOrPhone);
-                    //SendResetTotpCode
-                    var resultSendRestTotpCode =
-                        await _totpCode.SendTotpCodeAsync(Input.EmailOrPhone,TotpTypeCode.TotpAccountPasswordResetCode);
-                   
-                    if (resultSendRestTotpCode.Successed)
-                    {
-                        TempData[TempDataDict.ShowTotpResetCode] = true;
-                        TempData["phonNo"] = Input.EmailOrPhone;
-                        return RedirectToPage("./ResetPassword", new { userEmailOrPhone = Input.EmailOrPhone });
-                    }
 
-                    // TempData[TempDataDict.ShowTotpResetCode]=true;
-                    TempData[TempDataDict.Error_TotpCode] = resultSendRestTotpCode.ErrorMessage;
-                    return Page();
+                // await SendPhoneResetAsync(Input.EmailOrPhone);
+                //SendResetTotpCode
+                var resultSendRestTotpCode =
+                    await _totpCode.SendTotpCodeAsync(Input.EmailOrPhone, TotpTypeCode.TotpAccountPasswordResetCode);
+
+                if (resultSendRestTotpCode.Successed)
+                {
+                    TempData[TempDataDict.ShowTotpResetCode] = true;
+                    TempData["phonNo"] = Input.EmailOrPhone;
+                    return RedirectToPage("./ResetPassword", new { userEmailOrPhone = Input.EmailOrPhone });
                 }
 
-
+                // TempData[TempDataDict.ShowTotpResetCode]=true;
+                TempData[TempDataDict.Error_TotpCode] = resultSendRestTotpCode.Message;
+                return Page();
             }
 
             return Page();
+        }
+
+        public class InputModel
+        {
+            private string _normalEmailOrPhone;
+
+            [BindProperty]
+            [Required(ErrorMessage = "لطفا {0} را وارد نمایید")]
+            // [EmailAddress(ErrorMessage = "{0} وارد شده صحیح نمی باشد")]
+            [PhoneOrEmail]
+            [Display(Name = "ایمیل یا شماره موبایل")]
+            public string EmailOrPhone
+            {
+                get => _normalEmailOrPhone.ToNormalPhoneNo();
+                set => _normalEmailOrPhone = value;
+            }
         }
     }
 }

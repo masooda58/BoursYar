@@ -1,6 +1,4 @@
-﻿
-
-namespace Jwt.Identity.BoursYarServer.Services.TokenServices
+﻿namespace Jwt.Identity.BoursYarServer.Services.TokenServices
 {
     public class JwtSettingModel
     {

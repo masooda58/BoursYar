@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using System.IO;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using System.IO;
 
 namespace Jwt.Identity.Api.Server
 {
@@ -13,10 +13,9 @@ namespace Jwt.Identity.Api.Server
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
 
-          Host.CreateDefaultBuilder(args)
-
-        #region Add Extra AppSetting.json
+                #region Add Extra AppSetting.json
 
                 // که در فولدر JwtSharedSetting های عمومی هستند درفایل Setting یکسری اطلاعات که
                 // است و بصورت لینک به این پروژه آضافه شده قرار دارند SharedSetting 
@@ -32,22 +31,20 @@ namespace Jwt.Identity.Api.Server
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
-                  //  config.Sources.Clear();
+                    //  config.Sources.Clear();
                     var env = hostingContext.HostingEnvironment;
                     // find the shared folder in the parent folder
                     //var sharedFolder = Path.Combine(env.ContentRootPath, "..", "Shared");
                     //load the SharedSettings first, so that appsettings.json overrwrites it
                     config
-
-                         .AddJsonFile("appsettings.json", true)
+                        .AddJsonFile("appsettings.json", true)
                         .AddJsonFile("JwtIdentitySharedSettings.json", true)
-                       .AddJsonFile($"SharedSettings.{env.EnvironmentName}.json", true);
+                        .AddJsonFile($"SharedSettings.{env.EnvironmentName}.json", true);
                     config.AddEnvironmentVariables();
                 }) //end
 
-        #endregion
+                #endregion
 
                 .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
-
     }
 }

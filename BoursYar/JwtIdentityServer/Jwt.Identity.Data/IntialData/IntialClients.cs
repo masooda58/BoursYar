@@ -1,37 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Jwt.Identity.Domain.Models.Client;
-using Jwt.Identity.Domain.Models.TypeEnum;
+﻿using System.Collections.Generic;
+using Jwt.Identity.Domain.Clients.Entity;
+using Jwt.Identity.Domain.User.Enum;
 
 namespace Jwt.Identity.Data.IntialData
 {
     public static class IntialClients
     {
-        public static List<Client> GetClients() => new List<Client>
+        public static List<Client> GetClients()
         {
-            new Client()
+            return new List<Client>
             {
-                ClientName = "Identity",
-                BaseUrl = "http://localhost:44376/",
-                EmailConfirmPage = "/ConfirmationEmail",
-                EmailResetPage = "/ResetPassword",
-                LoginType = LoginType.TokenAndCookie,
-                LoginUrl = "/Login",
-                SignInExternal = "/External-SIGN",
-                SignOut = "/SignOut",
-                Lockout = "/LouckOut"
-
-            }
-
-
-
-        };
-
-
-
-
+                new()
+                {
+                    ClientName = "Identity",
+                    BaseUrl = "http://localhost:44376/",
+                    EmailConfirmPage = "/ConfirmationEmail",
+                    EmailResetPage = "/ResetPassword",
+                    LoginType = LoginType.TokenAndCookie,
+                    LoginUrl = "/Login",
+                    SignInExternal = "/External-SIGN",
+                    SignOut = "/SignOut",
+                    Lockout = "/LouckOut"
+                }
+            };
+        }
     }
 }

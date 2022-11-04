@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Jwt.Identity.Domain.Interfaces.IMessageSender;
+﻿using System.Threading.Tasks;
+using Jwt.Identity.Domain.IServices;
 
 namespace Jwt.Identity.BoursYarServer.Services.MessageServices
 {
-    public class SmsServices:ISmsSender
+    public class SmsServices : ISmsSender
     {
-        /// <inheritdoc />>
-
+        /// <inheritdoc />
+        /// >
         public async Task<bool> SendSmsAsync(string mobileNo, string smsBody, string providerName)
         {
             return true;

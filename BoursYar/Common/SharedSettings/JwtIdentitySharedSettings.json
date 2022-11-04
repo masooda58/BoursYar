@@ -1,6 +1,7 @@
 {
   "ConnectionStrings": {
-    "IdetityDb": "Server=.\\SQLEXPRESS;Database=BoursYarIdentityDb;Trusted_Connection=True;MultipleActiveResultSets=true"
+    "IdetityDb":
+      "Server=.\\SQLEXPRESS;Database=BoursYarIdentityDb;Trusted_Connection=True;MultipleActiveResultSets=true"
     //"WDbContext": "Server=DESKTOP-VISTA74\\SQLEXPRESS;Database=WDb_1;Trusted_Connection=True;MultipleActiveResultSets=true"
   },
   "JWT": {
@@ -21,8 +22,8 @@
 
   },
   "Cors": {
-    "Origin": [ "Https://localhost:44379", "Https://localhost:3005" ],
-    "Method": [ "OPTIONS", "GET", "HEAD", "POST", "PUT", "DELETE" ]
+    "Origin": ["Https://localhost:44379", "Https://localhost:3005"],
+    "Method": ["OPTIONS", "GET", "HEAD", "POST", "PUT", "DELETE"]
   },
   "AllowedHosts": "*"
 }

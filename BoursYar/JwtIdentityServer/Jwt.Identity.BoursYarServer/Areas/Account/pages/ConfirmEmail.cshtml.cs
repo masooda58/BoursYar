@@ -1,6 +1,6 @@
 ﻿using System.Text;
 using System.Threading.Tasks;
-using Jwt.Identity.Domain.Models;
+using Jwt.Identity.Domain.User.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -19,22 +19,16 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
             _userManager = userManager;
         }
 
-        [TempData]
-        public string StatusMessage { get; set; }
+        [TempData] public string StatusMessage { get; set; }
 
         public async Task<IActionResult> OnGetAsync(string email, string code)
         {
-            if (email == null || code == null)
-            {
-                return RedirectToPage("/Index");
-            }
+            if (email == null || code == null) return RedirectToPage("/Index");
 
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
-            {
-               // return NotFound();
-                 return NotFound($"Unable to load user with ID '{email}'.");
-            }
+                // return NotFound();
+                return NotFound($"Unable to load user with ID '{email}'.");
 
             code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
             var result = await _userManager.ConfirmEmailAsync(user, code);

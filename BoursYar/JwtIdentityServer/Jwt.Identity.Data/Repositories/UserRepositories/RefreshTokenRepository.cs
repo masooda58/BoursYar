@@ -1,10 +1,7 @@
-﻿using Jwt.Identity.Data.Context;
-using Jwt.Identity.Domain.Interfaces.IUserRepositories;
-using Jwt.Identity.Domain.Models;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Linq;
+﻿using System;
 using System.Threading.Tasks;
+using Jwt.Identity.Data.Context;
+using Jwt.Identity.Domain.Token.Data;
 
 namespace Jwt.Identity.Data.Repositories.UserRepositories
 {
@@ -35,7 +32,7 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
 
                 //});
                 //await _context.SaveChangesAsync();
-               // return result != null;
+                // return result != null;
                 return true;
             }
             catch (Exception e)
@@ -45,12 +42,8 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
         }
 
 
-
-
-
         public async Task<string> GetUserIdByRefreshTokenAsync(string refreshToken)
         {
-
             //var result = string.IsNullOrEmpty(refreshToken) ? null : await _context.RefreshTokens.FirstOrDefaultAsync
             //    (r => r.TempRefreshToken == refreshToken);
             //return result?.UserId;
@@ -74,7 +67,6 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
             //    return false;
             //}
             return true;
-
         }
     }
 }

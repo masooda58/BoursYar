@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Security.Claims;
-using System.Threading.Tasks;
-
-using Jwt.Identity.Domain.Interfaces.ITokenServices;
-using Jwt.Identity.Domain.Models;
+using Jwt.Identity.Domain.Token.ITokenServices;
+using Jwt.Identity.Domain.User.Entities;
 
 namespace Jwt.Identity.BoursYarServer.Services.TokenServices
 {
@@ -11,15 +9,14 @@ namespace Jwt.Identity.BoursYarServer.Services.TokenServices
     // این کلاس تعیین می کنن چه مواردی در توکن اصلی قرار بگیرد
     public class AuthClaimsGenrators : IAuthClaimsGenrators
     {
-        public  List<Claim> CreatClaims(ApplicationUser user)
+        public List<Claim> CreatClaims(ApplicationUser user)
         {
             var authClaims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, "user.UserName"),
-                new Claim("BoursYarAccess","x"),
-                new Claim("BoursYarAccess","y"),
-                new Claim("id","user.Id"),
-
+                new(ClaimTypes.Name, "user.UserName"),
+                new("BoursYarAccess", "x"),
+                new("BoursYarAccess", "y"),
+                new("id", "user.Id")
             };
             return authClaims;
         }

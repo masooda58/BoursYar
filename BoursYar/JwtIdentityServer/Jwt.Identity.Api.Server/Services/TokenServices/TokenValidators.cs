@@ -2,7 +2,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using Common.Jwt.Authentication;
-using Jwt.Identity.Domain.Interfaces.ITokenServices;
+using Jwt.Identity.Domain.Token.ITokenServices;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Jwt.Identity.Api.Server.Services.TokenServices
@@ -18,9 +18,9 @@ namespace Jwt.Identity.Api.Server.Services.TokenServices
 
         public bool Validate(string refreshToken)
         {
-            JwtSecurityTokenHandler jwtTokenHandler = new JwtSecurityTokenHandler();
+            var jwtTokenHandler = new JwtSecurityTokenHandler();
             //in tanzimat dar clint ham hast
-            TokenValidationParameters validationParameters = new TokenValidationParameters()
+            var validationParameters = new TokenValidationParameters
             {
                 ValidateIssuer = true,
                 ValidateAudience = true,
@@ -34,8 +34,7 @@ namespace Jwt.Identity.Api.Server.Services.TokenServices
             };
             try
             {
-
-                jwtTokenHandler.ValidateToken(refreshToken, validationParameters, out SecurityToken validatedToken);
+                jwtTokenHandler.ValidateToken(refreshToken, validationParameters, out var validatedToken);
                 return true;
             }
             catch (Exception e)
@@ -43,7 +42,5 @@ namespace Jwt.Identity.Api.Server.Services.TokenServices
                 return false;
             }
         }
-
-       
     }
 }

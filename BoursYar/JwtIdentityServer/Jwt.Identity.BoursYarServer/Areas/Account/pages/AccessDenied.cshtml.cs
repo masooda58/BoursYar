@@ -6,8 +6,6 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
     {
         public void OnGet()
         {
-
         }
     }
 }
-

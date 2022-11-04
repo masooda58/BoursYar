@@ -1,6 +1,12 @@
-﻿using Common.Api.Dependency.Swagger;
+﻿using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
+using Common.Api.Dependency.Cors;
+using Common.Api.Dependency.Swagger;
 using Common.Jwt.Authentication;
-using IdentityPersianHelper.Identity;
 using Jwt.Identity.Api.Server.Helpers.CustomSignIn;
 using Jwt.Identity.Api.Server.Security;
 using Jwt.Identity.Api.Server.Services.ConfirmCode;
@@ -8,18 +14,19 @@ using Jwt.Identity.Api.Server.Services.MessageServices;
 using Jwt.Identity.Api.Server.Services.PhoneTotpProvider;
 using Jwt.Identity.Api.Server.Services.TokenServices;
 using Jwt.Identity.Data.Context;
-using Jwt.Identity.Data.Repositories;
+using Jwt.Identity.Data.IntialData;
+using Jwt.Identity.Data.Repositories.ClientRepository;
 using Jwt.Identity.Data.Repositories.UserRepositories;
-using Jwt.Identity.Domain.Interfaces.IConfirmCode;
-using Jwt.Identity.Domain.Interfaces.IMessageSender;
-using Jwt.Identity.Domain.Interfaces.IPhoneTotpProvider;
-using Jwt.Identity.Domain.Interfaces.IRepository;
-using Jwt.Identity.Domain.Interfaces.ITokenServices;
-using Jwt.Identity.Domain.Interfaces.IUserRepositories;
-using Jwt.Identity.Domain.Models;
-using Jwt.Identity.Domain.Models.Client;
-using Jwt.Identity.Domain.Models.SettingModels;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using Jwt.Identity.Domain.Clients.Data;
+using Jwt.Identity.Domain.IServices;
+using Jwt.Identity.Domain.IServices.Email;
+using Jwt.Identity.Domain.IServices.Totp;
+using Jwt.Identity.Domain.IServices.Totp.SettingModels;
+using Jwt.Identity.Domain.Token.Data;
+using Jwt.Identity.Domain.Token.ITokenServices;
+using Jwt.Identity.Domain.User.Entities;
+using Jwt.Identity.Domain.User.Enum;
+using Jwt.Identity.Framework.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -27,22 +34,12 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
-using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Net;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
-using Common.Api.Dependency.Cors;
-using Jwt.Identity.Data.IntialData;
-using Jwt.Identity.Domain.Models.TypeEnum;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace Jwt.Identity.Api.Server
 {
@@ -59,6 +56,7 @@ namespace Jwt.Identity.Api.Server
         public void ConfigureServices(IServiceCollection services)
         {
             #region DbContext
+
             services.AddDbContext<IdentityContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("IdetityDb")), ServiceLifetime.Transient);
@@ -66,32 +64,33 @@ namespace Jwt.Identity.Api.Server
             #endregion
 
             #region Identity
+
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
-             {
-                 // Password settings
-                 options.Password.RequireDigit = false;
-                 options.Password.RequiredLength = 1;
-                 options.Password.RequireNonAlphanumeric = false;
-                 options.Password.RequireUppercase = false;
-                 options.Password.RequireLowercase = false;
-                 options.Password.RequiredUniqueChars = 1;
+                {
+                    // Password settings
+                    options.Password.RequireDigit = false;
+                    options.Password.RequiredLength = 1;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequireUppercase = false;
+                    options.Password.RequireLowercase = false;
+                    options.Password.RequiredUniqueChars = 1;
 
-                 // Lockout settings
-                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
-                 options.Lockout.MaxFailedAccessAttempts = 3;
-                 options.Lockout.AllowedForNewUsers = true;
+                    // Lockout settings
+                    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
+                    options.Lockout.MaxFailedAccessAttempts = 3;
+                    options.Lockout.AllowedForNewUsers = true;
 
-                 // User settings
-                 options.User.RequireUniqueEmail = false;
+                    // User settings
+                    options.User.RequireUniqueEmail = false;
 
-                 // SignIn settings
-                 //options.SignIn.RequireConfirmedEmail = false;
-                 // options.SignIn.RequireConfirmedPhoneNumber = false;
-                 options.SignIn.RequireConfirmedAccount = true;
+                    // SignIn settings
+                    //options.SignIn.RequireConfirmedEmail = false;
+                    // options.SignIn.RequireConfirmedPhoneNumber = false;
+                    options.SignIn.RequireConfirmedAccount = true;
 
-                 //Email token provider
-                 options.Tokens.EmailConfirmationTokenProvider = "EmailConFirmation";
-             })
+                    //Email token provider
+                    options.Tokens.EmailConfirmationTokenProvider = "EmailConFirmation";
+                })
                 .AddEntityFrameworkStores<IdentityContext>()
                 .AddDefaultTokenProviders()
                 //email Token Provider
@@ -100,15 +99,13 @@ namespace Jwt.Identity.Api.Server
                 .AddErrorDescriber<PersianIdentityErrorDescriber>();
 
             // تغییر زمان اعتبار همه توکن های ساخته شده
-            services.Configure<DataProtectionTokenProviderOptions>(o =>
-            {
-                o.TokenLifespan = TimeSpan.FromHours(8);
-            });
+            services.Configure<DataProtectionTokenProviderOptions>(o => { o.TokenLifespan = TimeSpan.FromHours(8); });
             //تغییر زمان توکن ایمیل
             services.Configure<EmailConfirmationTokenProviderOptions>(o =>
             {
                 o.TokenLifespan = TimeSpan.FromHours(2);
             });
+
             #endregion
 
             // ===== Configure Identity =======
@@ -131,9 +128,11 @@ namespace Jwt.Identity.Api.Server
             //});
 
             #region JwtTokenSetting
-            JwtSettingModel jwtSetting = new JwtSettingModel();
+
+            var jwtSetting = new JwtSettingModel();
             Configuration.Bind("JWT", jwtSetting);
             services.AddSingleton(jwtSetting);
+
             #endregion
 
             services.AddAuthentication(options =>
@@ -151,7 +150,6 @@ namespace Jwt.Identity.Api.Server
                         context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                         return Task.CompletedTask;
                     };
-
                 })
                 .AddJwtBearer("Bearer", options =>
                 {
@@ -174,23 +172,17 @@ namespace Jwt.Identity.Api.Server
                             context.Token = context.Request.Cookies["Access-TokenSession"];
                             return Task.CompletedTask;
                         },
-                     OnTokenValidated = context =>
-                     {
-                         var cache = context.HttpContext.RequestServices.GetService<IMemoryCache>();
-                         var accessToken = context.SecurityToken as JwtSecurityToken;
-                         ClaimsIdentity identity = context.Principal.Identity as ClaimsIdentity;
-                         var tt = accessToken.RawData;
-                       var UserID = identity.Claims.First(c => c.Type == "id").Value;
-                       return Task.CompletedTask;
-                     }
-                            
-
-
+                        OnTokenValidated = context =>
+                        {
+                            var cache = context.HttpContext.RequestServices.GetService<IMemoryCache>();
+                            var accessToken = context.SecurityToken as JwtSecurityToken;
+                            var identity = context.Principal.Identity as ClaimsIdentity;
+                            var tt = accessToken.RawData;
+                            var UserID = identity.Claims.First(c => c.Type == "id").Value;
+                            return Task.CompletedTask;
+                        }
                     };
-                   
-
                 })
-                
                 .AddPolicyScheme("JWT_OR_COOKIE", "JWT_OR_COOKIE", options =>
                 {
                     // runs on each request
@@ -203,22 +195,17 @@ namespace Jwt.Identity.Api.Server
                         {
                             string authorization = context.Request.Headers[HeaderNames.Authorization];
                             if (!string.IsNullOrEmpty(authorization) && authorization.StartsWith("Bearer "))
-                            {
                                 return "Bearer";
-                            }
                         }
-                    
-               
+
+
                         if (client is { LoginType: LoginType.Cookie or LoginType.TokenAndCookie })
                         {
                             string accessToken = context.Request.Headers[HeaderNames.Cookie];
                             if (!string.IsNullOrEmpty(accessToken) && accessToken.Contains("Access-Token"))
-                            {
                                 return "Bearer";
-                            }
-
                         }
-                    
+
 
                         // otherwise always check for cookie auth
 
@@ -226,10 +213,10 @@ namespace Jwt.Identity.Api.Server
                     };
                 })
                 .AddGoogle(option =>
-            {
-                option.ClientId = "346095678950-dhuqj3ko64i5i1becqteg2v3rv9l8j6a.apps.googleusercontent.com";
-                option.ClientSecret = "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";
-            });
+                {
+                    option.ClientId = "346095678950-dhuqj3ko64i5i1becqteg2v3rv9l8j6a.apps.googleusercontent.com";
+                    option.ClientSecret = "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";
+                });
             // 
             services.AddAuthorization(options =>
             {
@@ -242,10 +229,10 @@ namespace Jwt.Identity.Api.Server
 
                 options.DefaultPolicy = defaultAuthorizationPolicyBuilder.Build();
             });
+
             #region MemoryCache
 
             services.AddMemoryCache();
-
 
             #endregion
 
@@ -258,6 +245,7 @@ namespace Jwt.Identity.Api.Server
             #endregion
 
             #region Swaager&Cors
+
             //Nuget.Project:Common.Api.Dependency
             services.AddOurSwagger();
             var corsOrigin = Configuration.GetSection("Cors:Origin").Get<string[]>();
@@ -269,24 +257,25 @@ namespace Jwt.Identity.Api.Server
             #endregion
 
             services.AddControllers()
-                 .ConfigureApiBehaviorOptions(options =>
-                 {
-                     //   options.SuppressConsumesConstraintForFormFileParameters = true;
-                     //   options.SuppressInferBindingSourcesForParameters = true;
-                     // modelState مدیریت
-                     options.SuppressModelStateInvalidFilter = true;
-                     //   options.SuppressMapClientErrors = true;
-                     //   options.ClientErrorMapping[StatusCodes.Status404NotFound].Link =
-                     //      "/404";
-                 });
+                .ConfigureApiBehaviorOptions(options =>
+                {
+                    //   options.SuppressConsumesConstraintForFormFileParameters = true;
+                    //   options.SuppressInferBindingSourcesForParameters = true;
+                    // modelState مدیریت
+                    options.SuppressModelStateInvalidFilter = true;
+                    //   options.SuppressMapClientErrors = true;
+                    //   options.ClientErrorMapping[StatusCodes.Status404NotFound].Link =
+                    //      "/404";
+                });
             services.AddHttpContextAccessor();
 
             #region dependancy
-          services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+
+            services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
             services.AddSingleton<ITokenGenrators, TokenGenrators>();
             services.AddSingleton<ITokenValidators, TokenValidators>();
             services.AddSingleton<IAuthClaimsGenrators, AuthClaimsGenrators>();
-            services.AddScoped<IRepositoryService<Client>, RepositoryService<Client>>();
+            services.AddScoped<IClientRepository, ClientRepositoryService>();
             services.AddScoped<IEmailSender, EmailService>();
             services.AddScoped<ISmsSender, SmsServices>();
             services.AddTransient<IPhoneTotpProvider, PhoneTotpProvider>();
@@ -295,6 +284,7 @@ namespace Jwt.Identity.Api.Server
             services.AddSingleton<DataProtectionPepuseString>();
 
             #endregion
+
             //services.AddCors(options =>
             //{
             //    options.AddPolicy("CORSAllowLocalHost3000",
@@ -326,10 +316,7 @@ namespace Jwt.Identity.Api.Server
             app.UseAuthorization();
 
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }
 }

@@ -1,15 +1,26 @@
-﻿using Jwt.Identity.Api.Server.Resources;
+﻿using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
+using Jwt.Identity.Api.Server.Resources;
 using Jwt.Identity.Api.Server.Security;
 using Jwt.Identity.Data.IntialData;
-using Jwt.Identity.Domain.Interfaces.IConfirmCode;
-using Jwt.Identity.Domain.Interfaces.ITokenServices;
-using Jwt.Identity.Domain.Interfaces.IUserRepositories;
-using Jwt.Identity.Domain.Models;
-using Jwt.Identity.Domain.Models.CacheData;
-using Jwt.Identity.Domain.Models.Request;
-using Jwt.Identity.Domain.Models.Response;
-using Jwt.Identity.Domain.Models.SettingModels;
-using Jwt.Identity.Domain.Models.TypeEnum;
+using Jwt.Identity.Domain.IServices.Email;
+using Jwt.Identity.Domain.IServices.Email.Enum;
+using Jwt.Identity.Domain.IServices.Totp;
+using Jwt.Identity.Domain.IServices.Totp.Enum;
+using Jwt.Identity.Domain.IServices.Totp.Request;
+using Jwt.Identity.Domain.IServices.Totp.SettingModels;
+using Jwt.Identity.Domain.Shared.Models.CacheData;
+using Jwt.Identity.Domain.Token.Data;
+using Jwt.Identity.Domain.Token.ITokenServices;
+using Jwt.Identity.Domain.User.Entities;
+using Jwt.Identity.Domain.User.Enum;
+using Jwt.Identity.Domain.User.RequestDto;
+using Jwt.Identity.Framework.Response;
+using Jwt.Identity.Framework.Tools;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
@@ -20,15 +31,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 using static Google.Apis.Auth.GoogleJsonWebSignature;
 
 
@@ -38,47 +40,8 @@ namespace Jwt.Identity.Api.Server.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        #region CTOR
-
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly ITotpCode _totpCode;
-        private readonly ILogger<RegisterRequest> _logger;
-        private readonly IMemoryCache _memoryCache;
-        private readonly IMailCode _mailCode;
-        private readonly IDataProtector _protector;
-        private readonly TotpSettings _totpSettings;
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly IAuthClaimsGenrators _claimsGenrators;
-        private readonly ITokenGenrators _tokenGenrator;
-        private readonly IRefreshTokenRepository _refreshTokenRepository;
-        private readonly ITokenValidators _tokenValidators;
-
-        public AccountController(UserManager<ApplicationUser> userManager,
-            ITotpCode totpCode, ILogger<RegisterRequest> logger,
-            IMailCode mailCode, IMemoryCache memoryCache,
-            IOptions<TotpSettings> options,
-            IDataProtectionProvider dataProtectionProvider, DataProtectionPepuseString dataProtectionPepuseString,
-            SignInManager<ApplicationUser> signInManager, IAuthClaimsGenrators claimsGenrators,
-            ITokenGenrators tokenGenrator, IRefreshTokenRepository refreshTokenRepository, ITokenValidators tokenValidators)
-        {
-            _userManager = userManager;
-            _totpCode = totpCode;
-            _logger = logger;
-            _mailCode = mailCode;
-            _memoryCache = memoryCache;
-            _signInManager = signInManager;
-            _claimsGenrators = claimsGenrators;
-            _tokenGenrator = tokenGenrator;
-            _refreshTokenRepository = refreshTokenRepository;
-            _tokenValidators = tokenValidators;
-            _totpSettings = options?.Value ?? new TotpSettings();
-            _protector = dataProtectionProvider.CreateProtector(dataProtectionPepuseString.PhoneNoInCooki);
-        }
-
-        #endregion
-
         /// <summary>
-        /// ثبت نام
+        ///     ثبت نام
         /// </summary>
         /// <param name="clientId"></param>
         /// <param name="clientName"></param>
@@ -89,23 +52,17 @@ namespace Jwt.Identity.Api.Server.Controllers
         public async Task<IActionResult> Register(string clientName, [FromBody] RegisterRequest registerModel)
         {
             #region Check input
+
             if (string.IsNullOrEmpty(clientName))
-            {
                 return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
-            }
             var client = IntialClients.GetClients().SingleOrDefault(c => c.ClientName == clientName.ToUpper());
-            if (client == null)
-            {
-                return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
-            }
+            if (client == null) return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
             if (!ModelState.IsValid)
             {
-
                 var errorList = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage));
 
                 return BadRequest(new ResultResponse(false, errorList));
             }
-
 
             #endregion
 
@@ -139,8 +96,10 @@ namespace Jwt.Identity.Api.Server.Controllers
 
             var user = registerModel.EmailOrPhone.Contains("@")
                 ? new ApplicationUser { UserName = registerModel.EmailOrPhone, Email = registerModel.EmailOrPhone }
-                : new ApplicationUser { UserName = registerModel.EmailOrPhone, PhoneNumber = registerModel.EmailOrPhone };
+                : new ApplicationUser
+                    { UserName = registerModel.EmailOrPhone, PhoneNumber = registerModel.EmailOrPhone };
             var result = await _userManager.CreateAsync(user, registerModel.Password);
+
             #endregion
 
             if (!result.Succeeded)
@@ -158,16 +117,16 @@ namespace Jwt.Identity.Api.Server.Controllers
 
                 if (registerModel.EmailOrPhone.Contains("@"))
                 {
-                    var (successed, errorMessage) = await _mailCode.SendMailCodeAsync(user,
+                    var res = await _mailCode.SendMailCodeAsync(user,
                         MailTypeCode.MailAccountConfirmationCode, client.EmailConfirmPage);
-
+                    ;
+                    var successed = res.Successed;
+                    var message = res.Message;
                     if (successed)
-                    {
                         return Ok(new ResultResponse(true, MessageRes.EmailSent, registerModel.EmailOrPhone));
-                    }
 
                     await _userManager.DeleteAsync(user);
-                    return BadRequest(new ResultResponse(false, errorMessage));
+                    return BadRequest(new ResultResponse(false, message));
                 }
 
                 #endregion
@@ -188,73 +147,61 @@ namespace Jwt.Identity.Api.Server.Controllers
                 {
                     #region Set Cooki for phoneNo
 
-                    HttpContext.Response.Cookies.Append("TempSession", _protector.Protect(registerModel.EmailOrPhone+ TotpTypeCode.TotpAccountConfirmationCode),
+                    HttpContext.Response.Cookies.Append("TempSession",
+                        _protector.Protect(registerModel.EmailOrPhone + TotpTypeCode.TotpAccountConfirmationCode),
                         CookiesOptions.SetCookieOptions(DateTime.Now.AddSeconds(2 * _totpSettings.Step)));
-
 
                     #endregion
 
-                    return Ok(new ResultResponse(true, MessageRes.TotpSent, registerModel.EmailOrPhone+TotpTypeCode.TotpAccountConfirmationCode));
-
+                    return Ok(new ResultResponse(true, MessageRes.TotpSent,
+                        registerModel.EmailOrPhone + TotpTypeCode.TotpAccountConfirmationCode));
                 }
 
                 ModelState.AddModelError(string.Empty, MessageRes.UnkonwnError);
                 var errorList = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage));
                 await _userManager.DeleteAsync(user);
-                return BadRequest(new ResultResponse(false, resualtSendTotpCodeAsync.ErrorMessage));
-
+                return BadRequest(new ResultResponse(false, resualtSendTotpCodeAsync.Message));
 
                 #endregion
-
-
             }
 
             // اگر کاربر نیاز به کانفرم اکانت نداشت
-            var resultSignIn = await _signInManager.PasswordSignInAsync(registerModel.EmailOrPhone, registerModel.Password,
-                false, lockoutOnFailure: true);
+            var resultSignIn = await _signInManager.PasswordSignInAsync(registerModel.EmailOrPhone,
+                registerModel.Password,
+                false, true);
 
-            if (resultSignIn.Succeeded)
-            {
-                return await LoginJwt(user, client.LoginType);
-            }
+            if (resultSignIn.Succeeded) return await LoginJwt(user, client.LoginType);
 
             return BadRequest(new ResultResponse(false, MessageRes.UnkonwnError));
-
 
             #endregion
         }
 
-       [HttpPost("login/{clientName}")]
+        [HttpPost("login/{clientName}")]
         public async Task<IActionResult> Login(string clientName, [FromBody] LoginRequest loginModel)
         {
             #region Check input
+
             if (string.IsNullOrEmpty(clientName))
-            {
                 return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
-            }
             var client = IntialClients.GetClients().SingleOrDefault(c => c.ClientName == clientName.ToUpper());
-            if (client == null)
-            {
-                return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
-            }
+            if (client == null) return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
             if (!ModelState.IsValid)
             {
-
                 var errorList = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage));
 
                 return BadRequest(new ResultResponse(false, errorList));
             }
 
-
             #endregion
 
-          //  await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+            //  await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
 
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, set lockoutOnFailure: true
 
-            var user =loginModel.EmailOrPhone.Contains("@")
+            var user = loginModel.EmailOrPhone.Contains("@")
                 ? await _userManager.FindByEmailAsync(loginModel.EmailOrPhone)
                 : await _userManager.Users.SingleOrDefaultAsync(u => u.PhoneNumber == loginModel.EmailOrPhone);
 
@@ -268,19 +215,20 @@ namespace Jwt.Identity.Api.Server.Controllers
             }
 
             var result = await _signInManager.PasswordSignInAsync(user.UserName, loginModel.Password,
-                false, lockoutOnFailure: true);
+                false, true);
             if (result.Succeeded)
             {
                 _logger.LogInformation("User logged in.");
                 return await LoginJwt(user, client.LoginType);
-
             }
+
             // check locked
             if (result.IsLockedOut)
             {
                 _logger.LogWarning("User account locked out.");
                 return BadRequest(new ResultResponse(false, MessageRes.AccountLucked));
             }
+
             //check confirm
             if (user.PhoneNumberConfirmed || user.EmailConfirmed)
             {
@@ -299,31 +247,23 @@ namespace Jwt.Identity.Api.Server.Controllers
 
 
             // If we got this far, something failed, redisplay form
-
         }
 
         [HttpPost("ExternalLogin/{clientName}")]
         public async Task<ActionResult> ExternalLogin(string clientName, string token)
         {
-
             #region Check input
+
             if (string.IsNullOrEmpty(clientName))
-            {
                 return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
-            }
             var client = IntialClients.GetClients().SingleOrDefault(c => c.ClientName == clientName.ToUpper());
-            if (client == null)
-            {
-                return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
-            }
+            if (client == null) return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
             if (!ModelState.IsValid)
             {
-
                 var errorList = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage));
 
                 return BadRequest(new ResultResponse(false, errorList));
             }
-
 
             #endregion
 
@@ -333,12 +273,8 @@ namespace Jwt.Identity.Api.Server.Controllers
                 {
                     "346095678950-dhuqj3ko64i5i1becqteg2v3rv9l8j6a.apps.googleusercontent.com"
                 }
-
             });
-            if (payload == null)
-            {
-                return BadRequest(new ResultResponse(false, MessageRes.UnkonwnError));
-            }
+            if (payload == null) return BadRequest(new ResultResponse(false, MessageRes.UnkonwnError));
 
             var user = await _userManager.FindByEmailAsync(payload.Email);
             if (user == null)
@@ -347,12 +283,11 @@ namespace Jwt.Identity.Api.Server.Controllers
                 var createdResult = await _userManager.CreateAsync(newUser);
                 var code = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
                 await _userManager.ConfirmEmailAsync(newUser, code);
-                await _signInManager.SignInAsync(newUser, isPersistent: false, payload.Issuer);
+                await _signInManager.SignInAsync(newUser, false, payload.Issuer);
                 return await LoginJwt(newUser, client.LoginType);
-
             }
 
-            await _signInManager.SignInAsync(user, isPersistent: false, payload.Issuer);
+            await _signInManager.SignInAsync(user, false, payload.Issuer);
             return await LoginJwt(user, client.LoginType);
         }
 
@@ -360,56 +295,47 @@ namespace Jwt.Identity.Api.Server.Controllers
         public async Task<ActionResult> ResetPassword(string clientName, [FromBody] ForgetOrConfirmRequest input)
         {
             #region Check input
+
             if (string.IsNullOrEmpty(clientName))
-            {
                 return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
-            }
             var client = IntialClients.GetClients().SingleOrDefault(c => c.ClientName == clientName.ToUpper());
-            if (client == null)
-            {
-                return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
-            }
+            if (client == null) return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
             if (!ModelState.IsValid)
             {
-
                 var errorList = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage));
 
                 return BadRequest(new ResultResponse(false, errorList));
             }
 
-
             #endregion
 
 
             var userExist = input.EmailOrPhone.Contains("@")
-                ?await _userManager.FindByEmailAsync(input.EmailOrPhone)
-                :await _userManager.Users.SingleOrDefaultAsync(u => u.PhoneNumber == input.EmailOrPhone);
+                ? await _userManager.FindByEmailAsync(input.EmailOrPhone)
+                : await _userManager.Users.SingleOrDefaultAsync(u => u.PhoneNumber == input.EmailOrPhone);
             if (userExist == null)
-            {
                 // مشخص نمی کنیم که یوزر در سایت نمی باشد
                 //ModelState.AddModelError(string.Empty, $"ایمیل {input.EmailOrPhone} قبلا در سایت ثبت نام ننموده است");
 
                 return BadRequest(new ResultResponse(false, MessageRes.UnkonwnError));
-            }
 
             #region Send email reset
 
             if (input.EmailOrPhone.Contains("@"))
             {
-                var (successed, errorMessage) = await _mailCode.SendMailCodeAsync(userExist,
+                var res = await _mailCode.SendMailCodeAsync(userExist,
                     MailTypeCode.MailAccountPasswordResetCode, client.EmailResetPage);
+                var successed = res.Successed;
+                var message = res.Message;
+                if (successed) return Ok(new ResultResponse(true, input.EmailOrPhone));
 
-                if (successed)
-                {
-                    return Ok(new ResultResponse(true, input.EmailOrPhone));
-                }
-
-                return BadRequest(new ResultResponse(false, errorMessage));
+                return BadRequest(new ResultResponse(false, message));
             }
 
             #endregion
 
             #region Send sms rest
+
             var remoteIpAddress = HttpContext!.Connection.RemoteIpAddress;
 
 
@@ -422,74 +348,67 @@ namespace Jwt.Identity.Api.Server.Controllers
 
                     #region Set Cooki for phoneNo
 
-                    HttpContext.Response.Cookies.Append("TempSession", _protector.Protect(input.EmailOrPhone + TotpTypeCode.TotpAccountPasswordResetCode),
+                    HttpContext.Response.Cookies.Append("TempSession",
+                        _protector.Protect(input.EmailOrPhone + TotpTypeCode.TotpAccountPasswordResetCode),
                         CookiesOptions.SetCookieOptions(DateTime.Now.AddSeconds(2 * _totpSettings.Step)));
 
-
                     #endregion
 
-                    return Ok(new ResultResponse(true, MessageRes.TotpSent,input.EmailOrPhone + TotpTypeCode.TotpAccountPasswordResetCode));
+                    return Ok(new ResultResponse(true, MessageRes.TotpSent,
+                        input.EmailOrPhone + TotpTypeCode.TotpAccountPasswordResetCode));
                 default:
-                    return BadRequest(new ResultResponse(false, resualtSendTotpCodeAsync.ErrorMessage));
+                    return BadRequest(new ResultResponse(false, resualtSendTotpCodeAsync.Message));
 
-                    #endregion
+                #endregion
             }
         }
 
         [HttpPost("SendConfirmation/{clientName}")]
-        public async Task<ActionResult> SendConfirmationAccount(string clientName, [FromBody] ForgetOrConfirmRequest input)
+        public async Task<ActionResult> SendConfirmationAccount(string clientName,
+            [FromBody] ForgetOrConfirmRequest input)
         {
             #region Check input
+
             if (string.IsNullOrEmpty(clientName))
-            {
                 return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
-            }
             var client = IntialClients.GetClients().SingleOrDefault(c => c.ClientName == clientName.ToUpper());
-            if (client == null)
-            {
-                return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
-            }
+            if (client == null) return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
             if (!ModelState.IsValid)
             {
-
                 var errorList = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage));
 
                 return BadRequest(new ResultResponse(false, errorList));
             }
 
-
             #endregion
 
 
-            var userExist =input.EmailOrPhone.Contains("@")
-                ?await _userManager.FindByEmailAsync(input.EmailOrPhone)
-                :await _userManager.Users.SingleOrDefaultAsync(u => u.PhoneNumber == input.EmailOrPhone);
+            var userExist = input.EmailOrPhone.Contains("@")
+                ? await _userManager.FindByEmailAsync(input.EmailOrPhone)
+                : await _userManager.Users.SingleOrDefaultAsync(u => u.PhoneNumber == input.EmailOrPhone);
             if (userExist == null)
-            {
                 // مشخص نمی کنیم که یوزر در سایت نمی باشد
                 //ModelState.AddModelError(string.Empty, $"ایمیل {input.EmailOrPhone} قبلا در سایت ثبت نام ننموده است");
 
                 return BadRequest(new ResultResponse(false, MessageRes.UnkonwnError));
-            }
 
             #region Send email reset
 
             if (input.EmailOrPhone.Contains("@"))
             {
-                var (successed, errorMessage) = await _mailCode.SendMailCodeAsync(userExist,
+                var res = await _mailCode.SendMailCodeAsync(userExist,
                     MailTypeCode.MailAccountConfirmationCode, client.EmailConfirmPage);
+                var successed = res.Successed;
+                var message = res.Message;
+                if (successed) return Ok(new ResultResponse(true, input.EmailOrPhone));
 
-                if (successed)
-                {
-                    return Ok(new ResultResponse(true, input.EmailOrPhone));
-                }
-
-                return BadRequest(new ResultResponse(false, errorMessage));
+                return BadRequest(new ResultResponse(false, message));
             }
 
             #endregion
 
             #region Send sms rest
+
             var remoteIpAddress = HttpContext!.Connection.RemoteIpAddress;
 
 
@@ -502,17 +421,18 @@ namespace Jwt.Identity.Api.Server.Controllers
 
                     #region Set Cooki for phoneNo
 
-                    HttpContext.Response.Cookies.Append("TempSession", _protector.Protect(input.EmailOrPhone + TotpTypeCode.TotpAccountConfirmationCode),
+                    HttpContext.Response.Cookies.Append("TempSession",
+                        _protector.Protect(input.EmailOrPhone + TotpTypeCode.TotpAccountConfirmationCode),
                         CookiesOptions.SetCookieOptions(DateTime.Now.AddSeconds(2 * _totpSettings.Step)));
-
 
                     #endregion
 
-                    return Ok(new ResultResponse(true, MessageRes.TotpSent,input.EmailOrPhone + TotpTypeCode.TotpAccountConfirmationCode));
+                    return Ok(new ResultResponse(true, MessageRes.TotpSent,
+                        input.EmailOrPhone + TotpTypeCode.TotpAccountConfirmationCode));
                 default:
-                    return BadRequest(new ResultResponse(false, resualtSendTotpCodeAsync.ErrorMessage));
-
+                    return BadRequest(new ResultResponse(false, resualtSendTotpCodeAsync.Message));
             }
+
             #endregion
         }
 
@@ -520,37 +440,25 @@ namespace Jwt.Identity.Api.Server.Controllers
         public async Task<ActionResult> ConfirmTotp(string clientName, [FromBody] string code)
         {
             #region Check input
+
             if (string.IsNullOrEmpty(clientName))
-            {
                 return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
-            }
             var client = IntialClients.GetClients().SingleOrDefault(c => c.ClientName == clientName.ToUpper());
-            if (client == null)
-            {
-                return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
-            }
+            if (client == null) return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
 
             #endregion
 
-            var cookie = Request.Cookies.TryGetValue("TempSession", out string protectedPhoneAndType);
-            if (!cookie)
-            {
-
-                return BadRequest(new ResultResponse(false, MessageRes.CodeExpire));
-
-            }
+            var cookie = Request.Cookies.TryGetValue("TempSession", out var protectedPhoneAndType);
+            if (!cookie) return BadRequest(new ResultResponse(false, MessageRes.CodeExpire));
             Debug.Assert(protectedPhoneAndType != null, nameof(protectedPhoneAndType) + " != null");
             var unProtectedPhoneAndType = _protector.Unprotect(protectedPhoneAndType);
             var phoneNo = unProtectedPhoneAndType.Substring(0, 12);
             var typeTotp = unProtectedPhoneAndType.Substring(12);
-            var isCovertToTotpTyp = Enum.TryParse<TotpTypeCode>(typeTotp, out TotpTypeCode totpType);
-            if (!isCovertToTotpTyp)
-            {
-                return BadRequest(new ResultResponse(false, MessageRes.CodeExpire));
-            }
+            var isCovertToTotpTyp = Enum.TryParse(typeTotp, out TotpTypeCode totpType);
+            if (!isCovertToTotpTyp) return BadRequest(new ResultResponse(false, MessageRes.CodeExpire));
 
-            var confirmResult = await _totpCode.ConfirmTotpCodeAsync(phoneNo, code, totpType);
-            if (confirmResult.Successed)
+            var ResultResponse = await _totpCode.ConfirmTotpCodeAsync(phoneNo, code, totpType);
+            if (ResultResponse.Successed)
             {
                 var tempConfirmTotp = new TempConfirmTotp(phoneNo, totpType);
                 //4 min
@@ -558,37 +466,31 @@ namespace Jwt.Identity.Api.Server.Controllers
 
                 #region remove coocki
 
-                Response.Cookies.Delete("TempSession", new CookieOptions()
+                Response.Cookies.Delete("TempSession", new CookieOptions
                 {
-                    Secure = true,
+                    Secure = true
                 });
 
                 #endregion
+
                 return Ok(new ResultResponse(true, phoneNo + totpType + "MobileConfirmed"));
             }
 
 
-            return BadRequest(confirmResult);
-
-
+            return BadRequest(ResultResponse);
         }
 
         [HttpPost("ConfirmTotp/{clientName}")]
         public async Task<ActionResult> ConfirmTotp(string clientName, [FromBody] TotpConfirmationCodeRequest input)
         {
             #region Check input
+
             if (string.IsNullOrEmpty(clientName))
-            {
                 return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
-            }
             var client = IntialClients.GetClients().SingleOrDefault(c => c.ClientName == clientName.ToUpper());
-            if (client == null)
-            {
-                return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
-            }
+            if (client == null) return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
             if (!ModelState.IsValid)
             {
-
                 var errorList = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage));
 
                 return BadRequest(new ResultResponse(false, errorList));
@@ -598,121 +500,101 @@ namespace Jwt.Identity.Api.Server.Controllers
 
             var phoneNo = input.PhoneNo;
             var typeTotp = input.TotpType;
-            var isCovertToTotpTyp = Enum.TryParse<TotpTypeCode>(typeTotp, out TotpTypeCode totpType);
-            if (!isCovertToTotpTyp)
-            {
-                return BadRequest(new ResultResponse(false, MessageRes.CodeExpire));
-            }
+            var isCovertToTotpTyp = Enum.TryParse(typeTotp, out TotpTypeCode totpType);
+            if (!isCovertToTotpTyp) return BadRequest(new ResultResponse(false, MessageRes.CodeExpire));
 
-            var confirmResult = await _totpCode.ConfirmTotpCodeAsync(phoneNo, input.Code, totpType);
-            if (confirmResult.Successed)
+            var ResultResponse = await _totpCode.ConfirmTotpCodeAsync(phoneNo, input.Code, totpType);
+            if (ResultResponse.Successed)
 
             {
                 var tempConfirmTotp = new TempConfirmTotp(phoneNo, totpType);
                 _memoryCache.Set(phoneNo + totpType + "MobileConfirmed", tempConfirmTotp, TimeSpan.FromMinutes(4));
 
-                return Ok(new ResultResponse(true, MessageRes.OKTotpInput, new { keyConfirmed = phoneNo + totpType + "MobileConfirmed" }));
+                return Ok(new ResultResponse(true, MessageRes.OKTotpInput,
+                    new { keyConfirmed = phoneNo + totpType + "MobileConfirmed" }));
             }
 
-            return BadRequest(confirmResult);
-
+            return BadRequest(ResultResponse);
         }
+
         [HttpPost("ConfirmAccountPhone/{clientName}")]
-        public async Task<ActionResult> ConfirmAccountPhone(string clientName,[FromBody] string keyConfirmed)
+        public async Task<ActionResult> ConfirmAccountPhone(string clientName, [FromBody] string keyConfirmed)
         {
             var client = IntialClients.GetClients().SingleOrDefault(c => c.ClientName == clientName.ToUpper());
-            if (client == null)
-            {
-                return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
-            }
-            bool isConfirmed = false;
-       
+            if (client == null) return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
+            var isConfirmed = false;
+
 
             isConfirmed = _memoryCache.TryGetValue(keyConfirmed, out TempConfirmTotp confirmedPhone);
-            if (!isConfirmed)
-            {
-                return BadRequest(new ResultResponse(false, MessageRes.UnkonwnError));
-            }
+            if (!isConfirmed) return BadRequest(new ResultResponse(false, MessageRes.UnkonwnError));
 
             if (confirmedPhone.TypeTotp == TotpTypeCode.TotpAccountConfirmationCode)
             {
                 var user = await _userManager.Users.SingleOrDefaultAsync(u => u.PhoneNumber == confirmedPhone.PhoneNo);
                 if (user != null)
                 {
-                    var tokenPhone = await _userManager.GenerateChangePhoneNumberTokenAsync(user, confirmedPhone.PhoneNo);
-                    var confirmMoleNumber = await _userManager.ChangePhoneNumberAsync(user, confirmedPhone.PhoneNo, tokenPhone);
+                    var tokenPhone =
+                        await _userManager.GenerateChangePhoneNumberTokenAsync(user, confirmedPhone.PhoneNo);
+                    var confirmMoleNumber =
+                        await _userManager.ChangePhoneNumberAsync(user, confirmedPhone.PhoneNo, tokenPhone);
                     //signin user    
                     await _signInManager.SignInAsync(user, false);
 
                     return Ok(await LoginJwt(user, client.LoginType));
                 }
+
                 return NotFound($"Unable to load user with ID '{confirmedPhone.PhoneNo}'.");
             }
-            return BadRequest(new ResultResponse(false, MessageRes.UnkonwnError));
 
+            return BadRequest(new ResultResponse(false, MessageRes.UnkonwnError));
         }
+
         [HttpPost("ConfirmAccoutEmail/{clientName}")]
         public async Task<ActionResult> ConfirmAccoutEmail(string clientName, string code, string email)
         {
             var client = IntialClients.GetClients().SingleOrDefault(c => c.ClientName == clientName.ToUpper());
-            if (client == null)
-            {
-                return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
-            }
+            if (client == null) return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
-            {
                 // return NotFound();
                 return NotFound($"Unable to load user with ID '{email}'.");
-            }
 
             code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
             var result = await _userManager.ConfirmEmailAsync(user, code);
 
 
-            if (!result.Succeeded)
-            {
-                return BadRequest(new ResultResponse(false, MessageRes.UnkonwnError));
-            }
+            if (!result.Succeeded) return BadRequest(new ResultResponse(false, MessageRes.UnkonwnError));
             await _signInManager.SignInAsync(user, false);
 
             return Ok(await LoginJwt(user, client.LoginType));
-
-            
-
         }
+
         [HttpPost("RestPasswordByPhone/{clientName}")]
-        public async Task<ActionResult> RestPasswordByPhone(string clientName,string keyConfirmed,[FromBody]ChangePasswordRequest input)
+        public async Task<ActionResult> RestPasswordByPhone(string clientName, string keyConfirmed,
+            [FromBody] ChangePasswordRequest input)
         {
             #region Check input
+
             if (string.IsNullOrEmpty(clientName))
-            {
                 return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
-            }
             var client = IntialClients.GetClients().SingleOrDefault(c => c.ClientName == clientName.ToUpper());
-            if (client == null)
-            {
-                return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
-            }
+            if (client == null) return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
             if (!ModelState.IsValid)
             {
-
                 var errorList = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage));
 
                 return BadRequest(new ResultResponse(false, errorList));
             }
+
             #endregion
-            bool isConfirmed = false;
+
+            var isConfirmed = false;
 
             isConfirmed = _memoryCache.TryGetValue(keyConfirmed, out TempConfirmTotp confirmedPhone);
-            if (!isConfirmed)
-            {
-                return BadRequest(new ResultResponse(false, MessageRes.UnkonwnError));
-            }
+            if (!isConfirmed) return BadRequest(new ResultResponse(false, MessageRes.UnkonwnError));
 
             if (confirmedPhone.TypeTotp == TotpTypeCode.TotpAccountPasswordResetCode)
             {
-
                 var user = await _userManager.Users.SingleOrDefaultAsync(u => u.PhoneNumber == confirmedPhone.PhoneNo);
                 if (user != null)
                 {
@@ -725,41 +607,38 @@ namespace Jwt.Identity.Api.Server.Controllers
 
                         return Ok(await LoginJwt(user, client.LoginType));
                     }
+
                     var errorList = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage));
 
                     return BadRequest(new ResultResponse(false, errorList));
-
-           
                 }
+
                 return NotFound($"Unable to load user with ID '{confirmedPhone.PhoneNo}'.");
             }
-            return NotFound(new ResultResponse(false,MessageRes.UnkonwnError));
 
+            return NotFound(new ResultResponse(false, MessageRes.UnkonwnError));
         }
+
         [HttpPost("RestPasswordByEmail/{clientName}")]
-        public async Task<ActionResult> RestPasswordByEmail(string clientName, string code, string email,[FromBody]ChangePasswordRequest input)
+        public async Task<ActionResult> RestPasswordByEmail(string clientName, string code, string email,
+            [FromBody] ChangePasswordRequest input)
         {
             if (!ModelState.IsValid)
             {
-
                 var errorList = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage));
 
                 return BadRequest(new ResultResponse(false, errorList));
             }
+
             var client = IntialClients.GetClients().SingleOrDefault(c => c.ClientName == clientName.ToUpper());
-            if (client == null)
-            {
-                return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
-            }
+            if (client == null) return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
-            {
                 // return NotFound();
                 return NotFound($"Unable to load user with ID '{email}'.");
-            }
 
             code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
-            var result = await _userManager.ResetPasswordAsync(user, code,input.Password);
+            var result = await _userManager.ResetPasswordAsync(user, code, input.Password);
 
 
             if (!result.Succeeded)
@@ -768,29 +647,27 @@ namespace Jwt.Identity.Api.Server.Controllers
 
                 return BadRequest(new ResultResponse(false, errorList));
             }
+
             await _signInManager.SignInAsync(user, false);
 
             return Ok(await LoginJwt(user, client.LoginType));
-            
         }
+
         [HttpPost("SignOut/{clientName}")]
         //[Authorize(AuthenticationSchemes="JWT_OR_COOKIE")]
         [Authorize]
         public async Task<ActionResult> SignOut(string clientName)
         {
             var client = IntialClients.GetClients().SingleOrDefault(c => c.ClientName == clientName.ToUpper());
-            if (client == null)
-            {
-                return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
-            }
+            if (client == null) return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
             await _signInManager.SignOutAsync();
-            Response.Cookies.Delete("Access-TokenSession", new CookieOptions()
+            Response.Cookies.Delete("Access-TokenSession", new CookieOptions
             {
-                Secure = true,
+                Secure = true
             });
-            Response.Cookies.Delete("Refresh-TokenSession", new CookieOptions()
+            Response.Cookies.Delete("Refresh-TokenSession", new CookieOptions
             {
-                Secure = true,
+                Secure = true
             });
             var userId = HttpContext.User.FindFirstValue("id");
             await _refreshTokenRepository.DeleteRefreshTokenByuserIdAsync(userId);
@@ -801,61 +678,45 @@ namespace Jwt.Identity.Api.Server.Controllers
         public async Task<ActionResult> RefreshTokent(string clientName, [FromBody] string? refreshToken)
         {
             var client = IntialClients.GetClients().SingleOrDefault(c => c.ClientName == clientName.ToUpper());
-            if (client == null)
-            {
-                return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
-            }
+            if (client == null) return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
 
-            bool isRefreshTokenValid = false;
-            string  validToken = "";
+            var isRefreshTokenValid = false;
+            var validToken = "";
             if (!string.IsNullOrEmpty(refreshToken) &&
                 client is { LoginType: LoginType.Token or LoginType.TokenAndCookie })
             {
                 isRefreshTokenValid = _tokenValidators.Validate(refreshToken);
-                if (isRefreshTokenValid)
-                {
-                    validToken = refreshToken;
-                }
-            
-    
+                if (isRefreshTokenValid) validToken = refreshToken;
             }
 
-            if (string.IsNullOrEmpty(refreshToken) &&  client is { LoginType: LoginType.Cookie or LoginType.TokenAndCookie })
+            if (string.IsNullOrEmpty(refreshToken) &&
+                client is { LoginType: LoginType.Cookie or LoginType.TokenAndCookie })
             {
                 var isRefreshTokenInCookie =
-                    HttpContext.Request.Cookies.TryGetValue("Refresh-TokenSession", out string refreshTokenCookie);
+                    HttpContext.Request.Cookies.TryGetValue("Refresh-TokenSession", out var refreshTokenCookie);
                 if (isRefreshTokenInCookie)
                 {
                     isRefreshTokenValid = _tokenValidators.Validate(refreshTokenCookie);
-                    if (isRefreshTokenValid)
-                    {
-                        validToken = refreshTokenCookie;
-                    }
+                    if (isRefreshTokenValid) validToken = refreshTokenCookie;
                 }
-               
             }
 
             if (!string.IsNullOrEmpty(validToken))
             {
-                var userId =await _refreshTokenRepository.GetUserIdByRefreshTokenAsync(validToken);
+                var userId = await _refreshTokenRepository.GetUserIdByRefreshTokenAsync(validToken);
                 if (string.IsNullOrEmpty(userId))
-                {
                     return NotFound(new ResultResponse(false, MessageRes.InvalidRefreshToken));
-                }
 
                 var user = await _userManager.FindByIdAsync(userId);
-                if (user == null)
-                {
-                    return NotFound(new ResultResponse(false, MessageRes.InvalidRefreshToken));
-                }
+                if (user == null) return NotFound(new ResultResponse(false, MessageRes.InvalidRefreshToken));
 
                 return await LoginJwt(user, client.LoginType);
             }
-        
+
 
             return BadRequest(new ResultResponse(false, MessageRes.InvalidRefreshToken));
-
         }
+
         private async Task<ActionResult> LoginJwt(ApplicationUser user, LoginType loginType)
         {
             var authClaims = _claimsGenrators.CreatClaims(user);
@@ -865,7 +726,7 @@ namespace Jwt.Identity.Api.Server.Controllers
             await _refreshTokenRepository.WritRefreshTokenAsync(user.Id, token.RefreshToken);
             // string  tokenSerialized = JsonSerializer.Serialize<UserTokenResponse>(token);
 
-            Response.Cookies.Append("test", "test",CookiesOptions.SetCookieOptionsPresist());
+            Response.Cookies.Append("test", "test", CookiesOptions.SetCookieOptionsPresist());
             switch (loginType)
             {
                 case LoginType.TokenAndCookie:
@@ -886,21 +747,54 @@ namespace Jwt.Identity.Api.Server.Controllers
             }
 
             return Ok(new ResultResponse(false, MessageRes.WrongLoginType));
-
         }
+
         [HttpPost("test")]
         public async Task<ActionResult> Test(LoginRequest login)
         {
-
-            ValidationContext vc = new ValidationContext(login);
-           // var r = new ValidationResult("string errorMessage", new string[] { vc.MemberName });
-            ICollection<ValidationResult> results = new List<ValidationResult>(); // Will contain the results of the validation
-          // var results= new ValidationResult(FormatErrorMessage(vc.DisplayName), new string[] { vc.MemberName });
-            bool isValid = Validator.TryValidateObject(login, vc, results,true);
+            var results = Utilitis.CheckModelValidation(login);
+            var errobj = results.ResponseValues;
             return Ok(results);
         }
 
+        #region CTOR
+
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ITotpCode _totpCode;
+        private readonly ILogger<RegisterRequest> _logger;
+        private readonly IMemoryCache _memoryCache;
+        private readonly IMailCode _mailCode;
+        private readonly IDataProtector _protector;
+        private readonly TotpSettings _totpSettings;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IAuthClaimsGenrators _claimsGenrators;
+        private readonly ITokenGenrators _tokenGenrator;
+        private readonly IRefreshTokenRepository _refreshTokenRepository;
+        private readonly ITokenValidators _tokenValidators;
+
+        public AccountController(UserManager<ApplicationUser> userManager,
+            ITotpCode totpCode, ILogger<RegisterRequest> logger,
+            IMailCode mailCode, IMemoryCache memoryCache,
+            IOptions<TotpSettings> options,
+            IDataProtectionProvider dataProtectionProvider, DataProtectionPepuseString dataProtectionPepuseString,
+            SignInManager<ApplicationUser> signInManager, IAuthClaimsGenrators claimsGenrators,
+            ITokenGenrators tokenGenrator, IRefreshTokenRepository refreshTokenRepository,
+            ITokenValidators tokenValidators)
+        {
+            _userManager = userManager;
+            _totpCode = totpCode;
+            _logger = logger;
+            _mailCode = mailCode;
+            _memoryCache = memoryCache;
+            _signInManager = signInManager;
+            _claimsGenrators = claimsGenrators;
+            _tokenGenrator = tokenGenrator;
+            _refreshTokenRepository = refreshTokenRepository;
+            _tokenValidators = tokenValidators;
+            _totpSettings = options?.Value ?? new TotpSettings();
+            _protector = dataProtectionProvider.CreateProtector(dataProtectionPepuseString.PhoneNoInCooki);
+        }
+
+        #endregion
     }
-
 }
-

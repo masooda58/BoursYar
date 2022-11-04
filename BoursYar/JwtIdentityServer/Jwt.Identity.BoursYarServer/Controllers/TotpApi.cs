@@ -1,16 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Jwt.Identity.BoursYarServer.Models.ViewModel;
-using Jwt.Identity.Domain.Interfaces.IConfirmCode;
-using Jwt.Identity.Domain.Models.ResultModels;
-using Jwt.Identity.Domain.Models.TypeEnum;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Newtonsoft.Json;
+using Jwt.Identity.Domain.IServices.Totp;
+using Jwt.Identity.Domain.IServices.Totp.Enum;
+using Jwt.Identity.Framework.Response;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Jwt.Identity.BoursYarServer.Controllers
 {
@@ -18,28 +11,27 @@ namespace Jwt.Identity.BoursYarServer.Controllers
     //[ApiController]
     public class TotpApi : ControllerBase
     {
-        private readonly ITotpCode _TotpService;
+        private readonly ITotpCode _totpService;
 
         public TotpApi(ITotpCode totpService)
         {
-            _TotpService = totpService;
+            _totpService = totpService;
         }
 
         [HttpPost]
         [Route("SendTotp")]
-        public async Task<JsonResult> SendTotp([FromForm]TotpDto totpDto)
+        public async Task<JsonResult> SendTotp([FromForm] TotpDto totpDto)
         {
-        
-            var result = await _TotpService.SendTotpCodeAsync(totpDto.PhoneNumber, totpDto.TotpType);
+            var result = await _totpService.SendTotpCodeAsync(totpDto.PhoneNumber, totpDto.TotpType);
             return new JsonResult(result);
         }
+
         [HttpPost]
         [Route("ConfirmTotp")]
-        public async Task<ConfirmResult> ConfirmTotp(string phoneNo,[FromForm]string code)
+        public async Task<ResultResponse> ConfirmTotp(string phoneNo, [FromForm] string code)
         {
-           
-            
-            var result = await _TotpService.ConfirmTotpCodeAsync(phoneNo, code,TotpTypeCode.TotpAccountPasswordResetCode);
+            var result =
+                await _totpService.ConfirmTotpCodeAsync(phoneNo, code, TotpTypeCode.TotpAccountPasswordResetCode);
             return result;
             //return new PartialViewResult()
             //{
@@ -55,7 +47,7 @@ namespace Jwt.Identity.BoursYarServer.Controllers
 
             //    }
 
-        //};
+            //};
         }
     }
 }
@@ -63,8 +55,8 @@ namespace Jwt.Identity.BoursYarServer.Controllers
 //[Route("ConfirmTotp")]
 //public async Task<JsonResult> ConfirmTotp([FromForm]TotpDto totpDto,[FromForm]string code)
 //{
-           
-            
+
+
 //    var result = await _TotpService.ConfirmTotpCodeAsync(totpDto.PhoneNumber, code,totpDto.TotpType);
 //    return new JsonResult(result);
 //}

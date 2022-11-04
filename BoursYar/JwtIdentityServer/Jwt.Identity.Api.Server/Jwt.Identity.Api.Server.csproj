@@ -27,9 +27,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\IdentityPersianHelper\IdentityPersianHelper.csproj" />
     <ProjectReference Include="..\Jwt.Identity.Data\Jwt.Identity.Data.csproj" />
     <ProjectReference Include="..\Jwt.Identity.Domain\Jwt.Identity.Domain.csproj" />
+    <ProjectReference Include="..\Jwt.Identity.Framework\Jwt.Identity.Framework.csproj" />
   </ItemGroup>
 
   <ItemGroup>
