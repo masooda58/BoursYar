@@ -1,15 +1,21 @@
-﻿using Jwt.Identity.Domain.Clients.Entity;
+﻿using System.Data.Common;
+using Jwt.Identity.Domain.Clients.Entity;
 using Jwt.Identity.Domain.User.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace Jwt.Identity.Data.Context
 {
+
     public class IdentityContext : IdentityDbContext<ApplicationUser>
     {
         public IdentityContext(DbContextOptions<IdentityContext> options)
             : base(options)
         {
+            //اطمینان از ساخت دیتا بیس جدید
+            //this.Database.EnsureCreated();
         }
 
         public DbSet<Client> Clients { get; set; }
