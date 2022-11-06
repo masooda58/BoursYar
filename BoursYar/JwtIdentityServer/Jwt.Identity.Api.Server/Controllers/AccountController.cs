@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Jwt.Identity.Api.Server.Resources;
 using Jwt.Identity.Api.Server.Security;
 using Jwt.Identity.Data.IntialData;
+using Jwt.Identity.Data.Repositories.UserRepositories;
 using Jwt.Identity.Domain.IServices.Email;
 using Jwt.Identity.Domain.IServices.Email.Enum;
 using Jwt.Identity.Domain.IServices.Totp;
@@ -19,6 +20,7 @@ using Jwt.Identity.Domain.Token.ITokenServices;
 using Jwt.Identity.Domain.User.Entities;
 using Jwt.Identity.Domain.User.Enum;
 using Jwt.Identity.Domain.User.RequestDto;
+using Jwt.Identity.Framework.Extensions;
 using Jwt.Identity.Framework.Response;
 using Jwt.Identity.Framework.Tools;
 using Microsoft.AspNetCore.Authorization;
@@ -752,6 +754,7 @@ namespace Jwt.Identity.Api.Server.Controllers
         [HttpPost("test")]
         public async Task<ActionResult> Test(LoginRequest login)
         {
+            var t = await _userManager.FindUserByEmailOrPhoneAsync("98912306285".ToNormalPhoneNo());
             var results = Utilitis.CheckModelValidation(login);
             var errobj = results.ResponseValues;
             return Ok(results);
@@ -759,7 +762,7 @@ namespace Jwt.Identity.Api.Server.Controllers
 
         #region CTOR
 
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserManagementService _userManager;
         private readonly ITotpCode _totpCode;
         private readonly ILogger<RegisterRequest> _logger;
         private readonly IMemoryCache _memoryCache;
@@ -772,7 +775,7 @@ namespace Jwt.Identity.Api.Server.Controllers
         private readonly IRefreshTokenRepository _refreshTokenRepository;
         private readonly ITokenValidators _tokenValidators;
 
-        public AccountController(UserManager<ApplicationUser> userManager,
+        public AccountController(UserManagementService userManager,
             ITotpCode totpCode, ILogger<RegisterRequest> logger,
             IMailCode mailCode, IMemoryCache memoryCache,
             IOptions<TotpSettings> options,

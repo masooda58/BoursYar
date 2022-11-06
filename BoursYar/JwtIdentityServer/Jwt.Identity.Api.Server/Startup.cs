@@ -17,6 +17,7 @@ using Jwt.Identity.Data.Context;
 using Jwt.Identity.Data.IntialData;
 using Jwt.Identity.Data.Repositories.ClientRepository;
 using Jwt.Identity.Data.Repositories.UserRepositories;
+using Jwt.Identity.Data.UnitOfWork;
 using Jwt.Identity.Domain.Clients.Data;
 using Jwt.Identity.Domain.IServices;
 using Jwt.Identity.Domain.IServices.Email;
@@ -30,6 +31,7 @@ using Jwt.Identity.Framework.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -93,6 +95,7 @@ namespace Jwt.Identity.Api.Server
                 })
                 .AddEntityFrameworkStores<IdentityContext>()
                 .AddDefaultTokenProviders()
+                .AddUserManager<UserManagementService>()
                 //email Token Provider
                 .AddTokenProvider<EmailConfirmationTokenProvide<ApplicationUser>>("EmailConFirmation")
                 .AddSignInManager<CustomSignInManager>() //custom signin manage for mobile or email
@@ -271,6 +274,8 @@ namespace Jwt.Identity.Api.Server
 
             #region dependancy
 
+            services.AddScoped<UserManagementService>();
+            services.AddScoped<UnitOfWork>();
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
             services.AddSingleton<ITokenGenrators, TokenGenrators>();
             services.AddSingleton<ITokenValidators, TokenValidators>();
@@ -309,6 +314,13 @@ namespace Jwt.Identity.Api.Server
 
             app.UseCors();
             app.UseHttpsRedirection();
+            app.UseExceptionHandler(a => a.Run(async context =>
+            {
+                var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
+                var exception = exceptionHandlerPathFeature.Error;
+    
+                await context.Response.WriteAsJsonAsync(new { error = exception.Message,Data=exception.Data });
+            }));
 
             app.UseRouting();
 
