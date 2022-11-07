@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Jwt.Identity.Domain\Jwt.Identity.Domain.csproj" />
+    <ProjectReference Include="..\Jwt.Identity.Framework\Jwt.Identity.Framework.csproj" />
   </ItemGroup>
 
 </Project>

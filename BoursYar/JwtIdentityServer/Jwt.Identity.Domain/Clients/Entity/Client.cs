@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Jwt.Identity.Domain.User.Enum;
+using MediatR;
 
 namespace Jwt.Identity.Domain.Clients.Entity
 {

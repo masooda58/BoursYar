@@ -50,7 +50,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReactUi", "UI\ReactUi\React
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jwt.Identity.Api.Server", "JwtIdentityServer\Jwt.Identity.Api.Server\Jwt.Identity.Api.Server.csproj", "{874566B8-E2D7-452E-BC76-CDA4DFA3AB27}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jwt.Identity.Framework", "JwtIdentityServer\Jwt.Identity.Framework\Jwt.Identity.Framework.csproj", "{DAA47449-E66C-42D7-A1D7-8A577C259503}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jwt.Identity.Framework", "JwtIdentityServer\Jwt.Identity.Framework\Jwt.Identity.Framework.csproj", "{DAA47449-E66C-42D7-A1D7-8A577C259503}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.FrameWork.Domain", "Common\Nuget.Project\Common.FrameWork.Domain\Common.FrameWork.Domain.csproj", "{5421F9B9-15AB-4DFD-BC9D-A7FF03433666}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -118,6 +120,10 @@ Global
 		{DAA47449-E66C-42D7-A1D7-8A577C259503}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DAA47449-E66C-42D7-A1D7-8A577C259503}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DAA47449-E66C-42D7-A1D7-8A577C259503}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5421F9B9-15AB-4DFD-BC9D-A7FF03433666}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5421F9B9-15AB-4DFD-BC9D-A7FF03433666}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5421F9B9-15AB-4DFD-BC9D-A7FF03433666}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5421F9B9-15AB-4DFD-BC9D-A7FF03433666}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -140,6 +146,7 @@ Global
 		{C4328539-B93D-4FE3-90E9-00EEE475D980} = {17A608E6-C075-4B47-8619-484063ED152B}
 		{874566B8-E2D7-452E-BC76-CDA4DFA3AB27} = {8C35286C-F2C1-493F-9C13-FBE17FE0D8F6}
 		{DAA47449-E66C-42D7-A1D7-8A577C259503} = {8C35286C-F2C1-493F-9C13-FBE17FE0D8F6}
+		{5421F9B9-15AB-4DFD-BC9D-A7FF03433666} = {94F24191-527C-4337-9847-43185A7B97D5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E8BC5213-F0FD-4ABA-A5B9-41061C465589}

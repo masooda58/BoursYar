@@ -10,7 +10,7 @@ using Jwt.Identity.Domain.Clients.Data;
 
 namespace Jwt.Identity.Data.UnitOfWork
 {
-    public class UnitOfWork
+    public class UnitOfWork:IDisposable
     {
         private readonly IdentityContext _context;
         private ClientRepositoryService _client;
@@ -33,9 +33,28 @@ namespace Jwt.Identity.Data.UnitOfWork
             }
         }
 
-        public void savechange()
+        public void Save()
         {
-            _context.SaveChangesAsync();
+            _context.SaveChanges();
+        }
+        private bool disposed = false;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!this.disposed)
+            {
+                if (disposing)
+                {
+                    _context.Dispose();
+                }
+            }
+            this.disposed = true;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }

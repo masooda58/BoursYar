@@ -5,9 +5,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Jwt.Identity.Api.Server.Resources;
 using Jwt.Identity.Data.UnitOfWork;
+using Jwt.Identity.Domain.Clients.Command;
 using Jwt.Identity.Domain.Clients.Entity;
 
 using Jwt.Identity.Framework.Response;
+using Jwt.Identity.Framework.Tools.PersianErrorHandelSqlException;
+using MediatR;
 using Newtonsoft.Json;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -19,16 +22,18 @@ namespace Jwt.Identity.Api.Server.Controllers
     public class ClientController : ControllerBase
     {
         private readonly UnitOfWork _unitOfWork;
-        public ClientController(UnitOfWork unitOfWork)
+        private readonly IMediator _mediator;
+        public ClientController(UnitOfWork unitOfWork, IMediator mediator)
         {
             _unitOfWork = unitOfWork;
+            _mediator = mediator;
         }
         // GET: api/<ClientController>
         [HttpGet("GetAll")]
         public async Task<IEnumerable<Client>> GetAll()
         {
 
-                return await _unitOfWork.ClientRepository.GetAllAsync();
+                return  _unitOfWork.ClientRepository.Get();
          
        
         
@@ -45,21 +50,32 @@ namespace Jwt.Identity.Api.Server.Controllers
         public async Task<ActionResult> GetByClientName(string clientName)
         {
 
-            return Ok(await _unitOfWork.ClientRepository.GetByClientNameAsync(clientName));
+            return Ok(await _unitOfWork.ClientRepository.GetByAsync(clientName));
         }
 
 
         // PUT api/<ClientController>/5
         [HttpPut("Add")]
-        public async Task<ActionResult> AddClient([FromBody] Client client)
+        public async Task<ActionResult> AddClient([FromBody] UpSert client)
         {
-            var addResult = await _unitOfWork.ClientRepository.Add(client);
-            return addResult.Successed ? Ok(addResult) : Conflict(addResult);
+            try
+            {
+               await _mediator.Send(client);
+                 //await _unitOfWork.ClientRepository.InsertAsync(client);
+                 //_unitOfWork.Save();
+                return Ok(client);
+            }
+            catch (Exception e)
+            {
+                throw ExceptionMessage.GetPerisanSqlExceptionMessage(e);
+            }
+       
         }
         [HttpPut("Update")]
         public async Task<ActionResult> UpdateClient([FromBody] Client client)
         {
-            return Ok(await _unitOfWork.ClientRepository.Update(client));
+            _unitOfWork.ClientRepository.Update(client);
+            return Ok("Client Update");
         }
 
         // DELETE api/<ClientController>/5
@@ -68,8 +84,8 @@ namespace Jwt.Identity.Api.Server.Controllers
         {
 
 
-            var deleteClient = await _unitOfWork.ClientRepository.DeleteClientNameAsync((clientName));
-                return deleteClient.Successed ? Ok(deleteClient) : Conflict(deleteClient); ;
+            await _unitOfWork.ClientRepository.DeleteAsync(clientName);
+            return Ok("delete");
 
         }
     }

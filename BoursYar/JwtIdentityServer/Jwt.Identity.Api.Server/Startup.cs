@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,6 +29,7 @@ using Jwt.Identity.Domain.Token.ITokenServices;
 using Jwt.Identity.Domain.User.Entities;
 using Jwt.Identity.Domain.User.Enum;
 using Jwt.Identity.Framework.Identity;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -271,16 +273,16 @@ namespace Jwt.Identity.Api.Server
                     //      "/404";
                 });
             services.AddHttpContextAccessor();
-
+            services.AddMediatR(typeof(Startup).Assembly);
             #region dependancy
 
             services.AddScoped<UserManagementService>();
-            services.AddScoped<UnitOfWork>();
+            services.AddTransient<UnitOfWork>();
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
             services.AddSingleton<ITokenGenrators, TokenGenrators>();
             services.AddSingleton<ITokenValidators, TokenValidators>();
             services.AddSingleton<IAuthClaimsGenrators, AuthClaimsGenrators>();
-            services.AddScoped<IClientRepository, ClientRepositoryService>();
+           
             services.AddScoped<IEmailSender, EmailService>();
             services.AddScoped<ISmsSender, SmsServices>();
             services.AddTransient<IPhoneTotpProvider, PhoneTotpProvider>();
