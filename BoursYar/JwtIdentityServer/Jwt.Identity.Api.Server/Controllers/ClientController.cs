@@ -1,17 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Jwt.Identity.Api.Server.Resources;
-using Jwt.Identity.Data.UnitOfWork;
-using Jwt.Identity.Domain.Clients.Command;
-using Jwt.Identity.Domain.Clients.Entity;
-
+﻿using Jwt.Identity.Domain.Clients.Command;
+using Jwt.Identity.Domain.Clients.Query;
 using Jwt.Identity.Framework.Response;
 using Jwt.Identity.Framework.Tools.PersianErrorHandelSqlException;
 using MediatR;
-using Newtonsoft.Json;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
+using System;
+using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -21,22 +17,35 @@ namespace Jwt.Identity.Api.Server.Controllers
     [ApiController]
     public class ClientController : ControllerBase
     {
-        private readonly UnitOfWork _unitOfWork;
+        private readonly IWebHostEnvironment _env;
         private readonly IMediator _mediator;
-        public ClientController(UnitOfWork unitOfWork, IMediator mediator)
+        public ClientController(IMediator mediator, IWebHostEnvironment env)
         {
-            _unitOfWork = unitOfWork;
             _mediator = mediator;
+            _env = env;
         }
         // GET: api/<ClientController>
         [HttpGet("GetAll")]
-        public async Task<IEnumerable<Client>> GetAll()
+        public async Task<ActionResult> GetAll()
         {
 
-                return  _unitOfWork.ClientRepository.Get();
-         
-       
-        
+            try
+            {
+                var result = await _mediator.Send(new GetAllClient());
+                return Ok(new ResultResponse(true, "دریافت با موفقیت انجام شد", result));
+
+            }
+            catch (Exception e)
+            {
+                if (_env.IsDevelopment())
+                {
+                    throw ExceptionMessage.GetPerisanSqlExceptionMessage(e);
+                }
+                return BadRequest(new ResultResponse(true, "دریافت نا موفق", e));
+            }
+
+
+
         }
 
         // GET api/<ClientController>/5
@@ -49,45 +58,88 @@ namespace Jwt.Identity.Api.Server.Controllers
         [HttpPost("GetByClientName")]
         public async Task<ActionResult> GetByClientName(string clientName)
         {
+            try
+            {
+                var client = await _mediator.Send(new GetClient() { ClientName = clientName });
+                return Ok(new ResultResponse(true,"دریافت موفق",client));
+            }
 
-            return Ok(await _unitOfWork.ClientRepository.GetByAsync(clientName));
+
+            catch (Exception e)
+            {
+                if (_env.IsDevelopment())
+                {
+                    throw ExceptionMessage.GetPerisanSqlExceptionMessage(e);
+
+                }
+
+                return BadRequest(new ResultResponse(true,"دریافت  نا موفق",clientName));
+            }
         }
 
 
         // PUT api/<ClientController>/5
-        [HttpPut("Add")]
-        public async Task<ActionResult> AddClient([FromBody] UpSert client)
-        {
-            try
+            //[HttpPut("Add")]
+            //public async Task<ActionResult> AddClient([FromBody] UpSert client)
+            //{
+            //    try
+            //    {
+            //       await _mediator.Send(client);
+            //         //await _unitOfWork.ClientRepository.InsertAsync(client);
+            //         //_unitOfWork.Save();
+            //        return Ok(client);
+            //    }
+            //    catch (Exception e)
+            //    {
+            //        throw ExceptionMessage.GetPerisanSqlExceptionMessage(e);
+            //    }
+
+            //}
+            [HttpPut("Upsert")]
+            public async Task<ActionResult> UpSertClient([FromBody] UpSert client)
             {
-               await _mediator.Send(client);
-                 //await _unitOfWork.ClientRepository.InsertAsync(client);
-                 //_unitOfWork.Save();
-                return Ok(client);
+
+
+                try
+                {
+                    var result = await _mediator.Send(client);
+
+                    return Ok(result);
+                }
+                catch (Exception e)
+                {
+                    if (_env.IsDevelopment())
+                    {
+                        throw ExceptionMessage.GetPerisanSqlExceptionMessage(e);
+                    }
+
+                    return BadRequest(new ResultResponse(false, "عملیات ناموفق", client.Client));
+                }
             }
-            catch (Exception e)
+
+            // DELETE api/<ClientController>/5
+            [HttpDelete("DeleteClient")]
+            public async Task<ActionResult> DeleteClient(string clientName)
             {
-                throw ExceptionMessage.GetPerisanSqlExceptionMessage(e);
+                try
+                {
+                    await _mediator.Send(new DeletClient() { ClientName = clientName });
+                    return Ok(new ResultResponse(true, $"کلاینت {clientName} حذف گردید",clientName));
+                }
+                catch (Exception e)
+                {
+                    if (_env.IsDevelopment())
+                    {
+                        throw ExceptionMessage.GetPerisanSqlExceptionMessage(e);
+                    }
+
+                    return BadRequest(new ResultResponse(false, "عملیات ناموفق", clientName));
+
+                }
+
+
+
             }
-       
-        }
-        [HttpPut("Update")]
-        public async Task<ActionResult> UpdateClient([FromBody] Client client)
-        {
-            _unitOfWork.ClientRepository.Update(client);
-            return Ok("Client Update");
-        }
-
-        // DELETE api/<ClientController>/5
-        [HttpDelete("DeleteClient")]
-        public async Task<ActionResult> DeleteClient(string clientName)
-        {
-
-
-            await _unitOfWork.ClientRepository.DeleteAsync(clientName);
-            return Ok("delete");
-
         }
     }
-}
 

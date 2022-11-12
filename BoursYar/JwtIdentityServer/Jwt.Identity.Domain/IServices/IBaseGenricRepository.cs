@@ -14,9 +14,11 @@ namespace Jwt.Identity.Domain.IServices
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
             string includeProperties = "");
         public  Task<TEntity> GetByAsync(object id);
+        public Task<TEntity> GetById(object id);
      
         public Task InsertAsync(TEntity entity);
         public Task DeleteAsync(object id);
+
         public Task DeleteAsync(TEntity entityToDelete);
         public  void Update(TEntity entityToUpdate);
     }

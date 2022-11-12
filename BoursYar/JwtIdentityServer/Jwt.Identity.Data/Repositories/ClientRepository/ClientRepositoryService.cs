@@ -26,7 +26,7 @@ namespace Jwt.Identity.Data.Repositories.ClientRepository
 
         public override  async Task<Client> GetByAsync(object clientName)
         {
-       
+           
                 var client = await _context.Clients.FirstOrDefaultAsync(x => x.ClientName == clientName.ToString().ToUpper());
                 if (client != null)
                 {
@@ -36,6 +36,11 @@ namespace Jwt.Identity.Data.Repositories.ClientRepository
                 throw new Exception("کاربر وجود ندارد");
            
 
+        }
+
+        public override async Task<Client> GetByIdNotraking(object id)
+        {
+            return await _context.Clients.AsNoTracking().FirstOrDefaultAsync(c => c.ClientId == (int)id);
         }
     }
 }

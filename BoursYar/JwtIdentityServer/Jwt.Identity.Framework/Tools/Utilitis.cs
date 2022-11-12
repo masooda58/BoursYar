@@ -8,6 +8,7 @@ using System.Resources;
 using Jwt.Identity.Framework.Response;
 using Jwt.Identity.Framework.Tools.PersianErrorHandelSqlException;
 using Microsoft.Data.SqlClient;
+using Newtonsoft.Json;
 
 namespace Jwt.Identity.Framework.Tools
 {
@@ -23,10 +24,17 @@ namespace Jwt.Identity.Framework.Tools
             if (!isValid)
             {
                 var errorList = results.Select(err => err.ErrorMessage);
-                return new ResultResponse(false, errorList, results);
+
+                CreateException(errorList);
+                // return new ResultResponse(false, errorList, results);
             }
 
             return new ResultResponse(true, true.ToString(), results);
+        }
+
+        private static Exception CreateException(IEnumerable<string> str)
+        {
+            return new Exception(JsonConvert.SerializeObject(str));
         }
       
     }

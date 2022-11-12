@@ -1,6 +1,5 @@
 ﻿using Jwt.Identity.Data.Context;
 using Jwt.Identity.Domain.IServices;
-using Jwt.Identity.Framework.Tools.PersianErrorHandelSqlException;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -29,75 +28,81 @@ namespace Jwt.Identity.Data.Repositories.BaseRepository
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
             string includeProperties = "")
         {
-          
-                IQueryable<TEntity> query = dbSet;
 
-                if (filter != null)
-                {
-                    query = query.Where(filter);
-                }
+            IQueryable<TEntity> query = dbSet;
 
-                foreach (var includeProperty in includeProperties.Split
-                             (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-                {
-                    query = query.Include(includeProperty);
-                }
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
 
-                if (orderBy != null)
-                {
-                    return orderBy(query).ToList();
-                }
-                else
-                {
-                    return query.ToList();
-                }
-      
+            foreach (var includeProperty in includeProperties.Split
+                         (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                query = query.Include(includeProperty);
+            }
+
+            if (orderBy != null)
+            {
+                return orderBy(query).ToList();
+            }
+            else
+            {
+                return query.ToList();
+            }
+
         }
 
 
         public abstract Task<TEntity> GetByAsync(object id);
+        public abstract Task<TEntity> GetByIdNotraking(object id);
 
+        public virtual async Task<TEntity> GetById(object id)
+        {
+            return await dbSet.FindAsync(id);
+        }
 
-   
 
 
 
         public virtual async Task InsertAsync(TEntity entity)
         {
-           
-                await dbSet.AddAsync(entity);
-            
-         
+
+            await dbSet.AddAsync(entity);
+
+
         }
 
         public virtual async Task DeleteAsync(object id)
         {
-      
-                TEntity entityToDelete = await GetByAsync(id);
-               await DeleteAsync(entityToDelete);
 
-            
-    
-           
+            TEntity entityToDelete = await GetByAsync(id);
+            await DeleteAsync(entityToDelete);
+
+
+
+
         }
 
         public virtual async Task DeleteAsync(TEntity entityToDelete)
         {
-          
-                if (context.Entry(entityToDelete).State == EntityState.Detached)
-                {
-                    dbSet.Attach(entityToDelete);
-                }
-                dbSet.Remove(entityToDelete);
-        
+
+            if (context.Entry(entityToDelete).State == EntityState.Detached)
+            {
+                dbSet.Attach(entityToDelete);
+            }
+            dbSet.Remove(entityToDelete);
+           
+
         }
 
         public virtual void Update(TEntity entityToUpdate)
         {
-           
+            bool isDetached = context.Entry(entityToUpdate).State == EntityState.Detached;
+            if (isDetached)
                 dbSet.Attach(entityToUpdate);
-                context.Entry(entityToUpdate).State = EntityState.Modified;
-        
+            context.Entry(entityToUpdate).State = EntityState.Modified;
+             
         }
     }
 
