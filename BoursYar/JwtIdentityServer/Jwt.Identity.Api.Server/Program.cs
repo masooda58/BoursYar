@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Jwt.Identity.Api.Server
 {
@@ -14,7 +15,7 @@ namespace Jwt.Identity.Api.Server
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-
+                
                 #region Add Extra AppSetting.json
 
                 // که در فولدر JwtSharedSetting های عمومی هستند درفایل Setting یکسری اطلاعات که
@@ -44,7 +45,13 @@ namespace Jwt.Identity.Api.Server
                 }) //end
 
                 #endregion
+                .ConfigureLogging((context, logging) =>
+                {
+                    logging.ClearProviders();
+                    logging.AddConfiguration(context.Configuration.GetSection("Logging"));
+                    logging.AddDebug();
 
+                })
                 .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
     }
 }

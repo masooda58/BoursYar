@@ -51,7 +51,6 @@
 
   <ItemGroup>
     <Folder Include="ServiceExtension\" />
-    <Folder Include="Services\ApplicationService\Clients\Query\" />
   </ItemGroup>
 
 </Project>
