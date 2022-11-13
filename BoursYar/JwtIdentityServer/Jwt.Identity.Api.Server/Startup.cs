@@ -1,11 +1,4 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Reflection;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
-using Common.Api.Dependency.Cors;
+﻿using Common.Api.Dependency.Cors;
 using Common.Api.Dependency.Swagger;
 using Common.Jwt.Authentication;
 using Jwt.Identity.Api.Server.Helpers.CustomSignIn;
@@ -16,10 +9,8 @@ using Jwt.Identity.Api.Server.Services.PhoneTotpProvider;
 using Jwt.Identity.Api.Server.Services.TokenServices;
 using Jwt.Identity.Data.Context;
 using Jwt.Identity.Data.IntialData;
-using Jwt.Identity.Data.Repositories.ClientRepository;
 using Jwt.Identity.Data.Repositories.UserRepositories;
 using Jwt.Identity.Data.UnitOfWork;
-using Jwt.Identity.Domain.Clients.Data;
 using Jwt.Identity.Domain.IServices;
 using Jwt.Identity.Domain.IServices.Email;
 using Jwt.Identity.Domain.IServices.Totp;
@@ -44,6 +35,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Jwt.Identity.Api.Server
 {
@@ -195,7 +192,7 @@ namespace Jwt.Identity.Api.Server
                     {
                         // filter by auth type
                         var reqHost = context.Request.Host.ToString();
-                        var client = IntialClients.GetClients().SingleOrDefault(c => c.BaseUrl.Contains(reqHost));
+                        var client = InitialClients.GetClients().SingleOrDefault(c => c.BaseUrl.Contains(reqHost));
                         if (client is { LoginType: LoginType.Token or LoginType.TokenAndCookie })
                         {
                             string authorization = context.Request.Headers[HeaderNames.Authorization];
@@ -274,6 +271,7 @@ namespace Jwt.Identity.Api.Server
                 });
             services.AddHttpContextAccessor();
             services.AddMediatR(typeof(Startup).Assembly);
+            services.AddLogging();
             #region dependancy
 
             services.AddScoped<UserManagementService>();
@@ -282,7 +280,7 @@ namespace Jwt.Identity.Api.Server
             services.AddSingleton<ITokenGenrators, TokenGenrators>();
             services.AddSingleton<ITokenValidators, TokenValidators>();
             services.AddSingleton<IAuthClaimsGenrators, AuthClaimsGenrators>();
-           
+
             services.AddScoped<IEmailSender, EmailService>();
             services.AddScoped<ISmsSender, SmsServices>();
             services.AddTransient<IPhoneTotpProvider, PhoneTotpProvider>();
@@ -305,7 +303,7 @@ namespace Jwt.Identity.Api.Server
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IdentityContext context)
         {
             if (env.IsDevelopment())
             {
@@ -313,15 +311,15 @@ namespace Jwt.Identity.Api.Server
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Jwt.Identity.Api.Server v1"));
             }
-
+            IdentityDbContextSeed.SeedData(context);
             app.UseCors();
             app.UseHttpsRedirection();
             app.UseExceptionHandler(a => a.Run(async context =>
             {
                 var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
                 var exception = exceptionHandlerPathFeature.Error;
-    
-                await context.Response.WriteAsJsonAsync(new { error = exception.Message,Data=exception.Data });
+
+                await context.Response.WriteAsJsonAsync(new { error = exception.Message, Data = exception.Data });
             }));
 
             app.UseRouting();

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Jwt.Identity.Data.Migrations
 {
-    public partial class afirst : Migration
+    public partial class Initia : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -55,17 +55,43 @@ namespace Jwt.Identity.Data.Migrations
                 {
                     ClientId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ClientName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    EmailLandingPage = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ClientName = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    EmailConfirmPage = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    EmailResetPage = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     BaseUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LoginUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SignInExternal = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SignOut = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Lockout = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LoginType = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Clients", x => x.ClientId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "IdentitySettings",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RequireDigit = table.Column<bool>(type: "bit", nullable: false),
+                    RequiredLength = table.Column<int>(type: "int", nullable: false),
+                    RequireNonAlphanumeric = table.Column<bool>(type: "bit", nullable: false),
+                    RequireUppercase = table.Column<bool>(type: "bit", nullable: false),
+                    RequireLowercase = table.Column<bool>(type: "bit", nullable: false),
+                    RequiredUniqueChars = table.Column<int>(type: "int", nullable: false),
+                    DefaultLockoutTimeSpanMinute = table.Column<int>(type: "int", nullable: false),
+                    MaxFailedAccessAttempts = table.Column<int>(type: "int", nullable: false),
+                    RequireConfirmedAccount = table.Column<bool>(type: "bit", nullable: false),
+                    TokenLifespanHour = table.Column<int>(type: "int", nullable: false),
+                    TotpLifeSpanMinute = table.Column<int>(type: "int", nullable: false),
+                    CaptchStrategy = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_IdentitySettings", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -175,19 +201,21 @@ namespace Jwt.Identity.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RefreshTokens",
+                name: "UserLogInOutLogs",
                 columns: table => new
                 {
                     IdGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    TempRefreshToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatTime = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Device = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IpAdress = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SignInOut = table.Column<int>(type: "int", nullable: false),
+                    Time = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RefreshTokens", x => x.IdGuid);
+                    table.PrimaryKey("PK_UserLogInOutLogs", x => x.IdGuid);
                     table.ForeignKey(
-                        name: "FK_RefreshTokens_AspNetUsers_UserId",
+                        name: "FK_UserLogInOutLogs_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -234,8 +262,15 @@ namespace Jwt.Identity.Data.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RefreshTokens_UserId",
-                table: "RefreshTokens",
+                name: "IX_Clients_ClientName",
+                table: "Clients",
+                column: "ClientName",
+                unique: true,
+                filter: "[ClientName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserLogInOutLogs_UserId",
+                table: "UserLogInOutLogs",
                 column: "UserId",
                 unique: true,
                 filter: "[UserId] IS NOT NULL");
@@ -262,7 +297,10 @@ namespace Jwt.Identity.Data.Migrations
                 name: "Clients");
 
             migrationBuilder.DropTable(
-                name: "RefreshTokens");
+                name: "IdentitySettings");
+
+            migrationBuilder.DropTable(
+                name: "UserLogInOutLogs");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

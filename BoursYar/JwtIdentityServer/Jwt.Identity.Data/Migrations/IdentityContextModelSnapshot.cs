@@ -19,7 +19,116 @@ namespace Jwt.Identity.Data.Migrations
                 .HasAnnotation("ProductVersion", "5.0.8")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("Jwt.Identity.Domain.Models.ApplicationUser", b =>
+            modelBuilder.Entity("Jwt.Identity.Domain.Clients.Entity.Client", b =>
+                {
+                    b.Property<int>("ClientId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("BaseUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClientName")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("EmailConfirmPage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EmailResetPage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Lockout")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("LoginType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("LoginUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SignInExternal")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SignOut")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ClientId");
+
+                    b.HasIndex("ClientName")
+                        .IsUnique()
+                        .HasFilter("[ClientName] IS NOT NULL");
+
+                    b.ToTable("Clients");
+                });
+
+            modelBuilder.Entity("Jwt.Identity.Domain.IdentityPolicy.Entity.IdentitySetting", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CaptchStrategy")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DefaultLockoutTimeSpanMinute")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MaxFailedAccessAttempts")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("RequireConfirmedAccount")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("RequireDigit")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("RequireLowercase")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("RequireNonAlphanumeric")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("RequireUppercase")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("RequiredLength")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RequiredUniqueChars")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TokenLifespanHour")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotpLifeSpanMinute")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("IdentitySettings");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CaptchStrategy = 2,
+                            DefaultLockoutTimeSpanMinute = 30,
+                            MaxFailedAccessAttempts = 3,
+                            RequireConfirmedAccount = false,
+                            RequireDigit = false,
+                            RequireLowercase = false,
+                            RequireNonAlphanumeric = false,
+                            RequireUppercase = false,
+                            RequiredLength = 1,
+                            RequiredUniqueChars = 1,
+                            TokenLifespanHour = 8,
+                            TotpLifeSpanMinute = 2
+                        });
+                });
+
+            modelBuilder.Entity("Jwt.Identity.Domain.User.Entities.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -95,50 +204,7 @@ namespace Jwt.Identity.Data.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("Jwt.Identity.Domain.Models.Client.Client", b =>
-                {
-                    b.Property<int>("ClientId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("BaseUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ClientName")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("EmailConfirmPage")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("EmailResetPage")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Lockout")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("LoginType")
-                        .HasColumnType("int");
-
-                    b.Property<string>("LoginUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SignInExternal")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SignOut")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ClientId");
-
-                    b.HasIndex("ClientName")
-                        .IsUnique()
-                        .HasFilter("[ClientName] IS NOT NULL");
-
-                    b.ToTable("Clients");
-                });
-
-            modelBuilder.Entity("Jwt.Identity.Domain.Models.UserLogInOutLog", b =>
+            modelBuilder.Entity("Jwt.Identity.Domain.User.Entities.UserLogInOutLog", b =>
                 {
                     b.Property<Guid>("IdGuid")
                         .ValueGeneratedOnAdd()
@@ -299,11 +365,11 @@ namespace Jwt.Identity.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("Jwt.Identity.Domain.Models.UserLogInOutLog", b =>
+            modelBuilder.Entity("Jwt.Identity.Domain.User.Entities.UserLogInOutLog", b =>
                 {
-                    b.HasOne("Jwt.Identity.Domain.Models.ApplicationUser", "User")
+                    b.HasOne("Jwt.Identity.Domain.User.Entities.ApplicationUser", "User")
                         .WithOne("UserLogInOutLoger")
-                        .HasForeignKey("Jwt.Identity.Domain.Models.UserLogInOutLog", "UserId");
+                        .HasForeignKey("Jwt.Identity.Domain.User.Entities.UserLogInOutLog", "UserId");
 
                     b.Navigation("User");
                 });
@@ -319,7 +385,7 @@ namespace Jwt.Identity.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Jwt.Identity.Domain.Models.ApplicationUser", null)
+                    b.HasOne("Jwt.Identity.Domain.User.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -328,7 +394,7 @@ namespace Jwt.Identity.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Jwt.Identity.Domain.Models.ApplicationUser", null)
+                    b.HasOne("Jwt.Identity.Domain.User.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -343,7 +409,7 @@ namespace Jwt.Identity.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Jwt.Identity.Domain.Models.ApplicationUser", null)
+                    b.HasOne("Jwt.Identity.Domain.User.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -352,14 +418,14 @@ namespace Jwt.Identity.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Jwt.Identity.Domain.Models.ApplicationUser", null)
+                    b.HasOne("Jwt.Identity.Domain.User.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Jwt.Identity.Domain.Models.ApplicationUser", b =>
+            modelBuilder.Entity("Jwt.Identity.Domain.User.Entities.ApplicationUser", b =>
                 {
                     b.Navigation("UserLogInOutLoger");
                 });

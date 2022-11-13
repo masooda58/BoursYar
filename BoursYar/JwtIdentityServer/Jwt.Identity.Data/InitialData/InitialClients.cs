@@ -4,7 +4,7 @@ using Jwt.Identity.Domain.User.Enum;
 
 namespace Jwt.Identity.Data.IntialData
 {
-    public static class IntialClients
+    public static class InitialClients
     {
         public static List<Client> GetClients()
         {

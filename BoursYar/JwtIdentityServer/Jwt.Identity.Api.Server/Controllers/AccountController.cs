@@ -57,7 +57,7 @@ namespace Jwt.Identity.Api.Server.Controllers
 
             if (string.IsNullOrEmpty(clientName))
                 return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
-            var client = IntialClients.GetClients().SingleOrDefault(c => c.ClientName == clientName.ToUpper());
+            var client = InitialClients.GetClients().SingleOrDefault(c => c.ClientName == clientName.ToUpper());
             if (client == null) return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
             if (!ModelState.IsValid)
             {
@@ -186,7 +186,7 @@ namespace Jwt.Identity.Api.Server.Controllers
 
             if (string.IsNullOrEmpty(clientName))
                 return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
-            var client = IntialClients.GetClients().SingleOrDefault(c => c.ClientName == clientName.ToUpper());
+            var client = InitialClients.GetClients().SingleOrDefault(c => c.ClientName == clientName.ToUpper());
             if (client == null) return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
             if (!ModelState.IsValid)
             {
@@ -258,7 +258,7 @@ namespace Jwt.Identity.Api.Server.Controllers
 
             if (string.IsNullOrEmpty(clientName))
                 return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
-            var client = IntialClients.GetClients().SingleOrDefault(c => c.ClientName == clientName.ToUpper());
+            var client = InitialClients.GetClients().SingleOrDefault(c => c.ClientName == clientName.ToUpper());
             if (client == null) return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
             if (!ModelState.IsValid)
             {
@@ -300,7 +300,7 @@ namespace Jwt.Identity.Api.Server.Controllers
 
             if (string.IsNullOrEmpty(clientName))
                 return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
-            var client = IntialClients.GetClients().SingleOrDefault(c => c.ClientName == clientName.ToUpper());
+            var client = InitialClients.GetClients().SingleOrDefault(c => c.ClientName == clientName.ToUpper());
             if (client == null) return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
             if (!ModelState.IsValid)
             {
@@ -373,7 +373,7 @@ namespace Jwt.Identity.Api.Server.Controllers
 
             if (string.IsNullOrEmpty(clientName))
                 return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
-            var client = IntialClients.GetClients().SingleOrDefault(c => c.ClientName == clientName.ToUpper());
+            var client = InitialClients.GetClients().SingleOrDefault(c => c.ClientName == clientName.ToUpper());
             if (client == null) return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
             if (!ModelState.IsValid)
             {
@@ -445,7 +445,7 @@ namespace Jwt.Identity.Api.Server.Controllers
 
             if (string.IsNullOrEmpty(clientName))
                 return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
-            var client = IntialClients.GetClients().SingleOrDefault(c => c.ClientName == clientName.ToUpper());
+            var client = InitialClients.GetClients().SingleOrDefault(c => c.ClientName == clientName.ToUpper());
             if (client == null) return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
 
             #endregion
@@ -489,7 +489,7 @@ namespace Jwt.Identity.Api.Server.Controllers
 
             if (string.IsNullOrEmpty(clientName))
                 return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
-            var client = IntialClients.GetClients().SingleOrDefault(c => c.ClientName == clientName.ToUpper());
+            var client = InitialClients.GetClients().SingleOrDefault(c => c.ClientName == clientName.ToUpper());
             if (client == null) return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
             if (!ModelState.IsValid)
             {
@@ -522,7 +522,7 @@ namespace Jwt.Identity.Api.Server.Controllers
         [HttpPost("ConfirmAccountPhone/{clientName}")]
         public async Task<ActionResult> ConfirmAccountPhone(string clientName, [FromBody] string keyConfirmed)
         {
-            var client = IntialClients.GetClients().SingleOrDefault(c => c.ClientName == clientName.ToUpper());
+            var client = InitialClients.GetClients().SingleOrDefault(c => c.ClientName == clientName.ToUpper());
             if (client == null) return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
             var isConfirmed = false;
 
@@ -554,7 +554,7 @@ namespace Jwt.Identity.Api.Server.Controllers
         [HttpPost("ConfirmAccoutEmail/{clientName}")]
         public async Task<ActionResult> ConfirmAccoutEmail(string clientName, string code, string email)
         {
-            var client = IntialClients.GetClients().SingleOrDefault(c => c.ClientName == clientName.ToUpper());
+            var client = InitialClients.GetClients().SingleOrDefault(c => c.ClientName == clientName.ToUpper());
             if (client == null) return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
@@ -579,7 +579,7 @@ namespace Jwt.Identity.Api.Server.Controllers
 
             if (string.IsNullOrEmpty(clientName))
                 return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
-            var client = IntialClients.GetClients().SingleOrDefault(c => c.ClientName == clientName.ToUpper());
+            var client = InitialClients.GetClients().SingleOrDefault(c => c.ClientName == clientName.ToUpper());
             if (client == null) return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
             if (!ModelState.IsValid)
             {
@@ -632,7 +632,7 @@ namespace Jwt.Identity.Api.Server.Controllers
                 return BadRequest(new ResultResponse(false, errorList));
             }
 
-            var client = IntialClients.GetClients().SingleOrDefault(c => c.ClientName == clientName.ToUpper());
+            var client = InitialClients.GetClients().SingleOrDefault(c => c.ClientName == clientName.ToUpper());
             if (client == null) return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
@@ -660,7 +660,7 @@ namespace Jwt.Identity.Api.Server.Controllers
         [Authorize]
         public async Task<ActionResult> SignOut(string clientName)
         {
-            var client = IntialClients.GetClients().SingleOrDefault(c => c.ClientName == clientName.ToUpper());
+            var client = InitialClients.GetClients().SingleOrDefault(c => c.ClientName == clientName.ToUpper());
             if (client == null) return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
             await _signInManager.SignOutAsync();
             Response.Cookies.Delete("Access-TokenSession", new CookieOptions
@@ -679,7 +679,7 @@ namespace Jwt.Identity.Api.Server.Controllers
         [HttpPost("RefreshTokent/{clientName}")]
         public async Task<ActionResult> RefreshTokent(string clientName, [FromBody] string? refreshToken)
         {
-            var client = IntialClients.GetClients().SingleOrDefault(c => c.ClientName == clientName.ToUpper());
+            var client = InitialClients.GetClients().SingleOrDefault(c => c.ClientName == clientName.ToUpper());
             if (client == null) return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
 
             var isRefreshTokenValid = false;

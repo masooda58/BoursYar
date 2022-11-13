@@ -1,23 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Jwt.Identity.Data.Context;
-using Jwt.Identity.Data.IntialData;
+﻿using Jwt.Identity.Data.Context;
 using Jwt.Identity.Data.Repositories.ClientRepository;
-using Jwt.Identity.Domain.Clients.Data;
+using Jwt.Identity.Data.Repositories.IdentitySettingRepository;
+using Microsoft.Extensions.Caching.Memory;
+using System;
 
 namespace Jwt.Identity.Data.UnitOfWork
 {
-    public class UnitOfWork:IDisposable
+    public class UnitOfWork : IDisposable
     {
         private readonly IdentityContext _context;
         private ClientRepositoryService _client;
+        private IdentitySettingRepositoryService _identitySetting;
+        private readonly IMemoryCache _cache;
 
-        public UnitOfWork(IdentityContext context)
+        public UnitOfWork(IdentityContext context, IMemoryCache cache)
         {
             _context = context;
+            _cache = cache;
         }
 
         public ClientRepositoryService ClientRepository
@@ -30,6 +29,13 @@ namespace Jwt.Identity.Data.UnitOfWork
                 }
 
                 return _client;
+            }
+        }
+        public IdentitySettingRepositoryService IdentitySettingPolicy
+        {
+            get
+            {
+                return _identitySetting ??= new IdentitySettingRepositoryService(_context, _cache);
             }
         }
 

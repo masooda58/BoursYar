@@ -31,7 +31,7 @@ namespace Jwt.Identity.Test
             using var userManager = DataServiceHelpers.CreateUserManager(dbContext);
             using var roleManager = DataServiceHelpers.CreateRoleManager(dbContext);
             // Arrange
-            var userManagementService = new UserManagementService(dbContext, userManager);
+           // var userManagementService = new UserManagementService(dbContext, userManager);
             var rolemanagerService = new RoleManagementService(dbContext, roleManager);
             const string ROLE_NAME = "testRole";
 

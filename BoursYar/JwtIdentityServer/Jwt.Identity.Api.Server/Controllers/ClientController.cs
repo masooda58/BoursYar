@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Threading.Tasks;
+using Jwt.Identity.Api.Server.Resources;
+using Microsoft.Extensions.Logging;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -19,10 +21,12 @@ namespace Jwt.Identity.Api.Server.Controllers
     {
         private readonly IWebHostEnvironment _env;
         private readonly IMediator _mediator;
-        public ClientController(IMediator mediator, IWebHostEnvironment env)
+        private readonly ILogger _loger;
+        public ClientController(IMediator mediator, IWebHostEnvironment env, ILogger loger)
         {
             _mediator = mediator;
             _env = env;
+            _loger = loger;
         }
         // GET: api/<ClientController>
         [HttpGet("GetAll")]
@@ -41,7 +45,8 @@ namespace Jwt.Identity.Api.Server.Controllers
                 {
                     throw ExceptionMessage.GetPerisanSqlExceptionMessage(e);
                 }
-                return BadRequest(new ResultResponse(true, "دریافت نا موفق", e));
+                _loger.LogError("Error",e);
+                return BadRequest(new ResultResponse(true, ErrorRes.GetError, e));
             }
 
 
@@ -61,7 +66,7 @@ namespace Jwt.Identity.Api.Server.Controllers
             try
             {
                 var client = await _mediator.Send(new GetClient() { ClientName = clientName });
-                return Ok(new ResultResponse(true,"دریافت موفق",client));
+                return Ok(new ResultResponse(true,ErrorRes.GetError,client));
             }
 
 
@@ -72,8 +77,8 @@ namespace Jwt.Identity.Api.Server.Controllers
                     throw ExceptionMessage.GetPerisanSqlExceptionMessage(e);
 
                 }
-
-                return BadRequest(new ResultResponse(true,"دریافت  نا موفق",clientName));
+                _loger.LogError("Error",e);
+                return BadRequest(new ResultResponse(true,ErrorRes.GetError,clientName));
             }
         }
 
@@ -112,8 +117,8 @@ namespace Jwt.Identity.Api.Server.Controllers
                     {
                         throw ExceptionMessage.GetPerisanSqlExceptionMessage(e);
                     }
-
-                    return BadRequest(new ResultResponse(false, "عملیات ناموفق", client.Client));
+                    _loger.LogError("Error",e);
+                    return BadRequest(new ResultResponse(false, ErrorRes.NotComplite, client.Client));
                 }
             }
 
@@ -132,8 +137,8 @@ namespace Jwt.Identity.Api.Server.Controllers
                     {
                         throw ExceptionMessage.GetPerisanSqlExceptionMessage(e);
                     }
-
-                    return BadRequest(new ResultResponse(false, "عملیات ناموفق", clientName));
+                    _loger.LogError("Error",e);
+                    return BadRequest(new ResultResponse(false, ErrorRes.NotComplite, clientName));
 
                 }
 

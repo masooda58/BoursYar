@@ -126,7 +126,7 @@ namespace Jwt.Identity.BoursYarServer
             services.AddSingleton<ITokenValidators, TokenValidators>();
             services.AddSingleton<IAuthClaimsGenrators, AuthClaimsGenrators>();
             services.AddTransient<IRoleManagementService, RoleManagementService>();
-            services.AddTransient<IUserManagementService, UserManagementService>();
+           // services.AddTransient<IUserManagementService, UserManagementService>();
             services.AddScoped<IEmailSender, EmailService>();
             services.AddScoped<ISmsSender, SmsServices>();
             services.AddTransient<IPhoneTotpProvider, PhoneTotpProvider>();

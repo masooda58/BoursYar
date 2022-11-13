@@ -16,7 +16,7 @@ namespace Jwt.Identity.Domain.Clients.Entity
         private string _signInExternal;
         private string _signOut;
 
-        [Key] [Required] public int ClientId { get; set; }
+        [Key][Required]  public int ClientId { get; set; }
 
         public string ClientName
         {
