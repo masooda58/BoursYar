@@ -59,6 +59,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Controllers\RemoteControlers\" />
     <Folder Include="ServiceExtension\" />
   </ItemGroup>
 

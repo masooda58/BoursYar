@@ -13,7 +13,7 @@ namespace Jwt.Identity.Data.IntialData
                 new()
                 {
                     ClientName = "Identity",
-                    BaseUrl = "http://localhost:44376/",
+                    BaseUrl = "http://localhost:44379/",
                     EmailConfirmPage = "/ConfirmationEmail",
                     EmailResetPage = "/ResetPassword",
                     LoginType = LoginType.TokenAndCookie,

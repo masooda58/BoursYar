@@ -123,7 +123,7 @@
   <data name="GetError" xml:space="preserve">
     <value>در ردیافت اطلاعات مشکلی پیش آمده است</value>
   </data>
-  <data name="NotComplite" xml:space="preserve">
+  <data name="NotComplete" xml:space="preserve">
     <value>عملیات ناموفق</value>
   </data>
   <data name="UppdateError" xml:space="preserve">

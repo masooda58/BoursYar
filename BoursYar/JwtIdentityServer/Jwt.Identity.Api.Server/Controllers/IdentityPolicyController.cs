@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Jwt.Identity.Api.Server.Resources;
+using Jwt.Identity.Api.Server.Security;
 using Jwt.Identity.Data.UnitOfWork;
 using Jwt.Identity.Domain.IdentityPolicy.Command;
 using Jwt.Identity.Domain.IdentityPolicy.Entity;
@@ -12,7 +13,9 @@ using Jwt.Identity.Domain.IdentityPolicy.Query;
 using Jwt.Identity.Framework.Response;
 using Jwt.Identity.Framework.Tools;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Jwt.Identity.Api.Server.Controllers
 {
@@ -22,11 +25,15 @@ namespace Jwt.Identity.Api.Server.Controllers
     {
         private readonly ILogger _logger;
      private readonly IMediator _mediator;
+    
+
 
         public IdentityPolicyController( IMediator mediator, ILogger<IdentityPolicyController> logger)
         {
             _mediator = mediator;
             _logger = logger;
+            
+    
         }
 
         [HttpGet("Get")]
@@ -39,7 +46,7 @@ namespace Jwt.Identity.Api.Server.Controllers
             }
             catch (Exception e)
             {
-               _logger.LogError("Error",e);
+               _logger.LogError(e.Message);
                return BadRequest(new ResultResponse(false,ErrorRes.GetError));
             }
         }
@@ -63,5 +70,7 @@ namespace Jwt.Identity.Api.Server.Controllers
                 return BadRequest(new ResultResponse(false,ErrorRes.UppdateError));
             }
         }
+
+  
     }
 }

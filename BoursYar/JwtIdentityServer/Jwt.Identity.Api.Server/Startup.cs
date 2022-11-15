@@ -41,9 +41,16 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Jwt.Identity.Api.Server.Helpers.Convention;
+using Jwt.Identity.Api.Server.IOC;
+using Jwt.Identity.Data.InitialData;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Jwt.Identity.Api.Server
 {
+   
+
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -64,49 +71,15 @@ namespace Jwt.Identity.Api.Server
 
             #endregion
 
+            services.AddTransient<UnitOfWork>();
+            #region MemoryCache
+
+            services.AddMemoryCache();
+
+            #endregion
             #region Identity
 
-            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
-                {
-                    // Password settings
-                    options.Password.RequireDigit = false;
-                    options.Password.RequiredLength = 1;
-                    options.Password.RequireNonAlphanumeric = false;
-                    options.Password.RequireUppercase = false;
-                    options.Password.RequireLowercase = false;
-                    options.Password.RequiredUniqueChars = 1;
-
-                    // Lockout settings
-                    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
-                    options.Lockout.MaxFailedAccessAttempts = 3;
-                    options.Lockout.AllowedForNewUsers = true;
-
-                    // User settings
-                    options.User.RequireUniqueEmail = false;
-
-                    // SignIn settings
-                    //options.SignIn.RequireConfirmedEmail = false;
-                    // options.SignIn.RequireConfirmedPhoneNumber = false;
-                    options.SignIn.RequireConfirmedAccount = true;
-
-                    //Email token provider
-                    options.Tokens.EmailConfirmationTokenProvider = "EmailConFirmation";
-                })
-                .AddEntityFrameworkStores<IdentityContext>()
-                .AddDefaultTokenProviders()
-                .AddUserManager<UserManagementService>()
-                //email Token Provider
-                .AddTokenProvider<EmailConfirmationTokenProvide<ApplicationUser>>("EmailConFirmation")
-                .AddSignInManager<CustomSignInManager>() //custom signin manage for mobile or email
-                .AddErrorDescriber<PersianIdentityErrorDescriber>();
-
-            // تغییر زمان اعتبار همه توکن های ساخته شده
-            services.Configure<DataProtectionTokenProviderOptions>(o => { o.TokenLifespan = TimeSpan.FromHours(8); });
-            //تغییر زمان توکن ایمیل
-            services.Configure<EmailConfirmationTokenProviderOptions>(o =>
-            {
-                o.TokenLifespan = TimeSpan.FromHours(2);
-            });
+            services.IdentityConfigExtension();
 
             #endregion
 
@@ -232,11 +205,7 @@ namespace Jwt.Identity.Api.Server
                 options.DefaultPolicy = defaultAuthorizationPolicyBuilder.Build();
             });
 
-            #region MemoryCache
-
-            services.AddMemoryCache();
-
-            #endregion
+         
 
             #region Options from AppSetting
 
@@ -257,8 +226,13 @@ namespace Jwt.Identity.Api.Server
             #endregion
 
             #endregion
-
-            services.AddControllers()
+            //c.ControllerType.Namespace?.Split('.').Last()
+            string projectName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name.Replace(".", "");
+            services.AddControllers(options => options.Conventions.Add(
+                    new CustomRouteToken(
+                        "ProjectRout",
+                        c =>projectName+"/Api/"+c.ControllerName
+                    )))
                 .ConfigureApiBehaviorOptions(options =>
                 {
                     //   options.SuppressConsumesConstraintForFormFileParameters = true;
@@ -272,10 +246,11 @@ namespace Jwt.Identity.Api.Server
             services.AddHttpContextAccessor();
             services.AddMediatR(typeof(Startup).Assembly);
             services.AddLogging();
+          
             #region dependancy
 
             services.AddScoped<UserManagementService>();
-            services.AddTransient<UnitOfWork>();
+            
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
             services.AddSingleton<ITokenGenrators, TokenGenrators>();
             services.AddSingleton<ITokenValidators, TokenValidators>();
@@ -303,7 +278,7 @@ namespace Jwt.Identity.Api.Server
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IdentityContext context)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -311,7 +286,7 @@ namespace Jwt.Identity.Api.Server
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Jwt.Identity.Api.Server v1"));
             }
-            IdentityDbContextSeed.SeedData(context);
+            //IdentityDbContextSeed.SeedData(context);
             app.UseCors();
             app.UseHttpsRedirection();
             app.UseExceptionHandler(a => a.Run(async context =>
@@ -326,9 +301,24 @@ namespace Jwt.Identity.Api.Server
 
             app.UseAuthentication();
             app.UseAuthorization();
+            //var projectName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
 
 
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            //app.UseEndpoints(routes =>
+            //{
+            //    routes.MapControllerRoute(
+            //        name: "default",
+            //        pattern: $"{projectName}/{{controller}}/{{action}}/{{id?}}");
+            //});
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
+
+
+
+
+
         }
     }
 }

@@ -15,14 +15,17 @@ using Microsoft.Extensions.Logging;
 
 namespace Jwt.Identity.Api.Server.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
+     [Route("[ProjectRout]/")]
+     [ApiController]
+    
+
     public class ClientController : ControllerBase
     {
+        
         private readonly IWebHostEnvironment _env;
         private readonly IMediator _mediator;
         private readonly ILogger _loger;
-        public ClientController(IMediator mediator, IWebHostEnvironment env, ILogger loger)
+        public ClientController(IMediator mediator, IWebHostEnvironment env, ILogger<ClientController> loger)
         {
             _mediator = mediator;
             _env = env;
@@ -30,9 +33,10 @@ namespace Jwt.Identity.Api.Server.Controllers
         }
         // GET: api/<ClientController>
         [HttpGet("GetAll")]
+        
         public async Task<ActionResult> GetAll()
         {
-
+           
             try
             {
                 var result = await _mediator.Send(new GetAllClient());
@@ -118,7 +122,7 @@ namespace Jwt.Identity.Api.Server.Controllers
                         throw ExceptionMessage.GetPerisanSqlExceptionMessage(e);
                     }
                     _loger.LogError("Error",e);
-                    return BadRequest(new ResultResponse(false, ErrorRes.NotComplite, client.Client));
+                    return BadRequest(new ResultResponse(false, ErrorRes.NotComplete, client.Client));
                 }
             }
 
@@ -138,7 +142,7 @@ namespace Jwt.Identity.Api.Server.Controllers
                         throw ExceptionMessage.GetPerisanSqlExceptionMessage(e);
                     }
                     _loger.LogError("Error",e);
-                    return BadRequest(new ResultResponse(false, ErrorRes.NotComplite, clientName));
+                    return BadRequest(new ResultResponse(false, ErrorRes.NotComplete, clientName));
 
                 }
 

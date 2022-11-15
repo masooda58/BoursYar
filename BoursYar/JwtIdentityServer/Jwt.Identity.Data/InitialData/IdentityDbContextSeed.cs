@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Jwt.Identity.Data.Context;
+using Jwt.Identity.Data.IntialData;
 using Jwt.Identity.Domain.IdentityPolicy.Entity;
 
-namespace Jwt.Identity.Data.IntialData
+namespace Jwt.Identity.Data.InitialData
 {
    public class IdentityDbContextSeed
     {
@@ -18,20 +16,34 @@ namespace Jwt.Identity.Data.IntialData
 
         public static void SeedInitialIdentitySetting(IdentityContext context)
         {
-            var settingExist = context.IdentitySettings.Any();
-            if (!settingExist)
+            try
             {
-                context.IdentitySettings.Add(new IdentitySettingPolicy());
-                context.SaveChanges();
+                var settingExist = context.IdentitySettings.Any();
+                if (!settingExist)
+                {
+                    context.IdentitySettings.Add(new IdentitySettingPolicy());
+                    context.SaveChanges();
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception("خطای دیتای اولیه");
             }
         }
         public static void SeedClientInitial(IdentityContext context)
         {
-            var settingExist = context.Clients.Any();
-            if (!settingExist)
+            try
             {
-                context.Clients.AddRange(InitialClients.GetClients());
-                context.SaveChanges();
+                var settingExist = context.Clients.Any();
+                if (!settingExist)
+                {
+                    context.Clients.AddRange(InitialClients.GetClients());
+                    context.SaveChanges();
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception("خطای دیتای اولیه");
             }
         }
     }

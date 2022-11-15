@@ -81,9 +81,9 @@ namespace Jwt.Identity.Api.Server.Resources {
         /// <summary>
         ///   Looks up a localized string similar to عملیات ناموفق.
         /// </summary>
-        public static string NotComplite {
+        public static string NotComplete {
             get {
-                return ResourceManager.GetString("NotComplite", resourceCulture);
+                return ResourceManager.GetString("NotComplete", resourceCulture);
             }
         }
         

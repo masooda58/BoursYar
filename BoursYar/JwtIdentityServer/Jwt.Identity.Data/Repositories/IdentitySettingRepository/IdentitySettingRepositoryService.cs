@@ -37,6 +37,16 @@ namespace Jwt.Identity.Data.Repositories.IdentitySettingRepository
                 _memoryCache.Set(CacheKey.IdentitySetting, settingInDb[0]);
                 return settingInDb[0];
             }
+
+            if (settingInDb.Count == 0)
+            {
+                _context.IdentitySettings.Add(new IdentitySettingPolicy());
+                _context.SaveChanges();
+                var defaultSetting = _context.IdentitySettings.AsNoTracking().ToList();
+                _memoryCache.Set(CacheKey.IdentitySetting, defaultSetting[0] );
+                return defaultSetting[0];
+
+            }
           
 
             throw new Exception("اطلاعات در دیتا بیس دچار مشکل است");
