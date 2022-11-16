@@ -19,7 +19,7 @@ using Microsoft.Extensions.Options;
 
 namespace Jwt.Identity.Api.Server.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[ProjectRout]/")]
     [ApiController]
     public class IdentityPolicyController : ControllerBase
     {

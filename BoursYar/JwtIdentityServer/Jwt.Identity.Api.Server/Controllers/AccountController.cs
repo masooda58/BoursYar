@@ -38,7 +38,7 @@ using static Google.Apis.Auth.GoogleJsonWebSignature;
 
 namespace Jwt.Identity.Api.Server.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[ProjectRout]/")]
     [ApiController]
     public class AccountController : ControllerBase
     {

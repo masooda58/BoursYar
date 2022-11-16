@@ -10,7 +10,7 @@ using Jwt.Identity.Api.Server.Resources;
 namespace Jwt.Identity.Api.Server.Controllers
 {
 
-    [Route("api/[controller]")]
+    [Route("[ProjectRout]/")]
     [ApiController]
 
     public class InstalitionController : ControllerBase
