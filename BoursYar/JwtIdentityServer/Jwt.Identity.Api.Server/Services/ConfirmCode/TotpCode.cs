@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using EasyCaching.Core;
 using Jwt.Identity.Api.Server.Resources;
 using Jwt.Identity.Domain.IServices;
 using Jwt.Identity.Domain.IServices.Totp;
@@ -11,6 +12,7 @@ using Jwt.Identity.Framework.Response;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
@@ -24,25 +26,25 @@ namespace Jwt.Identity.Api.Server.Services.ConfirmCode
             #region Ip Block for send sms
 
             var remoteIpAddress = _httpContextAccessor.HttpContext!.Connection.RemoteIpAddress;
-            var isIpBlock = _memoryCache.TryGetValue(remoteIpAddress!.ToString(), out TempIpBlock ipBlock);
+            var ipBlock = _memoryCache.Get<TempIpBlock>(remoteIpAddress!.ToString());
 
             #endregion
 
             //آیا کد قبلا ارسال شده است
-            var isPasswordTotp =
-                _memoryCache.TryGetValue(phoneNo + sendType, out TotpTempData passwordTotp);
-            if (isPasswordTotp)
+            var passwordTotp =
+                _memoryCache.Get<TotpTempData>(phoneNo + sendType);
+            if (passwordTotp.HasValue)
                 //  اگر هنوز کد ارسالی معتبر بود
                 //نیاز به این شرط نیست چون اگر زمان منقضی شده باشد خود به خود از کش پاک می شود
-                if (DateTime.Now < passwordTotp.ExpirationTime)
+                if (DateTime.Now < passwordTotp.Value.ExpirationTime)
                 {
-                    var remainTime = (int)(passwordTotp.ExpirationTime - DateTime.Now).TotalSeconds;
+                    var remainTime = (int)(passwordTotp.Value.ExpirationTime - DateTime.Now).TotalSeconds;
                     return new ResultResponse(false, $"{remainTime}");
                 }
 
-            if (isIpBlock)
+            if (ipBlock.HasValue)
             {
-                var remainTime = (int)(ipBlock.ExpirationTime - DateTime.Now).TotalSeconds;
+                var remainTime = (int)(ipBlock.Value.ExpirationTime - DateTime.Now).TotalSeconds;
                 return new ResultResponse(false, $"{remainTime}");
             }
 
@@ -56,10 +58,10 @@ namespace Jwt.Identity.Api.Server.Services.ConfirmCode
                 DateTime.Now.AddSeconds(_options.Step - 2));
             // var memoryCacheOptions = new MemoryCacheEntryOptions()
             //    .SetSlidingExpiration(TimeSpan.FromSeconds(_options.Step));
-            _memoryCache.Set(phoneNo + sendType, totpTemp,
+            await _memoryCache.SetAsync(phoneNo + sendType, totpTemp,
                 TimeSpan.FromSeconds(_options.Step));
             // block ip for send sms in step time
-            _memoryCache.Set(remoteIpAddress!.ToString(), tempIpBlock,
+            await _memoryCache.SetAsync(remoteIpAddress!.ToString(), tempIpBlock,
                 TimeSpan.FromSeconds(_options.Step));
 
             //جهت تست
@@ -75,23 +77,23 @@ namespace Jwt.Identity.Api.Server.Services.ConfirmCode
 
         public async Task<ResultResponse> ConfirmTotpCodeAsync(string phoneNo, string code, TotpTypeCode confirmType)
         {
-            var isResetPasswordTotp =
-                _memoryCache.TryGetValue(phoneNo + confirmType, out TotpTempData PasswordTotp);
+            var resetPasswordTotp =
+                _memoryCache.Get<TotpTempData>(phoneNo + confirmType);
 
-            if (!isResetPasswordTotp || DateTime.Now > PasswordTotp.ExpirationTime)
+            if (!resetPasswordTotp.HasValue || DateTime.Now > resetPasswordTotp.Value.ExpirationTime)
                 //  اگر هنوز کد ارسالی معتبر بود
                 //نیاز به این شرط نیست چون اگر زمان منقضی شده باشد خود به خود از کش پاک می شود
 
                 return new ResultResponse(false, MessageRes.CodeExpire);
 
-            var mathResult = _totp.VerifyTotp(PasswordTotp.SecretKey, code);
+            var mathResult = _totp.VerifyTotp(resetPasswordTotp.Value.SecretKey, code);
             //اگر کد درست باشد
             if (mathResult.Successed)
             {
                 var remoteIpAddress = _httpContextAccessor.HttpContext!.Connection.RemoteIpAddress;
 
-                _memoryCache.Remove(remoteIpAddress!.ToString());
-                _memoryCache.Remove(phoneNo + confirmType);
+                await _memoryCache.RemoveAsync(remoteIpAddress!.ToString());
+                await _memoryCache.RemoveAsync(phoneNo + confirmType);
 
                 return new ResultResponse(true, "");
             }
@@ -103,7 +105,7 @@ namespace Jwt.Identity.Api.Server.Services.ConfirmCode
 
         #region Ctor
 
-        private readonly IMemoryCache _memoryCache;
+        private readonly  IHybridCachingProvider _memoryCache;
         private readonly IPhoneTotpProvider _totp;
         private readonly TotpSettings _options;
         private readonly IEmailSender _emailSender;
@@ -113,7 +115,7 @@ namespace Jwt.Identity.Api.Server.Services.ConfirmCode
         private readonly IHttpContextAccessor _httpContextAccessor;
 
 
-        public TotpCode(IMemoryCache memoryCache, IPhoneTotpProvider totp, IOptions<TotpSettings> options,
+        public TotpCode( IHybridCachingProvider memoryCache, IPhoneTotpProvider totp, IOptions<TotpSettings> options,
             IEmailSender emailSender, IWebHostEnvironment env, ISmsSender smsSender,
             UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor)
         {

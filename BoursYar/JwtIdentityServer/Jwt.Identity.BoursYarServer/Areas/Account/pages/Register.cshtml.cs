@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 
@@ -28,7 +29,7 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
     {
         private readonly IEmailSender _emailSender;
         private readonly ILogger<RegisterModel> _logger;
-        private readonly IMemoryCache _memoryCache;
+        private readonly  IDistributedCache _memoryCache;
         private readonly SignInManager<ApplicationUser> _signInManager;
 
 
@@ -38,7 +39,7 @@ namespace Jwt.Identity.BoursYarServer.Areas.Account.pages
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            ILogger<RegisterModel> logger, IMemoryCache memoryCache, ITotpCode totpCode, IEmailSender emailSender)
+            ILogger<RegisterModel> logger,  IDistributedCache memoryCache, ITotpCode totpCode, IEmailSender emailSender)
         {
             _userManager = userManager;
             _signInManager = signInManager;

@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EasyCaching.Core;
 using Jwt.Identity.Data.Context;
 using Jwt.Identity.Domain.IdentityPolicy.Data;
 using Jwt.Identity.Domain.IdentityPolicy.Entity;
 using Jwt.Identity.Domain.Shared;
+using Jwt.Identity.Framework.DistributedCachingHelper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace Jwt.Identity.Data.Repositories.IdentitySettingRepository
@@ -15,26 +18,32 @@ namespace Jwt.Identity.Data.Repositories.IdentitySettingRepository
     public class IdentitySettingRepositoryService:IIdentityPolicyRepository
     {
         private readonly IdentityContext _context;
-        private readonly IMemoryCache _memoryCache;
-        public IdentitySettingRepositoryService(IdentityContext context, IMemoryCache memoryCache)
+       
+       // private readonly  IMemoryCache _memoryCache;
+       private readonly IEasyCachingProviderBase _cacheProvider;
+        public IdentitySettingRepositoryService(IdentityContext context, 
+            IEasyCachingProviderBase cacheProvider)
         {
             _context = context;
-            _memoryCache = memoryCache;
+
+            _cacheProvider = cacheProvider;
+            
         }
 
-        public IdentitySettingPolicy GetSetting()
+        public  IdentitySettingPolicy GetSetting()
         {
             // check memmory cache
-           var settingInMemmory= _memoryCache.TryGetValue(CacheKey.IdentitySetting,out IdentitySettingPolicy setting);
-           //if Memory cash empty
-           if (settingInMemmory)
+          CacheValue<IdentitySettingPolicy> settingInMemmory;
+          settingInMemmory = _cacheProvider.Get<IdentitySettingPolicy>(CacheKey.IdentitySetting);
+          //if Memory cash empty
+           if (settingInMemmory.HasValue)
            {
-               return setting;
+               return settingInMemmory.Value;
            }
             var settingInDb = _context.IdentitySettings.AsNoTracking().ToList();
             if (settingInDb.Count == 1)
             {
-                _memoryCache.Set(CacheKey.IdentitySetting, settingInDb[0]);
+                _cacheProvider.Set(CacheKey.IdentitySetting, settingInDb[0],TimeSpan.FromMinutes(1));
                 return settingInDb[0];
             }
 
@@ -43,7 +52,7 @@ namespace Jwt.Identity.Data.Repositories.IdentitySettingRepository
                 _context.IdentitySettings.Add(new IdentitySettingPolicy());
                 _context.SaveChanges();
                 var defaultSetting = _context.IdentitySettings.AsNoTracking().ToList();
-                _memoryCache.Set(CacheKey.IdentitySetting, defaultSetting[0] );
+                _cacheProvider.Set(CacheKey.IdentitySetting, settingInDb[0],TimeSpan.FromMinutes(1));
                 return defaultSetting[0];
 
             }
@@ -60,7 +69,8 @@ namespace Jwt.Identity.Data.Repositories.IdentitySettingRepository
               _context.Attach(setting);
             _context.Entry(setting).State = EntityState.Modified;
             // set memmory cache
-            _memoryCache.Set(CacheKey.IdentitySetting, setting);
+           // _memoryCache.Set(CacheKey.IdentitySetting, setting);
+            _cacheProvider.Set(CacheKey.IdentitySetting, setting,TimeSpan.FromDays(1));
 
         }
 

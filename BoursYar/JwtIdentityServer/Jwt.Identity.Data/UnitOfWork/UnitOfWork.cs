@@ -3,6 +3,8 @@ using Jwt.Identity.Data.Repositories.ClientRepository;
 using Jwt.Identity.Data.Repositories.IdentitySettingRepository;
 using Microsoft.Extensions.Caching.Memory;
 using System;
+using EasyCaching.Core;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace Jwt.Identity.Data.UnitOfWork
 {
@@ -11,9 +13,9 @@ namespace Jwt.Identity.Data.UnitOfWork
         private readonly IdentityContext _context;
         private ClientRepositoryService _client;
         private IdentitySettingRepositoryService _identitySetting;
-        private readonly IMemoryCache _cache;
+        private readonly  IEasyCachingProviderBase _cache;
 
-        public UnitOfWork(IdentityContext context, IMemoryCache cache)
+        public UnitOfWork(IdentityContext context,  IEasyCachingProviderBase cache)
         {
             _context = context;
             _cache = cache;

@@ -41,10 +41,15 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using EasyCaching.Core.Configurations;
+using EasyCaching.Serialization.SystemTextJson.Configurations;
+using Google.Apis.Util;
 using Jwt.Identity.Api.Server.Helpers.Convention;
 using Jwt.Identity.Api.Server.IOC;
+using Jwt.Identity.Api.Server.IOC.CustomCache;
 using Jwt.Identity.Data.InitialData;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.Caching.Distributed;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Jwt.Identity.Api.Server
@@ -53,12 +58,14 @@ namespace Jwt.Identity.Api.Server
 
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment envinment)
         {
             Configuration = configuration;
+            Envinment = envinment;
         }
 
         public IConfiguration Configuration { get; }
+        public IWebHostEnvironment Envinment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -70,13 +77,50 @@ namespace Jwt.Identity.Api.Server
                     Configuration.GetConnectionString("IdetityDb")), ServiceLifetime.Transient);
 
             #endregion
-
-            services.AddTransient<UnitOfWork>();
+            
+            string projectName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name.Replace(".", "");
             #region MemoryCache
 
-            services.AddMemoryCache();
+           // services.AddMemoryCache();
+          // services.AddDistributedMemoryCache();
+          services.AddEasyCaching(option =>
+          {
+              option.WithSystemTextJson("myjson");
 
+              // local
+              option.UseInMemory("m1");
+              // distributed
+              option.UseRedis(config =>
+              {
+                  config.DBConfig.Endpoints.Add(new ServerEndPoint("127.0.0.1", 6379));
+                  config.DBConfig.KeyPrefix = projectName + ":";
+                  config.DBConfig.Database = 5;
+                  config.SerializerName = "myjson";
+              }, "myredis");
+
+              // combine local and distributed
+              option.UseHybrid(config =>
+                  {
+                      config.TopicName = "test-topic";
+                      config.EnableLogging = true;
+
+                      // specify the local cache provider name after v0.5.4
+                      config.LocalCacheProviderName = "m1";
+                      // specify the distributed cache provider name after v0.5.4
+                      config.DistributedCacheProviderName = "myredis";
+                  },"h1")
+                  // use redis bus
+                  .WithRedisBus(busConf =>
+                  {
+                      busConf.Endpoints.Add(new ServerEndPoint("127.0.0.1", 6379));
+
+                      // do not forget to set the SerializerName for the bus here !!
+                      busConf.SerializerName = "myjson";
+                  });
+          });
+            services.AddCustomCacheConfig(Envinment,"m1","h1");
             #endregion
+            services.AddTransient<UnitOfWork>();
             #region Identity
 
             services.IdentityConfigExtension();
@@ -149,7 +193,7 @@ namespace Jwt.Identity.Api.Server
                         },
                         OnTokenValidated = context =>
                         {
-                            var cache = context.HttpContext.RequestServices.GetService<IMemoryCache>();
+                            var cache = context.HttpContext.RequestServices.GetService< IDistributedCache>();
                             var accessToken = context.SecurityToken as JwtSecurityToken;
                             var identity = context.Principal.Identity as ClaimsIdentity;
                             var tt = accessToken.RawData;
@@ -227,7 +271,7 @@ namespace Jwt.Identity.Api.Server
 
             #endregion
             //c.ControllerType.Namespace?.Split('.').Last()
-            string projectName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name.Replace(".", "");
+            
             services.AddControllers(options => options.Conventions.Add(
                     new CustomRouteToken(
                         "ProjectRout",
@@ -262,7 +306,7 @@ namespace Jwt.Identity.Api.Server
             services.AddScoped<ITotpCode, TotpCode>();
             services.AddScoped<IMailCode, MailCode>();
             services.AddSingleton<DataProtectionPepuseString>();
-
+           
             #endregion
 
             //services.AddCors(options =>

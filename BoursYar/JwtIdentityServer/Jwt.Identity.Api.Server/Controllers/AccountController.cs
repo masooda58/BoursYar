@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using EasyCaching.Core;
 using Jwt.Identity.Api.Server.Resources;
 using Jwt.Identity.Api.Server.Security;
 using Jwt.Identity.Data.IntialData;
@@ -30,6 +31,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -138,9 +140,9 @@ namespace Jwt.Identity.Api.Server.Controllers
                 // check ip not block
                 var remoteIpAddress = HttpContext!.Connection.RemoteIpAddress;
 
-                var isIpBlock = _memoryCache.TryGetValue(remoteIpAddress!.ToString(), out TempIpBlock ipBlock);
-                if (isIpBlock)
-                    _memoryCache.Remove(remoteIpAddress!.ToString());
+                var isIpBlock = _memoryCache.Get<TempIpBlock>(remoteIpAddress!.ToString());
+                if (isIpBlock.HasValue)
+                    await _memoryCache.RemoveAsync(remoteIpAddress!.ToString());
                 //......
                 var resualtSendTotpCodeAsync =
                     await _totpCode.SendTotpCodeAsync(registerModel.EmailOrPhone,
@@ -524,28 +526,28 @@ namespace Jwt.Identity.Api.Server.Controllers
         {
             var client = InitialClients.GetClients().SingleOrDefault(c => c.ClientName == clientName.ToUpper());
             if (client == null) return BadRequest(new ResultResponse(false, MessageRes.ClientNoExist));
-            var isConfirmed = false;
+            
 
 
-            isConfirmed = _memoryCache.TryGetValue(keyConfirmed, out TempConfirmTotp confirmedPhone);
-            if (!isConfirmed) return BadRequest(new ResultResponse(false, MessageRes.UnkonwnError));
+            var confirmed = _memoryCache.Get<TempConfirmTotp>(keyConfirmed);
+            if (!confirmed.HasValue) return BadRequest(new ResultResponse(false, MessageRes.UnkonwnError));
 
-            if (confirmedPhone.TypeTotp == TotpTypeCode.TotpAccountConfirmationCode)
+            if (confirmed.Value.TypeTotp == TotpTypeCode.TotpAccountConfirmationCode)
             {
-                var user = await _userManager.Users.SingleOrDefaultAsync(u => u.PhoneNumber == confirmedPhone.PhoneNo);
+                var user = await _userManager.Users.SingleOrDefaultAsync(u => u.PhoneNumber == confirmed.Value.PhoneNo);
                 if (user != null)
                 {
                     var tokenPhone =
-                        await _userManager.GenerateChangePhoneNumberTokenAsync(user, confirmedPhone.PhoneNo);
+                        await _userManager.GenerateChangePhoneNumberTokenAsync(user, confirmed.Value.PhoneNo);
                     var confirmMoleNumber =
-                        await _userManager.ChangePhoneNumberAsync(user, confirmedPhone.PhoneNo, tokenPhone);
+                        await _userManager.ChangePhoneNumberAsync(user, confirmed.Value.PhoneNo, tokenPhone);
                     //signin user    
                     await _signInManager.SignInAsync(user, false);
 
                     return Ok(await LoginJwt(user, client.LoginType));
                 }
 
-                return NotFound($"Unable to load user with ID '{confirmedPhone.PhoneNo}'.");
+                return NotFound($"Unable to load user with ID '{confirmed.Value.PhoneNo}'.");
             }
 
             return BadRequest(new ResultResponse(false, MessageRes.UnkonwnError));
@@ -590,14 +592,14 @@ namespace Jwt.Identity.Api.Server.Controllers
 
             #endregion
 
-            var isConfirmed = false;
+          
 
-            isConfirmed = _memoryCache.TryGetValue(keyConfirmed, out TempConfirmTotp confirmedPhone);
-            if (!isConfirmed) return BadRequest(new ResultResponse(false, MessageRes.UnkonwnError));
+            var confirmed = _memoryCache.Get<TempConfirmTotp>(keyConfirmed);
+            if (!confirmed.HasValue) return BadRequest(new ResultResponse(false, MessageRes.UnkonwnError));
 
-            if (confirmedPhone.TypeTotp == TotpTypeCode.TotpAccountPasswordResetCode)
+            if (confirmed.Value.TypeTotp == TotpTypeCode.TotpAccountPasswordResetCode)
             {
-                var user = await _userManager.Users.SingleOrDefaultAsync(u => u.PhoneNumber == confirmedPhone.PhoneNo);
+                var user = await _userManager.Users.SingleOrDefaultAsync(u => u.PhoneNumber == confirmed.Value.PhoneNo);
                 if (user != null)
                 {
                     var code = await _userManager.GeneratePasswordResetTokenAsync(user);
@@ -615,7 +617,7 @@ namespace Jwt.Identity.Api.Server.Controllers
                     return BadRequest(new ResultResponse(false, errorList));
                 }
 
-                return NotFound($"Unable to load user with ID '{confirmedPhone.PhoneNo}'.");
+                return NotFound($"Unable to load user with ID '{confirmed.Value.PhoneNo}'.");
             }
 
             return NotFound(new ResultResponse(false, MessageRes.UnkonwnError));
@@ -765,7 +767,8 @@ namespace Jwt.Identity.Api.Server.Controllers
         private readonly UserManagementService _userManager;
         private readonly ITotpCode _totpCode;
         private readonly ILogger<RegisterRequest> _logger;
-        private readonly IMemoryCache _memoryCache;
+        private readonly  IHybridCachingProvider _memoryCache;
+       
         private readonly IMailCode _mailCode;
         private readonly IDataProtector _protector;
         private readonly TotpSettings _totpSettings;
@@ -777,7 +780,7 @@ namespace Jwt.Identity.Api.Server.Controllers
 
         public AccountController(UserManagementService userManager,
             ITotpCode totpCode, ILogger<RegisterRequest> logger,
-            IMailCode mailCode, IMemoryCache memoryCache,
+            IMailCode mailCode,  IHybridCachingProvider memoryCache,
             IOptions<TotpSettings> options,
             IDataProtectionProvider dataProtectionProvider, DataProtectionPepuseString dataProtectionPepuseString,
             SignInManager<ApplicationUser> signInManager, IAuthClaimsGenrators claimsGenrators,

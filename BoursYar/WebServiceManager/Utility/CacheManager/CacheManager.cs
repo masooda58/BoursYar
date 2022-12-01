@@ -1,13 +1,14 @@
 ﻿using DAL;
 using Microsoft.Extensions.Caching.Memory;
 using System;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace WebServiceManager
 {
 
     public class CacheManager
     {
-        public static IMemoryCache Cache = new MemoryCache(new MemoryCacheOptions());
+        public static  IDistributedCache Cache;// = new MemoryCache(new MemoryCacheOptions());
 
         public static EventHandler ChangeCache;
 
