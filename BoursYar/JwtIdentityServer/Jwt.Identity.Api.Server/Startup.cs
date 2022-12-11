@@ -191,15 +191,15 @@ namespace Jwt.Identity.Api.Server
                             context.Token = context.Request.Cookies["Access-TokenSession"];
                             return Task.CompletedTask;
                         },
-                        OnTokenValidated = context =>
-                        {
-                            var cache = context.HttpContext.RequestServices.GetService< IDistributedCache>();
-                            var accessToken = context.SecurityToken as JwtSecurityToken;
-                            var identity = context.Principal.Identity as ClaimsIdentity;
-                            var tt = accessToken.RawData;
-                            var UserID = identity.Claims.First(c => c.Type == "id").Value;
-                            return Task.CompletedTask;
-                        }
+                        //OnTokenValidated = context =>
+                        //{
+                        //    var cache = context.HttpContext.RequestServices.GetService< IDistributedCache>();
+                        //    var accessToken = context.SecurityToken as JwtSecurityToken;
+                        //    var identity = context.Principal.Identity as ClaimsIdentity;
+                        //    var tt = accessToken.RawData;
+                        //    var UserID = identity.Claims.First(c => c.Type == "id").Value;
+                        //    return Task.CompletedTask;
+                        //}
                     };
                 })
                 .AddPolicyScheme("JWT_OR_COOKIE", "JWT_OR_COOKIE", options =>
@@ -290,7 +290,7 @@ namespace Jwt.Identity.Api.Server
             services.AddHttpContextAccessor();
             services.AddMediatR(typeof(Startup).Assembly);
             services.AddLogging();
-          
+    
             #region dependancy
 
             services.AddScoped<UserManagementService>();
@@ -342,7 +342,7 @@ namespace Jwt.Identity.Api.Server
             }));
 
             app.UseRouting();
-
+          
             app.UseAuthentication();
             app.UseAuthorization();
             //var projectName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;

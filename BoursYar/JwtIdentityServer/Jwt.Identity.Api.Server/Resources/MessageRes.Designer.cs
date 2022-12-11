@@ -178,6 +178,15 @@ namespace Jwt.Identity.Api.Server.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Set session first.
+        /// </summary>
+        public static string SessionIdNotSet {
+            get {
+                return ResourceManager.GetString("SessionIdNotSet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to کد تایید ارسال گردید.
         /// </summary>
         public static string TotpSent {

@@ -5,6 +5,7 @@ using Jwt.Identity.Domain.User.Enum;
 
 namespace Jwt.Identity.Domain.User.Entities
 {
+    // store in db for login an logout history
     public class UserLogInOutLog
     {
         [Key] public Guid IdGuid { get; set; }

@@ -42,6 +42,10 @@ namespace Jwt.Identity.Data.Repositories.ClientRepository
         {
             return await _context.Clients.AsNoTracking().FirstOrDefaultAsync(c => c.ClientId == (int)id);
         }
+        public  async Task<Client> GetByBaseUrlNotraking(string url)
+        {
+            return await _context.Clients.AsNoTracking().SingleOrDefaultAsync(c => c.BaseUrl.Contains(url));
+        }
     }
 }
 

@@ -22,14 +22,14 @@ namespace Jwt.Identity.Domain.Shared {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class CacheKey {
+    public class KeyRes {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal CacheKey() {
+        internal KeyRes() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace Jwt.Identity.Domain.Shared {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Jwt.Identity.Domain.Shared.CacheKey", typeof(CacheKey).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Jwt.Identity.Domain.Shared.KeyRes", typeof(KeyRes).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,11 +61,38 @@ namespace Jwt.Identity.Domain.Shared {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Access-TokenSession.
+        /// </summary>
+        public static string Access_TokenSession {
+            get {
+                return ResourceManager.GetString("Access-TokenSession", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to IdentitySetting.
         /// </summary>
         public static string IdentitySetting {
             get {
                 return ResourceManager.GetString("IdentitySetting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Refresh-TokenSession.
+        /// </summary>
+        public static string Refresh_TokenSession {
+            get {
+                return ResourceManager.GetString("Refresh-TokenSession", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SessionId.
+        /// </summary>
+        public static string SessionId {
+            get {
+                return ResourceManager.GetString("SessionId", resourceCulture);
             }
         }
     }

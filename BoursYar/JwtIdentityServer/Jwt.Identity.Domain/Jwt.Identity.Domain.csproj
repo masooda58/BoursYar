@@ -20,17 +20,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Shared\CacheKey.Designer.cs">
+    <Compile Update="Shared\KeyRes.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>CacheKey.resx</DependentUpon>
+      <DependentUpon>KeyRes.resx</DependentUpon>
     </Compile>
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="Shared\CacheKey.resx">
+    <EmbeddedResource Update="Shared\KeyRes.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>CacheKey.Designer.cs</LastGenOutput>
+      <LastGenOutput>KeyRes.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
 

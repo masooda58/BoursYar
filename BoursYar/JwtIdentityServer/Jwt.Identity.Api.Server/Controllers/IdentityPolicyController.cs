@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Jwt.Identity.Api.Server.Resources;
 using Jwt.Identity.Api.Server.Security;
@@ -39,6 +40,7 @@ namespace Jwt.Identity.Api.Server.Controllers
         [HttpGet("Get")]
         public async Task<ActionResult> Get()
         {
+
             try
             {
                 var setting= await _mediator.Send(new GetIdentityPolicy());

@@ -34,7 +34,7 @@ namespace Jwt.Identity.Data.Repositories.IdentitySettingRepository
         {
             // check memmory cache
           CacheValue<IdentitySettingPolicy> settingInMemmory;
-          settingInMemmory = _cacheProvider.Get<IdentitySettingPolicy>(CacheKey.IdentitySetting);
+          settingInMemmory = _cacheProvider.Get<IdentitySettingPolicy>(KeyRes.IdentitySetting);
           //if Memory cash empty
            if (settingInMemmory.HasValue)
            {
@@ -43,7 +43,7 @@ namespace Jwt.Identity.Data.Repositories.IdentitySettingRepository
             var settingInDb = _context.IdentitySettings.AsNoTracking().ToList();
             if (settingInDb.Count == 1)
             {
-                _cacheProvider.Set(CacheKey.IdentitySetting, settingInDb[0],TimeSpan.FromMinutes(1));
+                _cacheProvider.Set(KeyRes.IdentitySetting, settingInDb[0],TimeSpan.FromMinutes(1));
                 return settingInDb[0];
             }
 
@@ -52,7 +52,7 @@ namespace Jwt.Identity.Data.Repositories.IdentitySettingRepository
                 _context.IdentitySettings.Add(new IdentitySettingPolicy());
                 _context.SaveChanges();
                 var defaultSetting = _context.IdentitySettings.AsNoTracking().ToList();
-                _cacheProvider.Set(CacheKey.IdentitySetting, settingInDb[0],TimeSpan.FromMinutes(1));
+                _cacheProvider.Set(KeyRes.IdentitySetting, settingInDb[0],TimeSpan.FromMinutes(1));
                 return defaultSetting[0];
 
             }
@@ -70,7 +70,7 @@ namespace Jwt.Identity.Data.Repositories.IdentitySettingRepository
             _context.Entry(setting).State = EntityState.Modified;
             // set memmory cache
            // _memoryCache.Set(CacheKey.IdentitySetting, setting);
-            _cacheProvider.Set(CacheKey.IdentitySetting, setting,TimeSpan.FromDays(1));
+            _cacheProvider.Set(KeyRes.IdentitySetting, setting,TimeSpan.FromDays(1));
 
         }
 

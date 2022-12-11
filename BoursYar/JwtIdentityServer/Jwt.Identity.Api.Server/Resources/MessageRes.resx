@@ -156,6 +156,9 @@
   <data name="OKTotpInput" xml:space="preserve">
     <value>کد وارد شده صحیح است</value>
   </data>
+  <data name="SessionIdNotSet" xml:space="preserve">
+    <value>Set session first</value>
+  </data>
   <data name="TotpSent" xml:space="preserve">
     <value>کد تایید ارسال گردید</value>
   </data>
