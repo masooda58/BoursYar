@@ -14,10 +14,11 @@ namespace Jwt.Identity.Api.Server.Services.TokenServices
         {
             var authClaims = new List<Claim>
             {
-                new(ClaimTypes.Name, "user.UserName"),
+                new(ClaimTypes.Name, user.UserName),
                 //new Claim("BoursYarAccess","x"),
                 //new Claim("BoursYarAccess","y"),
-                new("id", user.Id)
+                new("id", user.Id),
+                new("test","masood")
             };
             return authClaims;
         }

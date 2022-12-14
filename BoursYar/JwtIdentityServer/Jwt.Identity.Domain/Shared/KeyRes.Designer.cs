@@ -70,6 +70,15 @@ namespace Jwt.Identity.Domain.Shared {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to clients.
+        /// </summary>
+        public static string clients {
+            get {
+                return ResourceManager.GetString("clients", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to IdentitySetting.
         /// </summary>
         public static string IdentitySetting {

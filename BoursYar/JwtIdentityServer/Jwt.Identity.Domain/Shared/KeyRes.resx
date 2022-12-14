@@ -120,6 +120,9 @@
   <data name="Access-TokenSession" xml:space="preserve">
     <value>Access-TokenSession</value>
   </data>
+  <data name="clients" xml:space="preserve">
+    <value>clients</value>
+  </data>
   <data name="IdentitySetting" xml:space="preserve">
     <value>IdentitySetting</value>
   </data>

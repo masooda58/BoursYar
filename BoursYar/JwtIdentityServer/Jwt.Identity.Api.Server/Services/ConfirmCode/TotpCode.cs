@@ -105,7 +105,7 @@ namespace Jwt.Identity.Api.Server.Services.ConfirmCode
 
         #region Ctor
 
-        private readonly  IHybridCachingProvider _memoryCache;
+        private readonly  IEasyCachingProviderBase _memoryCache;
         private readonly IPhoneTotpProvider _totp;
         private readonly TotpSettings _options;
         private readonly IEmailSender _emailSender;
@@ -115,7 +115,7 @@ namespace Jwt.Identity.Api.Server.Services.ConfirmCode
         private readonly IHttpContextAccessor _httpContextAccessor;
 
 
-        public TotpCode( IHybridCachingProvider memoryCache, IPhoneTotpProvider totp, IOptions<TotpSettings> options,
+        public TotpCode( IEasyCachingProviderBase memoryCache, IPhoneTotpProvider totp, IOptions<TotpSettings> options,
             IEmailSender emailSender, IWebHostEnvironment env, ISmsSender smsSender,
             UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor)
         {

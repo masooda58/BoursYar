@@ -45,6 +45,7 @@ using EasyCaching.Core.Configurations;
 using EasyCaching.Serialization.SystemTextJson.Configurations;
 using Google.Apis.Util;
 using Jwt.Identity.Api.Server.Helpers.Convention;
+using Jwt.Identity.Api.Server.Helpers.CustomAuthenticaton;
 using Jwt.Identity.Api.Server.IOC;
 using Jwt.Identity.Api.Server.IOC.CustomCache;
 using Jwt.Identity.Data.InitialData;
@@ -153,83 +154,90 @@ namespace Jwt.Identity.Api.Server
             services.AddSingleton(jwtSetting);
 
             #endregion
-
+            
             services.AddAuthentication(options =>
                 {
+                    options.DefaultAuthenticateScheme = "JWT_OR_COOKIE";
                     options.DefaultScheme = "JWT_OR_COOKIE";
                     options.DefaultChallengeScheme = "JWT_OR_COOKIE";
+                    options.DefaultSignInScheme = "JWT_OR_COOKIE";
                     //configureOptions.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 })
-                .AddCookie("Cookies", options =>
+                //.AddCookie("Cookies", options =>
+                //{
+                //    options.LoginPath = "/Api/Acount/login";
+                //    options.ExpireTimeSpan = TimeSpan.FromDays(1);
+                //    options.Events.OnRedirectToLogin = context =>
+                //    {
+                //        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                //        return Task.CompletedTask;
+                //    };
+                //})
+
+                //.AddJwtBearer("Bearer", options =>
+                //{
+                //    options.TokenValidationParameters = new TokenValidationParameters
+                //    {
+                //        ValidateIssuer = true,
+                //        ValidateAudience = true,
+                //        ValidAudience = jwtSetting.ValidAudience,
+                //        ValidIssuer = jwtSetting.ValidIssuer,
+                //        RequireExpirationTime = true,
+                //        ClockSkew = TimeSpan.Zero,
+
+
+                //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSetting.Secret))
+                //    };
+                //    options.Events = new JwtBearerEvents
+                //    {
+                //        OnMessageReceived = context =>
+                //        {
+                //            context.Token = context.Request.Cookies["Access-TokenSession"];
+                //            return Task.CompletedTask;
+                //        },
+                //        //OnTokenValidated = context =>
+                //        //{
+                //        //    var cache = context.HttpContext.RequestServices.GetService< IDistributedCache>();
+                //        //    var accessToken = context.SecurityToken as JwtSecurityToken;
+                //        //    var identity = context.Principal.Identity as ClaimsIdentity;
+                //        //    var tt = accessToken.RawData;
+                //        //    var UserID = identity.Claims.First(c => c.Type == "id").Value;
+                //        //    return Task.CompletedTask;
+                //        //}
+                //    };
+                //})
+                //.AddPolicyScheme("JWT_OR_COOKIE", "JWT_OR_COOKIE", options =>
+                //{
+                //    // runs on each request
+                //    options.ForwardDefaultSelector = context =>
+                //    {
+                //        // filter by auth type
+                //        var reqHost = context.Request.Host.ToString();
+                //        var client = InitialClients.GetClients().SingleOrDefault(c => c.BaseUrl.Contains(reqHost));
+                //        if (client is { LoginType: LoginType.Token or LoginType.TokenAndCookie })
+                //        {
+                //            string authorization = context.Request.Headers[HeaderNames.Authorization];
+                //            if (!string.IsNullOrEmpty(authorization) && authorization.StartsWith("Bearer "))
+                //                return "Bearer";
+                //        }
+
+
+                //        if (client is { LoginType: LoginType.Cookie or LoginType.TokenAndCookie })
+                //        {
+                //            string accessToken = context.Request.Headers[HeaderNames.Cookie];
+                //            if (!string.IsNullOrEmpty(accessToken) && accessToken.Contains("Access-Token"))
+                //                return "Bearer";
+                //        }
+
+
+                //        // otherwise always check for cookie auth
+
+                //        return "Cookies";
+                //    };
+                //})
+             .AddScheme<CustomAutenthicationOptions,CustomAuthenticationHandler>("JWT_OR_COOKIE", options =>
                 {
-                    options.LoginPath = "/Api/Acount/login";
-                    options.ExpireTimeSpan = TimeSpan.FromDays(1);
-                    options.Events.OnRedirectToLogin = context =>
-                    {
-                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                        return Task.CompletedTask;
-                    };
-                })
-                .AddJwtBearer("Bearer", options =>
-                {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidAudience = jwtSetting.ValidAudience,
-                        ValidIssuer = jwtSetting.ValidIssuer,
-                        RequireExpirationTime = true,
-                        ClockSkew = TimeSpan.Zero,
-
-
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSetting.Secret))
-                    };
-                    options.Events = new JwtBearerEvents
-                    {
-                        OnMessageReceived = context =>
-                        {
-                            context.Token = context.Request.Cookies["Access-TokenSession"];
-                            return Task.CompletedTask;
-                        },
-                        //OnTokenValidated = context =>
-                        //{
-                        //    var cache = context.HttpContext.RequestServices.GetService< IDistributedCache>();
-                        //    var accessToken = context.SecurityToken as JwtSecurityToken;
-                        //    var identity = context.Principal.Identity as ClaimsIdentity;
-                        //    var tt = accessToken.RawData;
-                        //    var UserID = identity.Claims.First(c => c.Type == "id").Value;
-                        //    return Task.CompletedTask;
-                        //}
-                    };
-                })
-                .AddPolicyScheme("JWT_OR_COOKIE", "JWT_OR_COOKIE", options =>
-                {
-                    // runs on each request
-                    options.ForwardDefaultSelector = context =>
-                    {
-                        // filter by auth type
-                        var reqHost = context.Request.Host.ToString();
-                        var client = InitialClients.GetClients().SingleOrDefault(c => c.BaseUrl.Contains(reqHost));
-                        if (client is { LoginType: LoginType.Token or LoginType.TokenAndCookie })
-                        {
-                            string authorization = context.Request.Headers[HeaderNames.Authorization];
-                            if (!string.IsNullOrEmpty(authorization) && authorization.StartsWith("Bearer "))
-                                return "Bearer";
-                        }
-
-
-                        if (client is { LoginType: LoginType.Cookie or LoginType.TokenAndCookie })
-                        {
-                            string accessToken = context.Request.Headers[HeaderNames.Cookie];
-                            if (!string.IsNullOrEmpty(accessToken) && accessToken.Contains("Access-Token"))
-                                return "Bearer";
-                        }
-
-
-                        // otherwise always check for cookie auth
-
-                        return "Cookies";
-                    };
+                    
                 })
                 .AddGoogle(option =>
                 {

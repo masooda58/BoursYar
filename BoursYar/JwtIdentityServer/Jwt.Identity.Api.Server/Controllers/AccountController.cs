@@ -24,6 +24,8 @@ using Jwt.Identity.Domain.User.RequestDto;
 using Jwt.Identity.Framework.Extensions;
 using Jwt.Identity.Framework.Response;
 using Jwt.Identity.Framework.Tools;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
@@ -35,6 +37,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Polly;
 using static Google.Apis.Auth.GoogleJsonWebSignature;
 
 
@@ -174,7 +177,14 @@ namespace Jwt.Identity.Api.Server.Controllers
                 registerModel.Password,
                 false, true);
 
-            if (resultSignIn.Succeeded) return await LoginJwt(user, client.LoginType);
+            if (resultSignIn.Succeeded)
+            {
+                var loginJwt = await LoginJwt(user, client.LoginType);
+               
+                return loginJwt ;
+            }
+
+            
 
             return BadRequest(new ResultResponse(false, MessageRes.UnkonwnError));
 
@@ -730,8 +740,15 @@ namespace Jwt.Identity.Api.Server.Controllers
             await _refreshTokenRepository.WritRefreshTokenAsync(user.Id, token.RefreshToken);
             // string  tokenSerialized = JsonSerializer.Serialize<UserTokenResponse>(token);
 
-            Response.Cookies.Append("test", "test", CookiesOptions.SetCookieOptionsPresist());
-            switch (loginType)
+            var authProperties = new AuthenticationProperties
+            {
+                IsPersistent = true,
+            };
+           // var ticket = new AuthenticationTicket(_tokenValidators.GetClaimPrincipalValidatedToken(token.AccessToken), "JwtCookie");
+          //  AuthenticateResult.Success(ticket);
+           // await Request.HttpContext.SignInAsync("Identity.Application", _tokenValidators.GetClaimPrincipalValidatedToken(token.AccessToken), authProperties);
+           // HttpContext.User = _tokenValidators.GetClaimPrincipalValidatedToken(token.AccessToken);
+         switch (loginType)
             {
                 case LoginType.TokenAndCookie:
                     Response.Cookies.Append("Access-TokenSession", token.AccessToken,
@@ -754,12 +771,21 @@ namespace Jwt.Identity.Api.Server.Controllers
         }
 
         [HttpPost("test")]
+        [Authorize]
         public async Task<ActionResult> Test(LoginRequest login)
         {
-            var t = await _userManager.FindUserByEmailOrPhoneAsync("98912306285".ToNormalPhoneNo());
-            var results = Utilitis.CheckModelValidation(login);
-            var errobj = results.ResponseValues;
-            return Ok(results);
+
+            var user = User.Identity.IsAuthenticated;
+            var userId=User.FindFirstValue("id");
+            return Ok(user+$"userid={userId}");
+        }
+        [HttpPost("test2")]
+        public async Task<ActionResult> Test2(LoginRequest login)
+        {
+
+            var user = User.Identity.IsAuthenticated;
+            var userId= HttpContext.User.FindFirstValue("id");;
+            return Ok(user+$"userid={userId}");
         }
 
         #region CTOR
@@ -767,7 +793,7 @@ namespace Jwt.Identity.Api.Server.Controllers
         private readonly UserManagementService _userManager;
         private readonly ITotpCode _totpCode;
         private readonly ILogger<RegisterRequest> _logger;
-        private readonly  IHybridCachingProvider _memoryCache;
+        private readonly  IEasyCachingProviderBase _memoryCache;
        
         private readonly IMailCode _mailCode;
         private readonly IDataProtector _protector;
@@ -780,7 +806,7 @@ namespace Jwt.Identity.Api.Server.Controllers
 
         public AccountController(UserManagementService userManager,
             ITotpCode totpCode, ILogger<RegisterRequest> logger,
-            IMailCode mailCode,  IHybridCachingProvider memoryCache,
+            IMailCode mailCode,  IEasyCachingProviderBase memoryCache,
             IOptions<TotpSettings> options,
             IDataProtectionProvider dataProtectionProvider, DataProtectionPepuseString dataProtectionPepuseString,
             SignInManager<ApplicationUser> signInManager, IAuthClaimsGenrators claimsGenrators,

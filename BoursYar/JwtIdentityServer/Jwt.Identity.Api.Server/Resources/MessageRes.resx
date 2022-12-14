@@ -162,6 +162,9 @@
   <data name="TotpSent" xml:space="preserve">
     <value>کد تایید ارسال گردید</value>
   </data>
+  <data name="Unauthorize" xml:space="preserve">
+    <value>Unauthorize</value>
+  </data>
   <data name="UnknownTotpError" xml:space="preserve">
     <value>مشکلی پیش آمده مجدد درخواست کد نمایید</value>
   </data>

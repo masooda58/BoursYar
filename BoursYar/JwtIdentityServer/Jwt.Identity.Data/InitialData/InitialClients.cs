@@ -16,7 +16,7 @@ namespace Jwt.Identity.Data.IntialData
                     BaseUrl = "http://localhost:44379/",
                     EmailConfirmPage = "/ConfirmationEmail",
                     EmailResetPage = "/ResetPassword",
-                    LoginType = LoginType.TokenAndCookie,
+                    LoginType = LoginType.Token,
                     LoginUrl = "/Login",
                     SignInExternal = "/External-SIGN",
                     SignOut = "/SignOut",

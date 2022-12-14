@@ -43,7 +43,7 @@ namespace Jwt.Identity.Data.Repositories.IdentitySettingRepository
             var settingInDb = _context.IdentitySettings.AsNoTracking().ToList();
             if (settingInDb.Count == 1)
             {
-                _cacheProvider.Set(KeyRes.IdentitySetting, settingInDb[0],TimeSpan.FromMinutes(1));
+                _cacheProvider.Set(KeyRes.IdentitySetting, settingInDb[0],TimeSpan.FromDays(1));
                 return settingInDb[0];
             }
 
@@ -52,7 +52,7 @@ namespace Jwt.Identity.Data.Repositories.IdentitySettingRepository
                 _context.IdentitySettings.Add(new IdentitySettingPolicy());
                 _context.SaveChanges();
                 var defaultSetting = _context.IdentitySettings.AsNoTracking().ToList();
-                _cacheProvider.Set(KeyRes.IdentitySetting, settingInDb[0],TimeSpan.FromMinutes(1));
+                _cacheProvider.Set(KeyRes.IdentitySetting, settingInDb[0],TimeSpan.FromDays(1));
                 return defaultSetting[0];
 
             }

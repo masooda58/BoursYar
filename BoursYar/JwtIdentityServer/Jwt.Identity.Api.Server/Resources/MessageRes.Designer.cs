@@ -196,6 +196,15 @@ namespace Jwt.Identity.Api.Server.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unauthorize.
+        /// </summary>
+        public static string Unauthorize {
+            get {
+                return ResourceManager.GetString("Unauthorize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to مشکلی پیش آمده مجدد درخواست کد نمایید.
         /// </summary>
         public static string UnknownTotpError {

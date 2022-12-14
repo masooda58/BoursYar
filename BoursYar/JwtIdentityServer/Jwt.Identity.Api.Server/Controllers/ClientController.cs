@@ -70,7 +70,7 @@ namespace Jwt.Identity.Api.Server.Controllers
             try
             {
                 var client = await _mediator.Send(new GetClient() { ClientName = clientName });
-                return Ok(new ResultResponse(true,ErrorRes.GetError,client));
+                return Ok(new ResultResponse(true,client.ClientName,client));
             }
 
 

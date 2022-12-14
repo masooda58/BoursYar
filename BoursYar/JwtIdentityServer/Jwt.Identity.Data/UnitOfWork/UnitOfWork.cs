@@ -27,7 +27,7 @@ namespace Jwt.Identity.Data.UnitOfWork
             {
                 if (_client == null)
                 {
-                    _client = new ClientRepositoryService(_context);
+                    _client = new ClientRepositoryService(_context,_cache);
                 }
 
                 return _client;
