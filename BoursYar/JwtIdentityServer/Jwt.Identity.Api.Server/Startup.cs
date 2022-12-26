@@ -48,6 +48,7 @@ using Jwt.Identity.Api.Server.Helpers.Convention;
 using Jwt.Identity.Api.Server.Helpers.CustomAuthenticaton;
 using Jwt.Identity.Api.Server.IOC;
 using Jwt.Identity.Api.Server.IOC.CustomCache;
+using Jwt.Identity.Api.Server.Setting;
 using Jwt.Identity.Data.InitialData;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Caching.Distributed;
@@ -81,7 +82,9 @@ namespace Jwt.Identity.Api.Server
             
             string projectName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name.Replace(".", "");
             #region MemoryCache
-
+            var redisOptions = Configuration.GetSection("Redis");
+            services.Configure<RedisSettings>(redisOptions);
+            var redisInstanceOptions = redisOptions.Get<RedisSettings>();
            // services.AddMemoryCache();
           // services.AddDistributedMemoryCache();
           services.AddEasyCaching(option =>
@@ -93,11 +96,12 @@ namespace Jwt.Identity.Api.Server
               // distributed
               option.UseRedis(config =>
               {
-                  config.DBConfig.Endpoints.Add(new ServerEndPoint("127.0.0.1", 6379));
+                  config.DBConfig.Endpoints.Add(new ServerEndPoint(redisInstanceOptions.Ip,
+                      Convert.ToInt32(redisInstanceOptions.Port)));
                   config.DBConfig.KeyPrefix = projectName + ":";
                   config.DBConfig.Database = 5;
                   config.SerializerName = "myjson";
-              }, "myredis");
+              }, "r1");
 
               // combine local and distributed
               option.UseHybrid(config =>
@@ -113,7 +117,8 @@ namespace Jwt.Identity.Api.Server
                   // use redis bus
                   .WithRedisBus(busConf =>
                   {
-                      busConf.Endpoints.Add(new ServerEndPoint("127.0.0.1", 6379));
+                      busConf.Endpoints.Add(new ServerEndPoint(redisInstanceOptions.Ip,
+                          Convert.ToInt32(redisInstanceOptions.Port)));
 
                       // do not forget to set the SerializerName for the bus here !!
                       busConf.SerializerName = "myjson";
@@ -157,7 +162,7 @@ namespace Jwt.Identity.Api.Server
             
             services.AddAuthentication(options =>
                 {
-                    options.DefaultAuthenticateScheme = "JWT_OR_COOKIE";
+                    options.DefaultAuthenticateScheme = "None";
                     options.DefaultScheme = "JWT_OR_COOKIE";
                     options.DefaultChallengeScheme = "JWT_OR_COOKIE";
                     options.DefaultSignInScheme = "JWT_OR_COOKIE";

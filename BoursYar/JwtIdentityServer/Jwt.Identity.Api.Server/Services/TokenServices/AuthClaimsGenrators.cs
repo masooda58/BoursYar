@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using Jwt.Identity.Domain.Token.ITokenServices;
 using Jwt.Identity.Domain.User.Entities;
@@ -12,14 +13,17 @@ namespace Jwt.Identity.Api.Server.Services.TokenServices
         /// <inheritdoc />
         public List<Claim> CreatClaims(ApplicationUser user)
         {
+         
             var authClaims = new List<Claim>
             {
                 new(ClaimTypes.Name, user.UserName),
                 //new Claim("BoursYarAccess","x"),
                 //new Claim("BoursYarAccess","y"),
-                new("id", user.Id),
-                new("test","masood")
+                new(ClaimTypes.NameIdentifier, user.Id),
+                new(ClaimTypes.Role,"masood"),
+                new(ClaimTypes.Role,"masood2"),
             };
+          
             return authClaims;
         }
     }

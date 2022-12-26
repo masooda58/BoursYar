@@ -8,7 +8,7 @@ namespace WebServiceManager
 
     public class CacheManager
     {
-        public static  IDistributedCache Cache;// = new MemoryCache(new MemoryCacheOptions());
+        public static  IMemoryCache Cache;// = new MemoryCache(new MemoryCacheOptions());
 
         public static EventHandler ChangeCache;
 

@@ -5,6 +5,8 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using EasyCaching.Core;
+using EasyCaching.HybridCache;
+using EasyCaching.InMemory;
 using Jwt.Identity.Api.Server.Resources;
 using Jwt.Identity.Api.Server.Security;
 using Jwt.Identity.Data.IntialData;
@@ -776,16 +778,20 @@ namespace Jwt.Identity.Api.Server.Controllers
         {
 
             var user = User.Identity.IsAuthenticated;
-            var userId=User.FindFirstValue("id");
+            var userId=User.FindFirstValue(ClaimTypes.NameIdentifier);
             return Ok(user+$"userid={userId}");
         }
         [HttpPost("test2")]
         public async Task<ActionResult> Test2(LoginRequest login)
         {
 
-            var user = User.Identity.IsAuthenticated;
-            var userId= HttpContext.User.FindFirstValue("id");;
-            return Ok(user+$"userid={userId}");
+            //var user = User.Identity.IsAuthenticated;
+            //var userId= HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            //return Ok(user+$"userid={userId}");
+           // var x=typeof(IEasyCachingProviderBase).IsAssignableFrom(typeof(DefaultInMemoryCachingProvider));
+           //var y=typeof(IEasyCachingProviderBase).IsAssignableFrom(typeof(HybridCachingProvider));
+          
+           return Ok();
         }
 
         #region CTOR

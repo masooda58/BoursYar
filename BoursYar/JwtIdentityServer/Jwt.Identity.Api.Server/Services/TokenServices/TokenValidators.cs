@@ -6,20 +6,25 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using EasyCaching.Core;
+using Jwt.Identity.Domain.Shared.Models.CacheData;
 
 namespace Jwt.Identity.Api.Server.Services.TokenServices
 {
     public class TokenValidators : ITokenValidators
     {
         private readonly JwtSettingModel _jwtSetting;
+        private readonly IEasyCachingProviderBase _cache;
 
-        public TokenValidators(JwtSettingModel jwtSetting)
+        public TokenValidators(JwtSettingModel jwtSetting, IEasyCachingProviderBase cache)
         {
             _jwtSetting = jwtSetting;
+            _cache = cache;
         }
 
         public bool Validate(string token, TokenType type)
         {
+         
             var jwtTokenHandler = new JwtSecurityTokenHandler();
             //in tanzimat dar clint ham hast
 
@@ -50,7 +55,11 @@ namespace Jwt.Identity.Api.Server.Services.TokenServices
 
         public ClaimsPrincipal GetClaimPrincipalValidatedToken(string token, TokenType type = TokenType.AccessToken)
         {
-
+            var isServerCreatToken= _cache.Get<ValidTokenCacheModel>(token);
+            if (!isServerCreatToken.HasValue)
+            {
+                return null;
+            }
             try
             {
                 var jwtTokenHandler = new JwtSecurityTokenHandler();

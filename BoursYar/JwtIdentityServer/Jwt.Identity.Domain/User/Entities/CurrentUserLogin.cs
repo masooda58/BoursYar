@@ -7,12 +7,8 @@ namespace Jwt.Identity.Domain.User.Entities
     {
         public string UserId { get; set; }
         public string KeyGuid { get;  } = Guid.NewGuid().ToString();
-        
-        public string DeviceName { get; set; }
-
-        public string IpAdress { get; set; }
-
-        public DateTime LoginTime { get; set; } = DateTime.Now;
+        public string SessionId { get; set; }
+        public string AccessToken { get; set; }
 
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using Jwt.Identity.Domain.Token.ITokenServices;
 using Jwt.Identity.Domain.User.Entities;
@@ -16,8 +17,9 @@ namespace Jwt.Identity.BoursYarServer.Services.TokenServices
                 new(ClaimTypes.Name, "user.UserName"),
                 new("BoursYarAccess", "x"),
                 new("BoursYarAccess", "y"),
-                new("id", "user.Id")
+                new(ClaimTypes.NameIdentifier, "user.Id")
             };
+           var x= authClaims.FirstOrDefault(c => c.ValueType == "id").Value;
             return authClaims;
         }
     }

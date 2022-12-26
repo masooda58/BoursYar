@@ -132,4 +132,7 @@
   <data name="SessionId" xml:space="preserve">
     <value>SessionId</value>
   </data>
+  <data name="ValidToken" xml:space="preserve">
+    <value>ValidToken</value>
+  </data>
 </root>

@@ -10,4 +10,6 @@ namespace Jwt.Identity.Domain.Shared.Models.CacheData
     public record TotpTempData(string UserMobileNo, DateTime ExpirationTime, byte[] SecretKey);
 
     public record TempIpBlock(string IpAddress, DateTime ExpirationTime);
+
+    public record ValidTokenCacheModel(string Token, string UserId);
 }

@@ -104,5 +104,14 @@ namespace Jwt.Identity.Domain.Shared {
                 return ResourceManager.GetString("SessionId", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ValidToken.
+        /// </summary>
+        public static string ValidToken {
+            get {
+                return ResourceManager.GetString("ValidToken", resourceCulture);
+            }
+        }
     }
 }

@@ -8,6 +8,6 @@ namespace Jwt.Identity.Domain.Token.ITokenServices
     public interface ITokenGenrators
     {
         public UserTokenResponse GetAccessToken(List<Claim> authClaims);
-        public TokenModel GetRefreshToken();
+        //public TokenModel GetRefreshToken();
     }
 }
