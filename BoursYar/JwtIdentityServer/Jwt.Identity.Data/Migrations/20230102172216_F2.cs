@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Jwt.Identity.Data.Migrations
 {
-    public partial class Initia : Migration
+    public partial class F2 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -19,34 +19,6 @@ namespace Jwt.Identity.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetRoles", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetUsers",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    LastName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    Approved = table.Column<bool>(type: "bit", nullable: false),
-                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -74,8 +46,7 @@ namespace Jwt.Identity.Data.Migrations
                 name: "IdentitySettings",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     RequireDigit = table.Column<bool>(type: "bit", nullable: false),
                     RequiredLength = table.Column<int>(type: "int", nullable: false),
                     RequireNonAlphanumeric = table.Column<bool>(type: "bit", nullable: false),
@@ -95,6 +66,20 @@ namespace Jwt.Identity.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "SessionEntity",
+                columns: table => new
+                {
+                    SessionId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    IpAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DeviceName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BrowserName = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SessionEntity", x => x.SessionId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -111,6 +96,104 @@ namespace Jwt.Identity.Data.Migrations
                         name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserLogInOutLogs",
+                columns: table => new
+                {
+                    IdGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SessionId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    SignInOut = table.Column<int>(type: "int", nullable: false),
+                    Time = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserLogInOutLogs", x => x.IdGuid);
+                    table.ForeignKey(
+                        name: "FK_UserLogInOutLogs_SessionEntity_SessionId",
+                        column: x => x.SessionId,
+                        principalTable: "SessionEntity",
+                        principalColumn: "SessionId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserLoginPolicyOptions",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    PolicyName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    NumberOfLogin = table.Column<int>(type: "int", nullable: false),
+                    OvereNumberOfLogin = table.Column<int>(type: "int", nullable: false),
+                    ApplicationUserPolicyPolicyId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    ApplicationUserPolicyUserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserLoginPolicyOptions", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUsers",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    LastName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Approved = table.Column<bool>(type: "bit", nullable: false),
+                    UserLoginPolicyOptionId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetUsers_UserLoginPolicyOptions_UserLoginPolicyOptionId",
+                        column: x => x.UserLoginPolicyOptionId,
+                        principalTable: "UserLoginPolicyOptions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ApplicationUserPolicies",
+                columns: table => new
+                {
+                    PolicyId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ApliApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ApplicationUserPolicies", x => new { x.UserId, x.PolicyId });
+                    table.UniqueConstraint("AK_ApplicationUserPolicies_PolicyId", x => x.PolicyId);
+                    table.ForeignKey(
+                        name: "FK_ApplicationUserPolicies_AspNetUsers_ApliApplicationUserId",
+                        column: x => x.ApliApplicationUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ApplicationUserPolicies_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -200,27 +283,10 @@ namespace Jwt.Identity.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "UserLogInOutLogs",
-                columns: table => new
-                {
-                    IdGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    Device = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IpAdress = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SignInOut = table.Column<int>(type: "int", nullable: false),
-                    Time = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserLogInOutLogs", x => x.IdGuid);
-                    table.ForeignKey(
-                        name: "FK_UserLogInOutLogs_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
+            migrationBuilder.CreateIndex(
+                name: "IX_ApplicationUserPolicies_ApliApplicationUserId",
+                table: "ApplicationUserPolicies",
+                column: "ApliApplicationUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -255,6 +321,11 @@ namespace Jwt.Identity.Data.Migrations
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_UserLoginPolicyOptionId",
+                table: "AspNetUsers",
+                column: "UserLoginPolicyOptionId");
+
+            migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
@@ -269,15 +340,42 @@ namespace Jwt.Identity.Data.Migrations
                 filter: "[ClientName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserLogInOutLogs_UserId",
+                name: "IX_UserLogInOutLogs_SessionId",
                 table: "UserLogInOutLogs",
-                column: "UserId",
-                unique: true,
-                filter: "[UserId] IS NOT NULL");
+                column: "SessionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserLoginPolicyOptions_ApplicationUserPolicyUserId_ApplicationUserPolicyPolicyId",
+                table: "UserLoginPolicyOptions",
+                columns: new[] { "ApplicationUserPolicyUserId", "ApplicationUserPolicyPolicyId" });
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_UserLoginPolicyOptions_ApplicationUserPolicies_ApplicationUserPolicyUserId_ApplicationUserPolicyPolicyId",
+                table: "UserLoginPolicyOptions",
+                columns: new[] { "ApplicationUserPolicyUserId", "ApplicationUserPolicyPolicyId" },
+                principalTable: "ApplicationUserPolicies",
+                principalColumns: new[] { "UserId", "PolicyId" },
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_UserLoginPolicyOptions_ApplicationUserPolicies_Id",
+                table: "UserLoginPolicyOptions",
+                column: "Id",
+                principalTable: "ApplicationUserPolicies",
+                principalColumn: "PolicyId",
+                onDelete: ReferentialAction.Cascade);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_ApplicationUserPolicies_AspNetUsers_ApliApplicationUserId",
+                table: "ApplicationUserPolicies");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_ApplicationUserPolicies_AspNetUsers_UserId",
+                table: "ApplicationUserPolicies");
+
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -306,7 +404,16 @@ namespace Jwt.Identity.Data.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
+                name: "SessionEntity");
+
+            migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "UserLoginPolicyOptions");
+
+            migrationBuilder.DropTable(
+                name: "ApplicationUserPolicies");
         }
     }
 }

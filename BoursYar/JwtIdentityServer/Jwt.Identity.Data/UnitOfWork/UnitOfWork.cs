@@ -4,6 +4,8 @@ using Jwt.Identity.Data.Repositories.IdentitySettingRepository;
 using Microsoft.Extensions.Caching.Memory;
 using System;
 using EasyCaching.Core;
+using Jwt.Identity.Data.Repositories.UserLoginOptionRepository;
+using Jwt.Identity.Data.Repositories.UserRepositories;
 using Microsoft.Extensions.Caching.Distributed;
 
 namespace Jwt.Identity.Data.UnitOfWork
@@ -13,6 +15,8 @@ namespace Jwt.Identity.Data.UnitOfWork
         private readonly IdentityContext _context;
         private ClientRepositoryService _client;
         private IdentitySettingRepositoryService _identitySetting;
+        private UserPolicyManagementService _userLoginPolicy;
+        private UserLoginOptionRepositoryServices _loginOption;
         private readonly  IEasyCachingProviderBase _cache;
 
         public UnitOfWork(IdentityContext context,  IEasyCachingProviderBase cache)
@@ -31,6 +35,30 @@ namespace Jwt.Identity.Data.UnitOfWork
                 }
 
                 return _client;
+            }
+        }
+        public UserPolicyManagementService UserLoginPolicyRepository
+        {
+            get
+            {
+                if (_userLoginPolicy == null)
+                {
+                    _userLoginPolicy = new UserPolicyManagementService(_context);
+                }
+
+                return _userLoginPolicy;
+            }
+        }
+        public UserLoginOptionRepositoryServices LoginOptionRepository
+        {
+            get
+            {
+                if (_loginOption == null)
+                {
+                    _loginOption = new UserLoginOptionRepositoryServices(_context);
+                }
+
+                return _loginOption;
             }
         }
         public IdentitySettingRepositoryService IdentitySettingPolicy

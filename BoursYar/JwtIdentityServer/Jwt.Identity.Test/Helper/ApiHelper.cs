@@ -14,7 +14,8 @@ namespace Jwt.Identity.Test.Helper
     {
         public static TokenGenrators CreaTokenGenrators()
         {
-            return new TokenGenrators(LoadJson());
+           // return new TokenGenrators(LoadJson());
+           return null;
         }
 
         public static TokenValidators CreaTokenValidators()

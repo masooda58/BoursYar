@@ -45,8 +45,8 @@ namespace Jwt.Identity.Api.Server
                     //load the SharedSettings first, so that appsettings.json overrwrites it
                     config
                         .AddJsonFile("appsettings.json", true)
-                        .AddJsonFile("JwtIdentitySharedSettings.json", true)
-                        .AddJsonFile($"SharedSettings.{env.EnvironmentName}.json", true);
+                       .AddJsonFile("JwtIdentitySharedSettings.json", true)
+                       .AddJsonFile($"SharedSettings.{env.EnvironmentName}.json", true);
                     config.AddEnvironmentVariables();
                 }) //end
 

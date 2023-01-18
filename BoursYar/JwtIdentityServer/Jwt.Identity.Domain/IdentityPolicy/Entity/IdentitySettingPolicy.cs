@@ -11,7 +11,7 @@ namespace Jwt.Identity.Domain.IdentityPolicy.Entity
 {
    public class IdentitySettingPolicy
    {
-       [Key] public int Id { get; set; } 
+       [Key] public string Id { get; set; } = Guid.NewGuid().ToString();
         [Display(Name = "کلمه عبور شامل عدد باشد")]
         public bool RequireDigit { get; set; } = false;
         [Display(Name = "حداقل طول کلمه عبور")]

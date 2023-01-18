@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Jwt.Identity.Domain.UseLoginPolicy.Entities;
 using Microsoft.AspNetCore.Identity;
 
 namespace Jwt.Identity.Domain.User.Entities
@@ -14,6 +15,7 @@ namespace Jwt.Identity.Domain.User.Entities
 
         [NotMapped] public string FullName => FirstName + " " + LastName;
 
-        public virtual UserLogInOutLog UserLogInOutLoger { get; set; }
+ 
+        public virtual ApplicationUserPolicy ApplicationUserPolicy { get; set; }
     }
 }

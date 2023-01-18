@@ -12,6 +12,6 @@ namespace Jwt.Identity.Domain.IdentityPolicy.Data
     {
         public IdentitySettingPolicy GetSetting();
         public void UpdateSetting(IdentitySettingPolicy setting);
-        public bool SettingExist(int id);
+        public bool SettingExist(string id);
     }
 }

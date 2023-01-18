@@ -11,6 +11,7 @@ using Jwt.Identity.Api.Server.Resources;
 using Jwt.Identity.Api.Server.Security;
 using Jwt.Identity.Data.IntialData;
 using Jwt.Identity.Data.Repositories.UserRepositories;
+using Jwt.Identity.Data.UnitOfWork;
 using Jwt.Identity.Domain.IServices.Email;
 using Jwt.Identity.Domain.IServices.Email.Enum;
 using Jwt.Identity.Domain.IServices.Totp;
@@ -20,12 +21,14 @@ using Jwt.Identity.Domain.IServices.Totp.SettingModels;
 using Jwt.Identity.Domain.Shared.Models.CacheData;
 using Jwt.Identity.Domain.Token.Data;
 using Jwt.Identity.Domain.Token.ITokenServices;
+using Jwt.Identity.Domain.UseLoginPolicy.Entities;
 using Jwt.Identity.Domain.User.Entities;
 using Jwt.Identity.Domain.User.Enum;
 using Jwt.Identity.Domain.User.RequestDto;
 using Jwt.Identity.Framework.Extensions;
 using Jwt.Identity.Framework.Response;
 using Jwt.Identity.Framework.Tools;
+using Jwt.Identity.Framework.Tools.PersianErrorHandelSqlException;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -670,7 +673,7 @@ namespace Jwt.Identity.Api.Server.Controllers
         }
 
         [HttpPost("SignOut/{clientName}")]
-        //[Authorize(AuthenticationSchemes="JWT_OR_COOKIE")]
+       
         [Authorize]
         public async Task<ActionResult> SignOut(string clientName)
         {
@@ -782,20 +785,46 @@ namespace Jwt.Identity.Api.Server.Controllers
             return Ok(user+$"userid={userId}");
         }
         [HttpPost("test2")]
-        public async Task<ActionResult> Test2(LoginRequest login)
+        public async Task<ActionResult> Test2(string userId)
         {
 
             //var user = User.Identity.IsAuthenticated;
             //var userId= HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
             //return Ok(user+$"userid={userId}");
-           // var x=typeof(IEasyCachingProviderBase).IsAssignableFrom(typeof(DefaultInMemoryCachingProvider));
-           //var y=typeof(IEasyCachingProviderBase).IsAssignableFrom(typeof(HybridCachingProvider));
-          
+            // var x=typeof(IEasyCachingProviderBase).IsAssignableFrom(typeof(DefaultInMemoryCachingProvider));
+            //var y=typeof(IEasyCachingProviderBase).IsAssignableFrom(typeof(HybridCachingProvider));
+
+
+
+            //var userLoginPolicy = new UserLoginPolicyOptions();
+            //userLoginPolicy.PolicyName = "d2";
+            //await _UOW.LoginOptionRepository.InsertAsync(userLoginPolicy);
+            //_UOW.Save();
+
+            try
+            {
+                var user =await _userManager.FindUserByEmailOrPhoneAsync("989123406285");
+                var policyOption = await _UOW.LoginOptionRepository.GetByAsync("d2");
+                var userlog = new ApplicationUserPolicy(user.Id, policyOption.Id);
+                await _UOW.UserLoginPolicyRepository.AddPolicyToUserAsync(userlog);
+                _UOW.Save();
+
+                var policyId= await _UOW.UserLoginPolicyRepository.GetPolicyIdByUserIdAsync(user.Id);
+        
+                var policy = await _UOW.UserLoginPolicyRepository.GetPolicyByUserIdAsync(user.Id);
+                var userlist = await _UOW.UserLoginPolicyRepository.GetAllUserWithPolicyIdAsync(userlog.PolicyId);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(ExceptionMessage.GetPerisanSqlExceptionMessage(e));
+            }
+
            return Ok();
         }
 
         #region CTOR
 
+        private readonly UnitOfWork _UOW;
         private readonly UserManagementService _userManager;
         private readonly ITotpCode _totpCode;
         private readonly ILogger<RegisterRequest> _logger;
@@ -817,7 +846,7 @@ namespace Jwt.Identity.Api.Server.Controllers
             IDataProtectionProvider dataProtectionProvider, DataProtectionPepuseString dataProtectionPepuseString,
             SignInManager<ApplicationUser> signInManager, IAuthClaimsGenrators claimsGenrators,
             ITokenGenrators tokenGenrator, IRefreshTokenRepository refreshTokenRepository,
-            ITokenValidators tokenValidators)
+            ITokenValidators tokenValidators, UnitOfWork uow)
         {
             _userManager = userManager;
             _totpCode = totpCode;
@@ -829,6 +858,7 @@ namespace Jwt.Identity.Api.Server.Controllers
             _tokenGenrator = tokenGenrator;
             _refreshTokenRepository = refreshTokenRepository;
             _tokenValidators = tokenValidators;
+            _UOW = uow;
             _totpSettings = options?.Value ?? new TotpSettings();
             _protector = dataProtectionProvider.CreateProtector(dataProtectionPepuseString.PhoneNoInCooki);
         }

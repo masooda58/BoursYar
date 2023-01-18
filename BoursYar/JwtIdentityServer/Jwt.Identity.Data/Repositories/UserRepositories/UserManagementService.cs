@@ -20,7 +20,14 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
     public class UserManagementService : UserManager<ApplicationUser>
 
     {
-        public UserManagementService(IUserStore<ApplicationUser> store, IOptions<IdentityOptions> optionsAccessor, IPasswordHasher<ApplicationUser> passwordHasher, IEnumerable<IUserValidator<ApplicationUser>> userValidators, IEnumerable<IPasswordValidator<ApplicationUser>> passwordValidators, ILookupNormalizer keyNormalizer, IdentityErrorDescriber errors, IServiceProvider services, ILogger<UserManager<ApplicationUser>> logger) : base(store, optionsAccessor, passwordHasher, userValidators, passwordValidators, keyNormalizer, errors, services, logger)
+        public UserManagementService(IUserStore<ApplicationUser> store,
+            IOptions<IdentityOptions> optionsAccessor,
+            IPasswordHasher<ApplicationUser> passwordHasher,
+            IEnumerable<IUserValidator<ApplicationUser>> userValidators,
+            IEnumerable<IPasswordValidator<ApplicationUser>> passwordValidators,
+            ILookupNormalizer keyNormalizer, IdentityErrorDescriber errors,
+            IServiceProvider services,
+            ILogger<UserManager<ApplicationUser>> logger) : base(store, optionsAccessor, passwordHasher, userValidators, passwordValidators, keyNormalizer, errors, services, logger)
         {
         }
 
@@ -30,12 +37,16 @@ namespace Jwt.Identity.Data.Repositories.UserRepositories
                       
             return user;
         }
+
+        
         public async Task<bool> IsUserExistAsync( string emailOrPhone)
         {
             var userExist = await Users.AnyAsync(u => u.PhoneNumber == emailOrPhone || u.Email == emailOrPhone);
                        
             return userExist;
         }
+
+     
       
     }
 }

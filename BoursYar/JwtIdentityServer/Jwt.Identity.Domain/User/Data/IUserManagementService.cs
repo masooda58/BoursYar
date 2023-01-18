@@ -30,5 +30,7 @@ namespace Jwt.Identity.Domain.User.Data
 
         Task<IdentityResult> DeleteUserAsync(ApplicationUser user);
         Task<bool> CheckPasswordAsync(ApplicationUser user, string password);
+
+
     }
 }

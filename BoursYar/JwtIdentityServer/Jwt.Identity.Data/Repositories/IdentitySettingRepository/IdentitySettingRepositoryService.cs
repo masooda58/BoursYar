@@ -74,7 +74,9 @@ namespace Jwt.Identity.Data.Repositories.IdentitySettingRepository
 
         }
 
-        public bool SettingExist(int id)
+      
+
+        public bool SettingExist(string id)
         {
             return _context.IdentitySettings.Any(i => i.Id == id);
         }

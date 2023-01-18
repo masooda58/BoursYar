@@ -17,6 +17,6 @@ namespace Jwt.Identity.Domain.User.Entities
         public SignInLogerType SignInOut { get; set; }
         public DateTime Time { get; set; }
 
-        public virtual ApplicationUser User { get; set; }
+     
     }
 }

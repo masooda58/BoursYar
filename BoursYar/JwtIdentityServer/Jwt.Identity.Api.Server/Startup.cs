@@ -76,8 +76,8 @@ namespace Jwt.Identity.Api.Server
 
             services.AddDbContext<IdentityContext>(options =>
                 options.UseSqlServer(
-                    Configuration.GetConnectionString("IdetityDb")), ServiceLifetime.Transient);
-
+                    Configuration.GetConnectionString("IdetityDb")));
+            //, ServiceLifetime.Transient
             #endregion
             
             string projectName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name.Replace(".", "");
@@ -130,6 +130,9 @@ namespace Jwt.Identity.Api.Server
             #region Identity
 
             services.IdentityConfigExtension();
+
+            
+
 
             #endregion
 

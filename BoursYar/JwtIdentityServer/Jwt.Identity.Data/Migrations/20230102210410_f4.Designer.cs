@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Jwt.Identity.Data.Migrations
 {
     [DbContext(typeof(IdentityContext))]
-    [Migration("20221112135640_Initia")]
-    partial class Initia
+    [Migration("20230102210410_f4")]
+    partial class f4
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -64,12 +64,10 @@ namespace Jwt.Identity.Data.Migrations
                     b.ToTable("Clients");
                 });
 
-            modelBuilder.Entity("Jwt.Identity.Domain.IdentityPolicy.Entity.IdentitySetting", b =>
+            modelBuilder.Entity("Jwt.Identity.Domain.IdentityPolicy.Entity.IdentitySettingPolicy", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("CaptchStrategy")
                         .HasColumnType("int");
@@ -110,6 +108,44 @@ namespace Jwt.Identity.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("IdentitySettings");
+                });
+
+            modelBuilder.Entity("Jwt.Identity.Domain.Sessions.Entity.SessionEntity", b =>
+                {
+                    b.Property<string>("SessionId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("BrowserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeviceName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IpAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("SessionId");
+
+                    b.ToTable("SessionEntity");
+                });
+
+            modelBuilder.Entity("Jwt.Identity.Domain.UseLoginPolicy.Entities.UserLoginPolicyOptions", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("NumberOfLogin")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OvereNumberOfLogin")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PolicyName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserLoginPolicyOptions");
                 });
 
             modelBuilder.Entity("Jwt.Identity.Domain.User.Entities.ApplicationUser", b =>
@@ -188,17 +224,32 @@ namespace Jwt.Identity.Data.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("Jwt.Identity.Domain.User.Entities.ApplicationUserPolicy", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("PolicyId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("UserId", "PolicyId");
+
+                    b.HasIndex("PolicyId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("ApplicationUserPolicies");
+                });
+
             modelBuilder.Entity("Jwt.Identity.Domain.User.Entities.UserLogInOutLog", b =>
                 {
                     b.Property<Guid>("IdGuid")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Device")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("IpAdress")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("SessionId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("SignInOut")
                         .HasColumnType("int");
@@ -207,13 +258,11 @@ namespace Jwt.Identity.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("IdGuid");
 
-                    b.HasIndex("UserId")
-                        .IsUnique()
-                        .HasFilter("[UserId] IS NOT NULL");
+                    b.HasIndex("SessionId");
 
                     b.ToTable("UserLogInOutLogs");
                 });
@@ -349,13 +398,32 @@ namespace Jwt.Identity.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("Jwt.Identity.Domain.User.Entities.ApplicationUserPolicy", b =>
+                {
+                    b.HasOne("Jwt.Identity.Domain.UseLoginPolicy.Entities.UserLoginPolicyOptions", "UserLoginPolicyOption")
+                        .WithMany("ApplicationUserPolicies")
+                        .HasForeignKey("PolicyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Jwt.Identity.Domain.User.Entities.ApplicationUser", "ApplicationUser")
+                        .WithOne("ApplicationUserPolicy")
+                        .HasForeignKey("Jwt.Identity.Domain.User.Entities.ApplicationUserPolicy", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+
+                    b.Navigation("UserLoginPolicyOption");
+                });
+
             modelBuilder.Entity("Jwt.Identity.Domain.User.Entities.UserLogInOutLog", b =>
                 {
-                    b.HasOne("Jwt.Identity.Domain.User.Entities.ApplicationUser", "User")
-                        .WithOne("UserLogInOutLoger")
-                        .HasForeignKey("Jwt.Identity.Domain.User.Entities.UserLogInOutLog", "UserId");
+                    b.HasOne("Jwt.Identity.Domain.Sessions.Entity.SessionEntity", "Session")
+                        .WithMany()
+                        .HasForeignKey("SessionId");
 
-                    b.Navigation("User");
+                    b.Navigation("Session");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -409,9 +477,14 @@ namespace Jwt.Identity.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Jwt.Identity.Domain.UseLoginPolicy.Entities.UserLoginPolicyOptions", b =>
+                {
+                    b.Navigation("ApplicationUserPolicies");
+                });
+
             modelBuilder.Entity("Jwt.Identity.Domain.User.Entities.ApplicationUser", b =>
                 {
-                    b.Navigation("UserLogInOutLoger");
+                    b.Navigation("ApplicationUserPolicy");
                 });
 #pragma warning restore 612, 618
         }

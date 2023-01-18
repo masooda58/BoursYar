@@ -19,6 +19,8 @@
     <PackageReference Include="EasyCaching.Redis" Version="1.7.0" />
     <PackageReference Include="EasyCaching.Serialization.SystemTextJson" Version="1.7.0" />
     <PackageReference Include="Google.Apis.Auth" Version="1.57.0" />
+    <PackageReference Include="IdentityServer4" Version="4.1.2" />
+    <PackageReference Include="IdentityServer4.AspNetIdentity" Version="4.1.2" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="5.0.17" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.17" />

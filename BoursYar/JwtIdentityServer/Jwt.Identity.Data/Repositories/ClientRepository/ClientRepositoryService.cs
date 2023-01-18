@@ -88,18 +88,18 @@ namespace Jwt.Identity.Data.Repositories.ClientRepository
             return null;
         }
 
-        public override async Task DeleteAsync(Client entityToDelete)
-        {
-            await base.DeleteAsync(entityToDelete);
-            await _cacheProvider.SetAsync(KeyRes.clients, await _context.Clients.ToListAsync(),TimeSpan.FromDays(10));
+        //public override async Task DeleteAsync(Client entityToDelete)
+        //{
+        //    await base.DeleteAsync(entityToDelete);
+        //  //  await _cacheProvider.SetAsync(KeyRes.clients, await _context.Clients.ToListAsync(),TimeSpan.FromDays(10));
 
-        }
+        //}
 
-        public override async Task InsertAsync(Client entity)
-        {
-            await base.InsertAsync(entity);
-            await _cacheProvider.SetAsync(KeyRes.clients, await _context.Clients.ToListAsync(),TimeSpan.FromDays(10));
-        }
+        //public override async Task InsertAsync(Client entity)
+        //{
+        //    await base.InsertAsync(entity);
+        //    await _cacheProvider.SetAsync(KeyRes.clients, await _context.Clients.ToListAsync(),TimeSpan.FromDays(10));
+        //}
     }
 }
 

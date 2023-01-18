@@ -16,7 +16,7 @@ namespace Jwt.Identity.Framework.Tools.PersianErrorHandelSqlException
         public static Exception GetPerisanSqlExceptionMessage(Exception exception)
         {
             var sqlException = exception.GetBaseException() as SqlException;
-          
+            var x = sqlException.Data;
             if (sqlException == null)
             {
 
@@ -38,6 +38,8 @@ namespace Jwt.Identity.Framework.Tools.PersianErrorHandelSqlException
 
                
                 }
+
+              
                 return new Exception(sqlException.Message+"-"+sqlException.Number.ToString());
             }
             catch (Exception e)
